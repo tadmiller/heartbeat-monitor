@@ -1,4 +1,3 @@
-
 /*  Pulse Sensor Amped 1.5    by Joel Murphy and Yury Gitman   http://www.pulsesensor.com
 
 ----------------------  Notes ----------------------  ----------------------
@@ -37,41 +36,87 @@ volatile boolean QS = false;        // becomes true when Arduoino finds a beat.
 static int outputType = SERIAL_PLOTTER;
 
 
-void setup(){
-  pinMode(blinkPin,OUTPUT);         // pin that will blink to your heartbeat!
-  pinMode(fadePin,OUTPUT);          // pin that will fade to your heartbeat!
-  Serial.begin(115200);             // we agree to talk fast!
-  interruptSetup();                 // sets up to read Pulse Sensor signal every 2mS
-   // IF YOU ARE POWERING The Pulse Sensor AT VOLTAGE LESS THAN THE BOARD VOLTAGE,
-   // UN-COMMENT THE NEXT LINE AND APPLY THAT VOLTAGE TO THE A-REF PIN
-//   analogReference(EXTERNAL);
+void setup()
+{
+    pinMode(blinkPin,OUTPUT);         // pin that will blink to your heartbeat!
+    pinMode(fadePin,OUTPUT);          // pin that will fade to your heartbeat!
+    Serial.begin(115200);             // we agree to talk fast!
+    interruptSetup();                 // sets up to read Pulse Sensor signal every 2mS
+    // IF YOU ARE POWERING The Pulse Sensor AT VOLTAGE LESS THAN THE BOARD VOLTAGE,
+    // UN-COMMENT THE NEXT LINE AND APPLY THAT VOLTAGE TO THE A-REF PIN
+    //   analogReference(EXTERNAL);
 }
 
 
 //  Where the Magic Happens
-void loop(){
+void loop()
+{
+    serialOutput();
 
-    serialOutput() ;
-
-  if (QS == true){     // A Heartbeat Was Found
+    if (QS == true)
+    {     // A Heartbeat Was Found
                        // BPM and IBI have been Determined
                        // Quantified Self "QS" true when arduino finds a heartbeat
         fadeRate = 255;         // Makes the LED Fade Effect Happen
                                 // Set 'fadeRate' Variable to 255 to fade LED with pulse
         serialOutputWhenBeatHappens();   // A Beat Happened, Output that to serial.
         QS = false;                      // reset the Quantified Self flag for next time
-  }
+    }
 
-  ledFadeToBeat();                      // Makes the LED Fade Effect Happen
-  delay(20);                             //  take a break
+    ledFadeToBeat();                      // Makes the LED Fade Effect Happen
+    delay(20);                             //  take a break
 }
 
-
-
-
-
-void ledFadeToBeat(){
+void ledFadeToBeat()
+{
     fadeRate -= 15;                         //  set LED fade value
     fadeRate = constrain(fadeRate,0,255);   //  keep LED fade value from going into negative numbers!
     analogWrite(fadePin,fadeRate);          //  fade LED
-  }
+}
+
+void updateDisplay(byte frame[8][8]) //used to change frame, constantly updated when needed
+{
+    drawFrame(frame);
+    delay(20);
+    drawFrame(frame);
+}
+
+void drawFrame(byte frame[8][8])  //draws frame on 8x8 matrix
+{
+    digitalWrite(clock, LOW);  //sets the clock for each display, running through 0 then 1
+    digitalWrite(data, LOW);   //ditto for data.
+    delayMicroseconds(10);
+    digitalWrite(cs, LOW);     //ditto for cs.
+    delayMicroseconds(10);
+    
+    for(int x = 0; x < 8; x++)
+    {
+        for (int y = 0; y < 8; y++)
+        {
+            // Drawing the grid. x across then down to next y then x across.
+            writeByte(frame[x][y]);  
+            delayMicroseconds(10);
+        }
+    }
+    
+    delayMicroseconds(10);
+    digitalWrite(cs, HIGH);
+}
+
+// prints out bytes. Each colour is printed out.
+void writeByte(byte myByte)
+{
+    for (int b = 0; b < 8; b++)
+    {  // converting it to binary from colour code.
+        digitalWrite(clock, LOW);
+        
+        if ((myByte & bits[b]) > 0)
+            digitalWrite(data, HIGH);
+        else
+            digitalWrite(data, LOW);
+            
+        digitalWrite(clock, HIGH); 
+        delayMicroseconds(10);
+        digitalWrite(clock, LOW); 
+    }
+}
