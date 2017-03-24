@@ -28,6 +28,30 @@ volatile int IBI = 600;             // int that holds the time interval between 
 volatile boolean Pulse = false;     // "True" when User's live heartbeat is detected. "False" when not a "live beat".
 volatile boolean QS = false;        // becomes true when Arduoino finds a beat.
 
+/******************/
+/* GAME MECHANICS */
+/******************/
+bool shipsPlaced = false;
+byte myShipsDisplay[8][8] = {{2, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}};
+byte tmpDisplay[8][8] = {{2, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}};
+/************************/
+/* RGB LED DISPLAY VARS */
+/************************/
+#define BLUE 2
+#define ORANGE 100
+#define RED 64
+#define GREEN 8
+#define WHITE 110
+
+/*********************/
+/*    RGB DISPLAY    */
+/*********************/
+int bits[8] = {128, 64, 32, 16, 8, 4, 2, 1};
+int clock = 11; // Pin SCK del display
+int data = 13;  // Pin DI del display
+int cs = 12;    // Pin CS del display
+/******/
+
 // SET THE SERIAL OUTPUT TYPE TO YOUR NEEDS
 // PROCESSING_VISUALIZER works with Pulse Sensor Processing Visualizer
 //      https://github.com/WorldFamousElectronics/PulseSensor_Amped_Processing_Visualizer
@@ -35,9 +59,27 @@ volatile boolean QS = false;        // becomes true when Arduoino finds a beat.
 //      run the Serial Plotter at 115200 baud: Tools/Serial Plotter or Command+L
 static int outputType = SERIAL_PLOTTER;
 
+// Initialize the matrix. Might need to be in an object eventually
+void initMatrix()
+{
+    pinMode(clock, OUTPUT); // sets the digital pin as output 
+    pinMode(data, OUTPUT); 
+    pinMode(cs, OUTPUT); 
+
+    updateDisplay(tmpDisplay);
+}
 
 void setup()
 {
+    init();
+    Serial.begin(9600);
+
+    // Initialize RGB LED matrix
+    initMatrix(); // Load 8x8 RGB Matrix device drivers
+
+        //  cpyTmpDisplay();
+        //displayDots(row, col, orientation, size);
+        updateDisplay(tmpDisplay);
     pinMode(blinkPin,OUTPUT);         // pin that will blink to your heartbeat!
     pinMode(fadePin,OUTPUT);          // pin that will fade to your heartbeat!
     Serial.begin(115200);             // we agree to talk fast!
