@@ -31,26 +31,6 @@ volatile boolean QS = false;        // becomes true when Arduoino finds a beat.
 /******************/
 /* GAME MECHANICS */
 /******************/
-bool shipsPlaced = false;
-byte myShipsDisplay[8][8] = {{2, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}};
-byte tmpDisplay[8][8] = {{2, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}};
-/************************/
-/* RGB LED DISPLAY VARS */
-/************************/
-#define BLUE 2
-#define ORANGE 100
-#define RED 64
-#define GREEN 8
-#define WHITE 110
-
-/*********************/
-/*    RGB DISPLAY    */
-/*********************/
-int bits[8] = {128, 64, 32, 16, 8, 4, 2, 1};
-int clock = 11; // Pin SCK del display
-int data = 13;  // Pin DI del display
-int cs = 12;    // Pin CS del display
-/******/
 
 // SET THE SERIAL OUTPUT TYPE TO YOUR NEEDS
 // PROCESSING_VISUALIZER works with Pulse Sensor Processing Visualizer
@@ -59,30 +39,20 @@ int cs = 12;    // Pin CS del display
 //      run the Serial Plotter at 115200 baud: Tools/Serial Plotter or Command+L
 static int outputType = SERIAL_PLOTTER;
 
-// Initialize the matrix. Might need to be in an object eventually
-void initMatrix()
-{
-    pinMode(clock, OUTPUT); // sets the digital pin as output 
-    pinMode(data, OUTPUT); 
-    pinMode(cs, OUTPUT); 
-
-    updateDisplay(tmpDisplay);
-}
-
 void setup()
 {
     init();
-    Serial.begin(9600);
+    Serial.begin(115200);
 
     // Initialize RGB LED matrix
     initMatrix(); // Load 8x8 RGB Matrix device drivers
 
         //  cpyTmpDisplay();
         //displayDots(row, col, orientation, size);
-        updateDisplay(tmpDisplay);
+        //updateDisplay(tmpDisplay);
     pinMode(blinkPin,OUTPUT);         // pin that will blink to your heartbeat!
     pinMode(fadePin,OUTPUT);          // pin that will fade to your heartbeat!
-    Serial.begin(115200);             // we agree to talk fast!
+    //Serial.begin(115200);             // we agree to talk fast!
     interruptSetup();                 // sets up to read Pulse Sensor signal every 2mS
     // IF YOU ARE POWERING The Pulse Sensor AT VOLTAGE LESS THAN THE BOARD VOLTAGE,
     // UN-COMMENT THE NEXT LINE AND APPLY THAT VOLTAGE TO THE A-REF PIN
@@ -114,51 +84,4 @@ void ledFadeToBeat()
     fadeRate -= 15;                         //  set LED fade value
     fadeRate = constrain(fadeRate,0,255);   //  keep LED fade value from going into negative numbers!
     analogWrite(fadePin,fadeRate);          //  fade LED
-}
-
-void updateDisplay(byte frame[8][8]) //used to change frame, constantly updated when needed
-{
-    drawFrame(frame);
-    delay(20);
-    drawFrame(frame);
-}
-
-void drawFrame(byte frame[8][8])  //draws frame on 8x8 matrix
-{
-    digitalWrite(clock, LOW);  //sets the clock for each display, running through 0 then 1
-    digitalWrite(data, LOW);   //ditto for data.
-    delayMicroseconds(10);
-    digitalWrite(cs, LOW);     //ditto for cs.
-    delayMicroseconds(10);
-    
-    for(int x = 0; x < 8; x++)
-    {
-        for (int y = 0; y < 8; y++)
-        {
-            // Drawing the grid. x across then down to next y then x across.
-            writeByte(frame[x][y]);  
-            delayMicroseconds(10);
-        }
-    }
-    
-    delayMicroseconds(10);
-    digitalWrite(cs, HIGH);
-}
-
-// prints out bytes. Each colour is printed out.
-void writeByte(byte myByte)
-{
-    for (int b = 0; b < 8; b++)
-    {  // converting it to binary from colour code.
-        digitalWrite(clock, LOW);
-        
-        if ((myByte & bits[b]) > 0)
-            digitalWrite(data, HIGH);
-        else
-            digitalWrite(data, LOW);
-            
-        digitalWrite(clock, HIGH); 
-        delayMicroseconds(10);
-        digitalWrite(clock, LOW); 
-    }
 }
