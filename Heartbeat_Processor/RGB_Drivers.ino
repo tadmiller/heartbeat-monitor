@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include <stdarg.h>
+
 /**************************/
 /* RGB LED DISPLAY COLORS */
 /**************************/
@@ -16,8 +19,12 @@ int bits[8] = {128, 64, 32, 16, 8, 4, 2, 1};
 int clock = 11; // Pin SCK del display
 int data = 13;  // Pin DI del display
 int cs = 12;    // Pin CS del display
-byte default_color = RED; // What color the display is by default
-byte tmpDisplay[8][8] = {{4, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}};
+byte clr = RED; // What color the display is by default
+byte txt = WHITE;
+byte disp[8][8] = {{clr, clr, clr, clr, clr, clr, clr, clr}, {clr, clr, clr, clr, clr, clr, clr, clr}, {clr, clr, clr, clr, clr, clr, clr, clr}, {clr, clr, clr, clr, clr, clr, clr, clr}, {clr, clr, clr, clr, clr, clr, clr, clr}, {clr, clr, clr, clr, clr, clr, clr, clr}, {clr, clr, clr, clr, clr, clr, clr, clr}, {clr, clr, clr, clr, clr, clr, clr, clr}};
+byte tmpDisp[8][8];
+
+//byte nums[10][4][8] = {{4, 2, 2, 2, 2, 2, 2, 4}, {2, 2, 2, 2, 2, 2, 2, 2}, {txt, txt, txt, txt, txt, clr, clr, clr}, {2, 2, 2, 2, 2, 2, 2, 2}};
 /**************************/
 
 // Initialize the matrix. Might need to be in an object eventually
@@ -25,30 +32,139 @@ void initMatrix()
 {
     pinMode(clock, OUTPUT); // sets the digital pin as output 
     pinMode(data, OUTPUT); 
-    pinMode(cs, OUTPUT); 
+    pinMode(cs, OUTPUT);
 
-    byte start[8][8];
+    digitalWrite(clock, HIGH);  //sets the clock for each display, running through 0 then 1
+    digitalWrite(cs, HIGH);     //ditto for cs.
 
-    for (int i = 0; i < 8; i++)
-        for (int j = 0; j < 8; j++)
-            start[i][j] = default_color;
-
-    updateDisplay(start);
+    memcpy(tmpDisp, disp, sizeof(disp));
+    updateDisplay(disp);
 }
 
-void updateDisplay(byte frame[8][8])
+void matrixConcat(byte dst[8][8], byte src1[4][8], byte src2[4][8])
 {
-    displayFrame(frame);
-    delay(20);
-    displayFrame(frame);
-    delay(20);
-    displayFrame(frame);
+    updateDisplay(tmpDisp);
 }
 
-//used to change frame, constantly updated when needed
-void displayFrame(byte frame[8][8])  //draws frame on 8x8 matrix
+void matrixWrite(int num)
 {
-    Serial.flush();
+    //matrixConcat(tmpDisplay, one, one);
+    drawChar(9, 0, 3);
+    drawChar(8, 4, 3);
+    updateDisplay(tmpDisp);
+}
+
+// Method to draw a letter/number at xy coords
+void drawChar(char c, int x, int y)
+{
+    switch(c)
+    {
+        case 0:
+        {
+            placeDots(x, y, 5, 1, 1, 1, 1, 1);
+            placeDots(x + 1, y, 5, 1, 0, 0, 0, 1);
+            placeDots(x + 2, y, 5, 1, 1, 1, 1, 1);
+
+            break;
+        }
+        case 1:
+        {
+            placeDots(x, y, 5, 1, 0, 0, 0, 1);
+            placeDots(x + 1, y, 5, 1, 1, 1, 1, 1);
+            placeDots(x + 2, y, 5, 0, 0, 0, 0, 1);
+
+            break;
+        }
+        case 2:
+        {
+            placeDots(x, y, 5, 1, 0, 1, 1, 1);
+            placeDots(x + 1, y, 5, 1, 0, 1, 0, 1);
+            placeDots(x + 2, y, 5, 1, 1, 1, 0, 1);
+
+            break;
+        }
+        case 3:
+        {
+            placeDots(x, y, 5, 1, 0, 1, 0, 1);
+            placeDots(x + 1, y, 5, 1, 0, 1, 0, 1);
+            placeDots(x + 2, y, 5, 1, 1, 1, 1, 1);
+
+            break;
+        }
+        case 4:
+        {
+            placeDots(x, y, 5, 1, 1, 1, 0, 0);
+            placeDots(x + 1, y, 5, 0, 0, 1, 0, 0);
+            placeDots(x + 2, y, 5, 1, 1, 1, 1, 1);
+
+            break;
+        }
+        case 5:
+        {
+            placeDots(x, y, 5, 1, 1, 1, 0, 1);
+            placeDots(x + 1, y, 5, 1, 0, 1, 0, 1);
+            placeDots(x + 2, y, 5, 1, 0, 1, 1, 1);
+
+            break;
+        }
+        case 6:
+        {
+            placeDots(x, y, 5, 1, 0, 1, 1, 1);
+            placeDots(x + 1, y, 5, 1, 0, 1, 0, 1);
+            placeDots(x + 2, y, 5, 1, 1, 1, 1, 1);
+            
+            break;
+        }
+        case 7:
+        {
+            placeDots(x, y, 5, 1, 0, 0, 0, 0);
+            placeDots(x + 1, y, 5, 1, 0, 0, 0, 0);
+            placeDots(x + 2, y, 5, 1, 1, 1, 1, 1);
+
+            break;
+        }
+        case 8:
+        {
+            placeDots(x, y, 5, 1, 1, 1, 1, 1);
+            placeDots(x + 1, y, 5, 1, 0, 1, 0, 1);
+            placeDots(x + 2, y, 5, 1, 1, 1, 1, 1);
+
+            break;
+        }
+        case 9:
+        {
+            placeDots(x, y, 5, 1, 1, 1, 0, 1);
+            placeDots(x + 1, y, 5, 1, 0, 1, 0, 1);
+            placeDots(x + 2, y, 5, 1, 1, 1, 1, 1);
+
+            break;
+        }
+    }
+}
+
+void placeDots(int x, int y, int num, ...)
+{
+    va_list arguments;
+    va_start(arguments, num);
+    
+    for (byte b = 0; b < num && b < 8; b++)
+        if (x < 8 && y + b < 8)
+            va_arg(arguments, int) == 1 ? tmpDisp[x][y + b] = txt : true;
+        else
+            break;
+            
+    va_end(arguments);
+}
+
+void updateDisplay(byte frame[8][8]) //used to change frame, constantly updated when needed
+{
+    drawFrame(frame);
+    delay(20);
+    drawFrame(frame);
+}
+
+void drawFrame(byte frame[8][8])  //draws frame on 8x8 matrix
+{
     digitalWrite(clock, LOW);  //sets the clock for each display, running through 0 then 1
     digitalWrite(data, LOW);   //ditto for data.
     delayMicroseconds(10);
