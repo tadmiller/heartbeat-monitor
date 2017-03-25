@@ -48,9 +48,9 @@ void matrixConcat(byte dst[8][8], byte src1[4][8], byte src2[4][8])
 
 void matrixWrite(int num)
 {
-    //matrixConcat(tmpDisplay, one, one);
-    drawChar(9, 0, 3);
-    drawChar(8, 4, 3);
+    memcpy(tmpDisp, disp, sizeof(disp));
+    drawChar(((num / 10) % 10), 0, 3);
+    drawChar(num % 10, 4, 3);
     updateDisplay(tmpDisp);
 }
 
