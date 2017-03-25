@@ -5,6 +5,7 @@
 /* RGB LED DISPLAY COLORS */
 /**************************/
 
+#define BLACK 0
 #define BLUE 2
 #define ORANGE 100
 #define RED 32
@@ -19,7 +20,7 @@ int bits[8] = {128, 64, 32, 16, 8, 4, 2, 1};
 int clock = 11; // Pin SCK del display
 int data = 13;  // Pin DI del display
 int cs = 12;    // Pin CS del display
-byte clr = RED; // What color the display is by default
+byte clr = BLUE; // What color the display is by default
 byte txt = WHITE;
 byte disp[8][8] = {{clr, clr, clr, clr, clr, clr, clr, clr}, {clr, clr, clr, clr, clr, clr, clr, clr}, {clr, clr, clr, clr, clr, clr, clr, clr}, {clr, clr, clr, clr, clr, clr, clr, clr}, {clr, clr, clr, clr, clr, clr, clr, clr}, {clr, clr, clr, clr, clr, clr, clr, clr}, {clr, clr, clr, clr, clr, clr, clr, clr}, {clr, clr, clr, clr, clr, clr, clr, clr}};
 byte tmpDisp[8][8];
@@ -41,16 +42,11 @@ void initMatrix()
     updateDisplay(disp);
 }
 
-void matrixConcat(byte dst[8][8], byte src1[4][8], byte src2[4][8])
-{
-    updateDisplay(tmpDisp);
-}
-
 void matrixWrite(int num)
 {
     memcpy(tmpDisp, disp, sizeof(disp));
-    drawChar(((num / 10) % 10), 0, 3);
-    drawChar(num % 10, 4, 3);
+    drawChar(((num / 10) % 10), 0, 2);
+    drawChar(num % 10, 4, 2);
     updateDisplay(tmpDisp);
 }
 
@@ -60,85 +56,65 @@ void drawChar(char c, int x, int y)
     switch(c)
     {
         case 0:
-        {
             placeDots(x, y, 5, 1, 1, 1, 1, 1);
             placeDots(x + 1, y, 5, 1, 0, 0, 0, 1);
             placeDots(x + 2, y, 5, 1, 1, 1, 1, 1);
 
             break;
-        }
         case 1:
-        {
             placeDots(x, y, 5, 1, 0, 0, 0, 1);
             placeDots(x + 1, y, 5, 1, 1, 1, 1, 1);
             placeDots(x + 2, y, 5, 0, 0, 0, 0, 1);
 
             break;
-        }
         case 2:
-        {
             placeDots(x, y, 5, 1, 0, 1, 1, 1);
             placeDots(x + 1, y, 5, 1, 0, 1, 0, 1);
             placeDots(x + 2, y, 5, 1, 1, 1, 0, 1);
 
             break;
-        }
         case 3:
-        {
             placeDots(x, y, 5, 1, 0, 1, 0, 1);
             placeDots(x + 1, y, 5, 1, 0, 1, 0, 1);
             placeDots(x + 2, y, 5, 1, 1, 1, 1, 1);
 
             break;
-        }
         case 4:
-        {
             placeDots(x, y, 5, 1, 1, 1, 0, 0);
             placeDots(x + 1, y, 5, 0, 0, 1, 0, 0);
             placeDots(x + 2, y, 5, 1, 1, 1, 1, 1);
 
             break;
-        }
         case 5:
-        {
             placeDots(x, y, 5, 1, 1, 1, 0, 1);
             placeDots(x + 1, y, 5, 1, 0, 1, 0, 1);
             placeDots(x + 2, y, 5, 1, 0, 1, 1, 1);
 
             break;
-        }
         case 6:
-        {
-            placeDots(x, y, 5, 1, 0, 1, 1, 1);
+            placeDots(x, y, 5, 1, 1, 1, 1, 1);
             placeDots(x + 1, y, 5, 1, 0, 1, 0, 1);
-            placeDots(x + 2, y, 5, 1, 1, 1, 1, 1);
+            placeDots(x + 2, y, 5, 1, 0, 1, 1, 1);
             
             break;
-        }
         case 7:
-        {
             placeDots(x, y, 5, 1, 0, 0, 0, 0);
             placeDots(x + 1, y, 5, 1, 0, 0, 0, 0);
             placeDots(x + 2, y, 5, 1, 1, 1, 1, 1);
 
             break;
-        }
         case 8:
-        {
             placeDots(x, y, 5, 1, 1, 1, 1, 1);
             placeDots(x + 1, y, 5, 1, 0, 1, 0, 1);
             placeDots(x + 2, y, 5, 1, 1, 1, 1, 1);
 
             break;
-        }
         case 9:
-        {
             placeDots(x, y, 5, 1, 1, 1, 0, 1);
             placeDots(x + 1, y, 5, 1, 0, 1, 0, 1);
             placeDots(x + 2, y, 5, 1, 1, 1, 1, 1);
 
             break;
-        }
     }
 }
 
@@ -158,6 +134,8 @@ void placeDots(int x, int y, int num, ...)
 
 void updateDisplay(byte frame[8][8]) //used to change frame, constantly updated when needed
 {
+    drawFrame(frame);
+    delay(20);
     drawFrame(frame);
     delay(20);
     drawFrame(frame);
