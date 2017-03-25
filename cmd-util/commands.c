@@ -5,18 +5,34 @@
 void inputCmd(){
 
     char e[30] = "exit";
-    char input[30];
+    char r[30] = "resume";
+    char p[30] = "pause";
+    char s[30] = "show";
+    char *input[30];
 
     while(1){
 
-        if(strcmp(input,e) != 0){
-
-        //char input[30];
         printf("Enter command: ");
         scanf("%s", input);
-        //printf("%s", str);
+
+        if(strcmp(input,r) == 0){
+        
+            resume();
 
         }
+        if(strcmp(input,p) == 0){
+
+            pause();
+
+        }
+        if(strcmp(input,s) == 0){
+
+            if (strstr(request, "show ") != NULL) {
+    
+            }
+
+        }
+
 
         else{
             break;
