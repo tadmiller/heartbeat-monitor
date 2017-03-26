@@ -46,7 +46,6 @@ ISR(TIMER2_COMPA_vect){                         // triggered when Timer2 counts 
   if (N > 250){                                   // avoid high frequency noise
     if ( (Signal > thresh) && (Pulse == false) && (N > (IBI/5)*3) ){
       Pulse = true;                               // set the Pulse flag when we think there is a pulse
-      digitalWrite(blinkPin,HIGH);                // turn on pin 13 LED
       IBI = sampleCounter - lastBeatTime;         // measure time between beats in mS
       lastBeatTime = sampleCounter;               // keep track of time for next pulse
 
@@ -78,12 +77,12 @@ ISR(TIMER2_COMPA_vect){                         // triggered when Timer2 counts 
       runningTotal /= 10;                     // average the last 10 IBI values
       BPM = 60000/runningTotal;               // how many beats can fit into a minute? that's BPM!
       QS = true;                              // set Quantified Self flag
+      matrixWrite(BPM);
       // QS FLAG IS NOT CLEARED INSIDE THIS ISR
     }
   }
 
   if (Signal < thresh && Pulse == true){   // when the values are going down, the beat is over
-    digitalWrite(blinkPin,LOW);            // turn off pin 13 LED
     Pulse = false;                         // reset the Pulse flag so we can do it again
     amp = P - T;                           // get amplitude of the pulse wave
     thresh = amp/2 + T;                    // set thresh at 50% of the amplitude
