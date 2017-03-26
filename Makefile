@@ -6,7 +6,7 @@ CC=gcc
 CFLAGS=-std=c99 -Wall -pedantic -Werror
 
 all:
-	$(CC) $(CFLAGS) -c commands.c -o commands
+	$(CC) $(CFLAGS) -c commands.c -o commands.o
 
 clean:
 	rm -f *.o

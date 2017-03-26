@@ -57,7 +57,7 @@ void loop()
         cmd = Serial.read();
 
     //matrixWrite((int) cmd);
-    Serial.println("BYTE IS: " + cmd);
+    //Serial.println("BYTE IS: " + cmd);
     
     if (QS == true && cmd == 0 && !paused)
     {
@@ -66,16 +66,24 @@ void loop()
         serialOutputWhenBeatHappens();   // A Beat Happened, Output that to serial.
         QS = false;                      // reset the Quantified Self flag for next time
     }
-    else if (Pulse == false && cmd == 0 && !paused)
-        matrixWrite(0);
     else
     {
-        if (cmd == 'p')
+        Serial.print("CMD != 0 (");
+        Serial.print(String(cmd));
+        Serial.println(")\n");
+        
+        if (cmd == 112)
             paused = true;
-        else if (cmd == 'r')
+        else if (cmd == 114)
             paused = false;
-        else if (cmd == 's')
+        else if (cmd == 115)
         {
+            while (showValue == 0 || showValue == 115)
+            {
+                showValue = Serial.read();
+                delay(10);
+            }
+            
             matrixWrite(showValue);
             paused = true;
         }

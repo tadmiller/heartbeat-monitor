@@ -45,8 +45,10 @@ void initMatrix()
 void matrixWrite(int num)
 {
     memcpy(tmpDisp, disp, sizeof(disp));
-    drawChar(((num / 10) % 10), 0, 2);
-    drawChar(num % 10, 4, 2);
+    int randY = random(0, 4);
+    int randX = random(0, 2);
+    drawChar(((num / 10) % 10), 0 + randX, randY);
+    drawChar(num % 10, 4 + randX, randY);
     updateDisplay(tmpDisp);
 }
 
@@ -180,3 +182,4 @@ void writeByte(byte myByte)
         digitalWrite(clock, LOW); 
     }
 }
+
