@@ -31,7 +31,8 @@ main(int argc, char **argv) {
     if (argc == 2) {
         device = argv[1];
     } else {
-        device = "/dev/ttyACM0";
+        //device = "/dev/ttyACM0";
+        device = "/dev/cu.usbmodem1421";
     }
     printf("Connecting to %s\n", device);
 
