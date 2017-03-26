@@ -18,9 +18,9 @@ void serialOutput(){   // Decide How To Output Serial.
       Serial.println(Signal);
       break;
     default:
+      
       break;
   }
-
 }
 
 //  Decides How To OutPut BPM and IBI Data
