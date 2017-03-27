@@ -119,19 +119,19 @@ int sendBytes(char byte)
         return 0;
 }
 
-void resume()
+void resume()   //sends char r to arduino to provoke actions on display
 {
     printf("you resumed!!\n");
     sendBytes('r');
 }
 
-void pauseProg()
+void pauseProg() //sends char p to arduino to provoke actions on display
 {
     printf("you paused!!\n");
     sendBytes('p');
 }
 
-void show()
+void show() //sends char s to arduino to provoke actions on display
 {
     int num;
     sendBytes('s');
@@ -153,21 +153,21 @@ void inputCmd()
     char input[30];
 
 
-    while(1)
+    while(1)    //infinitely looping while
     {
-        printf("Enter command: ");
-        scanf("%s", input);
+        printf("Enter command: ");  //ask user to enter command
+        scanf("%s", input); 
 
-        if(strcmp(input, r) == 0)
+        if(strcmp(input, r) == 0)   //if input is resume then start resume method
             resume();
-        else if(strcmp(input, p) == 0)
+        else if(strcmp(input, p) == 0) //if input is pause then start pause method
             pauseProg();
-        else if(strcmp(input, s) == 0)
+        else if(strcmp(input, s) == 0) //if input is show X then start show method
             show();
-        else if(strcmp(input, e) == 0 || strcmp(input, "quit") == 0)
+        else if(strcmp(input, e) == 0 || strcmp(input, "quit") == 0) //if exit or quit then exit program
             exit(0);
         else
-            printf("Invalid input!\n");
+            printf("Invalid input!\n"); //anything else is read as invalid 
 
     }
    // printf("You exited the program\n");
