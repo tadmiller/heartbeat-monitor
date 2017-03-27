@@ -135,7 +135,7 @@ void show() //sends char s to arduino to provoke actions on display
 {
     int num;
     sendBytes('s');
-    printf("Input what integer you want to be shown: ");
+    //printf("Input what integer you want to be shown: ");
     scanf("%d", &num);
     sendBytes(num);
 }
