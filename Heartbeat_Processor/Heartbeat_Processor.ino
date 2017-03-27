@@ -26,7 +26,7 @@ volatile boolean Pulse = false;     // "True" when User's live heartbeat is dete
 volatile boolean QS = false;        // becomes true when Arduoino finds a beat.
 char cmd = 0;
 boolean paused = false;
-int showValue = 39;
+int showValue = 0;
 
 /******************/
 /* GAME MECHANICS */
@@ -67,21 +67,20 @@ void loop()
         QS = false;                      // reset the Quantified Self flag for next time
     }
     else
-    {
-        Serial.print("CMD != 0 (");
-        Serial.print(String(cmd));
-        Serial.println(")\n");
-        
+    {   
         if (cmd == 112)
             paused = true;
         else if (cmd == 114)
             paused = false;
         else if (cmd == 115)
         {
-            while (showValue == 0 || showValue == 115)
+            showValue = 0;
+            delay(100);
+            
+            while (showValue <= 0 || showValue >= 100)
             {
                 showValue = Serial.read();
-                delay(10);
+                delay(30);
             }
             
             matrixWrite(showValue);
