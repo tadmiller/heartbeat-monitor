@@ -40,6 +40,7 @@ int showValue = 0;
 //      run the Serial Plotter at 115200 baud: Tools/Serial Plotter or Command+L
 static int outputType = SERIAL_PLOTTER;
 
+
 void setup()
 {
     init();
@@ -93,25 +94,7 @@ void loop()
         cmd = 0;
     }
 
+    // Allows us to make the LED flash at the rate of the heart beat
     delay(BPM == 0 ? 100 : 20 + (23000  / (BPM)));
-    digitalWrite(8, ledStatus = !ledStatus);
+    digitalWrite(8, paused ? ledStatus = !ledStatus : LOW);
 }
-
-//void setup() {
-//  Serial.begin(9600);
-//  
-//  while (!Serial);
-//  // wait for serial port to connect
-//}
-//
-//void loop() {
-//        char incomingByte;
-//        // send data only when you receive data:
-//        if (Serial.available() > 0) {
-//                incomingByte = Serial.read();
-//                Serial.print("Got: ");
-//                Serial.println(incomingByte);
-//        }
-//        
-//}
-
