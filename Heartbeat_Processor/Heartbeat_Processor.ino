@@ -53,9 +53,11 @@ void setup()
 
 void loop()
 {
+    // Check and see if we can read a command.
     if (Serial.available() > 0)
         cmd = Serial.read();
-    
+
+    // If there's a new pulse, and we haven't received a command, and we're not paused from the cmd prompt
     if (QS == true && cmd == 0 && !paused)
     {
         serialOutput();
@@ -64,19 +66,21 @@ void loop()
         //serialOutputWhenBeatHappens();   // A Beat Happened, Output that to serial.
         QS = false;                      // reset the Quantified Self flag for next time
 
+        // Then we write our new BPM to the display
         matrixWrite(BPM);
     }
     else
-    {   
+    {   // 112 == 'p' which means we pause the program state.
         if (cmd == 112)
             paused = true;
-        else if (cmd == 114)
+        else if (cmd == 114) // 114 = 'r' which means we resume the program state.
             paused = false;
-        else if (cmd == 115)
+        else if (cmd == 115) // 115 is 's' which means we're going to display the number that comes after
         {
             showValue = 0;
             delay(100);
-            
+
+            // Wait until we receive a number. Then display it.
             while (showValue <= 0 || showValue >= 100)
             {
                 showValue = Serial.read();
@@ -98,6 +102,8 @@ void loop()
         delay(100);
     else
         delay(20 + (21000 / BPM));
-        
+
+    // I like shorthands
+    // This one checks to see that the BPM is > 0 OR we're showing something on the screen. Otherwise we don't blink.
     digitalWrite(8, BPM > 0 || (showValue > 0 && paused) ? ledStatus = !ledStatus : LOW);
 }

@@ -53,6 +53,7 @@ void initMatrix()
     updateDisplay(disp);
 }
 
+// Given a number, write it to the screen. Must be two digits.
 void matrixWrite(int num)
 {
     memcpy(tmpDisp, disp, sizeof(disp));
@@ -64,6 +65,7 @@ void matrixWrite(int num)
 // Method to draw a letter/number at xy coords
 void drawChar(char c, int x, int y)
 {
+    // This switch statement handles nums 0 - 9. Can be augmented to include A-Z. Seems to be the best way I could think of to do this.
     switch(c)
     {
         case 0:
@@ -129,6 +131,8 @@ void drawChar(char c, int x, int y)
     }
 }
 
+// This function takes dynamic arguments
+// The args are used as binary numbers in correlation to the coordinates to determine whether to place a dot or not.
 void placeDots(int x, int y, int num, ...)
 {
     va_list arguments;
