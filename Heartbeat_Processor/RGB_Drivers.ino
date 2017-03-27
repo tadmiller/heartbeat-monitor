@@ -56,10 +56,8 @@ void initMatrix()
 void matrixWrite(int num)
 {
     memcpy(tmpDisp, disp, sizeof(disp));
-    int randY = random(0, 4);
-    int randX = random(0, 2);
-    drawChar(((num / 10) % 10), 0 + randX, randY);
-    drawChar(num % 10, 4 + randX, randY);
+    drawChar(((num / 10) % 10), 0, 1);
+    drawChar(num % 10, 4, 1);
     updateDisplay(tmpDisp);
 }
 

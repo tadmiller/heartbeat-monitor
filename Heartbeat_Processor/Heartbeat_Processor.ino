@@ -40,7 +40,6 @@ int showValue = 0;
 //      run the Serial Plotter at 115200 baud: Tools/Serial Plotter or Command+L
 static int outputType = SERIAL_PLOTTER;
 
-
 void setup()
 {
     init();
@@ -54,21 +53,18 @@ void setup()
 
 void loop()
 {
-    serialOutput();
-    BPM = BPM > 99 ? 99 : BPM;
-
     if (Serial.available() > 0)
         cmd = Serial.read();
-
-    //matrixWrite((int) cmd);
-    //Serial.println("BYTE IS: " + cmd);
     
     if (QS == true && cmd == 0 && !paused)
     {
-        matrixWrite(BPM);
+        serialOutput();
+        BPM = BPM > 99 ? 99 : BPM; // We can't send values higher than 99 since the display is only two numbers.
 
-        serialOutputWhenBeatHappens();   // A Beat Happened, Output that to serial.
+        //serialOutputWhenBeatHappens();   // A Beat Happened, Output that to serial.
         QS = false;                      // reset the Quantified Self flag for next time
+
+        matrixWrite(BPM);
     }
     else
     {   
@@ -86,15 +82,22 @@ void loop()
                 showValue = Serial.read();
                 delay(30);
             }
-            
-            matrixWrite(showValue);
+
+            BPM = showValue;
             paused = true;
+            matrixWrite(BPM);
         }
 
         cmd = 0;
     }
 
     // Allows us to make the LED flash at the rate of the heart beat
-    delay(BPM == 0 ? 100 : 20 + (23000  / (BPM)));
-    digitalWrite(8, !paused && BPM > 0 ? ledStatus = !ledStatus : LOW);
+    if (showValue > 0 && paused)
+        delay(20 + (21000 / showValue));
+    else if (BPM == 0 || paused)
+        delay(100);
+    else
+        delay(20 + (21000 / BPM));
+        
+    digitalWrite(8, BPM > 0 || (showValue > 0 && paused) ? ledStatus = !ledStatus : LOW);
 }
