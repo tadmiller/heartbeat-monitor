@@ -26,6 +26,7 @@ volatile boolean Pulse = false;     // "True" when User's live heartbeat is dete
 volatile boolean QS = false;        // becomes true when Arduoino finds a beat.
 char cmd = 0;
 boolean paused = false;
+boolean ledStatus = false;
 int showValue = 0;
 
 /******************/
@@ -47,11 +48,13 @@ void setup()
     // Initialize RGB LED matrix
     initMatrix(); // Load 8x8 RGB Matrix device drivers
     interruptSetup();                 // sets up to read Pulse Sensor signal every 2mS
+    pinMode(8, OUTPUT);
 }
 
 void loop()
 {
     serialOutput();
+    BPM = BPM > 99 ? 99 : BPM;
 
     if (Serial.available() > 0)
         cmd = Serial.read();
@@ -61,7 +64,7 @@ void loop()
     
     if (QS == true && cmd == 0 && !paused)
     {
-        matrixWrite(BPM > 99 ? 99 : BPM);
+        matrixWrite(BPM);
 
         serialOutputWhenBeatHappens();   // A Beat Happened, Output that to serial.
         QS = false;                      // reset the Quantified Self flag for next time
@@ -90,7 +93,8 @@ void loop()
         cmd = 0;
     }
 
-    delay(20);
+    delay(BPM == 0 ? 100 : 20 + (23000  / (BPM)));
+    digitalWrite(8, ledStatus = !ledStatus);
 }
 
 //void setup() {
