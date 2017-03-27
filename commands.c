@@ -8,6 +8,13 @@
 #include <termios.h>
 #include <stdint.h>
 
+/*
+ * Authors: Danny Nsouli and Tad Miller
+ * Purpose: To allow the user to input commands that will be sent to the 
+ * arduino in order to process specific actions on the display (resume, pause, show X, and exit)
+ * 
+ */
+
 int fd;
 int count;
 char *device;
