@@ -1,16 +1,17 @@
-/*  Pulse Sensor Amped 1.5    by Joel Murphy and Yury Gitman   http://www.pulsesensor.com
-
-----------------------  Notes ----------------------  ----------------------
-This code:
-1) Blinks an LED to User's Live Heartbeat   PIN 13
-2) Fades an LED to User's Live HeartBeat    PIN 5
-3) Determines BPM
-4) Prints All of the Above to Serial
-
-Read Me:
-https://github.com/WorldFamousElectronics/PulseSensor_Amped_Arduino/blob/master/README.md
- ----------------------       ----------------------  ----------------------
-*/
+/*
+ * @name Heartbeat_Processor.ino 
+ * @vers 0.21
+ * @auth Theodore Miller, Danny Nsouli
+ * @desc This code reads data from the heartbeat monitor
+ *       and displays it on the RGB 8x8 LED matrix. It can
+ *       also receive commands from a C backend running on
+ *       a UNIX OS.
+ *       Credit to Joel Murphy and Yury Gitman for the
+ *       original code to read the analog data from the heartbeat 
+ *       monitor. Link: http://www.pulsesensor.com
+ * 
+ * 
+ ******************/
 
 #define PROCESSING_VISUALIZER 1
 #define SERIAL_PLOTTER  2
@@ -28,16 +29,6 @@ char cmd = 0;
 boolean paused = false;
 boolean ledStatus = false;
 int showValue = 0;
-
-/******************/
-/* GAME MECHANICS */
-/******************/
-
-// SET THE SERIAL OUTPUT TYPE TO YOUR NEEDS
-// PROCESSING_VISUALIZER works with Pulse Sensor Processing Visualizer
-//      https://github.com/WorldFamousElectronics/PulseSensor_Amped_Processing_Visualizer
-// SERIAL_PLOTTER outputs sensor data for viewing with the Arduino Serial Plotter
-//      run the Serial Plotter at 115200 baud: Tools/Serial Plotter or Command+L
 static int outputType = SERIAL_PLOTTER;
 
 void setup()
@@ -46,8 +37,9 @@ void setup()
     Serial.begin(9600);
 
     // Initialize RGB LED matrix
-    initMatrix(); // Load 8x8 RGB Matrix device drivers
-    interruptSetup();                 // sets up to read Pulse Sensor signal every 2mS
+    initMatrix();
+    
+    interruptSetup(); // sets up to read Pulse Sensor signal every 2mS
     pinMode(8, OUTPUT);
 }
 
