@@ -85,11 +85,14 @@ int sendBytes(char byte)
 {
       // Write this letter of the alphabet
         count = write(fd, &byte, 1);
-        if (count == -1) {
+        if (count == -1)
+        {
             perror("write");
             close(fd);
             return -1;
-        } else if (count == 0) {
+        }
+        else if (count == 0)
+        {
             fprintf(stderr, "No data written\n");
             close(fd);
             return -1;
@@ -122,7 +125,8 @@ void resume()
     sendBytes('r');
 }
 
-void pauseProg(){
+void pauseProg()
+{
     printf("you paused!!\n");
     sendBytes('p');
 }
@@ -130,10 +134,10 @@ void pauseProg(){
 void show()
 {
     int num;
-   sendBytes('s');
-   printf("Input what integer you want to be shown: ");
-   scanf("%d", &num);
-   
+    sendBytes('s');
+    printf("Input what integer you want to be shown: ");
+    scanf("%d", &num);
+    sendBytes(num);
 }
 
 /*
@@ -154,33 +158,16 @@ void inputCmd()
         printf("Enter command: ");
         scanf("%s", input);
 
-        if(strcmp(input, r) == 0){
-
+        if(strcmp(input, r) == 0)
             resume();
-            //inputCmd();
-        
-        }
-        else if(strcmp(input, p) == 0){
-        
+        else if(strcmp(input, p) == 0)
             pauseProg();
-           // inputCmd();
-            
-        }
-        else if(strcmp(input, s) == 0){
-
+        else if(strcmp(input, s) == 0)
             show();
-          //  inputCmd();
-
-        }
-        else if(strcmp(input, e) == 0){
+        else if(strcmp(input, e) == 0 || strcmp(input, "quit") == 0)
             exit(0);
-        }
         else
-        {
             printf("Invalid input!\n");
-            //inputCmd();
-
-        }
 
     }
    // printf("You exited the program\n");
@@ -191,15 +178,12 @@ void inputCmd()
 **ConnectArduino********************************************************************
 */
 
-int connectArduino(int argc, char **argv){
+int connectArduino(int argc, char **argv, char* device)
+{
     /*
      * Read the device path from input,
      * or default to /dev/ttyACM0
      */
-    if (argc == 2)
-        device = argv[1];
-    else
-        device = "/dev/cu.usbmodem1411";
 
     printf("Connecting to %s\n", device);
 
@@ -245,6 +229,6 @@ int init_tty(int fd);
 
 int main(int argc, char **argv)
 {
-    connectArduino(argc, argv);
+    connectArduino(argc, argv, "/dev/cu.usbmodem1421");
     inputCmd();
 }
