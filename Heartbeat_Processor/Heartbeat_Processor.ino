@@ -96,5 +96,5 @@ void loop()
 
     // Allows us to make the LED flash at the rate of the heart beat
     delay(BPM == 0 ? 100 : 20 + (23000  / (BPM)));
-    digitalWrite(8, paused ? ledStatus = !ledStatus : LOW);
+    digitalWrite(8, !paused && BPM > 0 ? ledStatus = !ledStatus : LOW);
 }
