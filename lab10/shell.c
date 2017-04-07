@@ -145,10 +145,12 @@ int shell_exec(char **args)
     if (args[0] == NULL)
         return 0;
 
+    printf("\nhello\n");
+
     if (strcmp(*args, "print") == 0)
         builtin_print(args);
-    else if (strcmp(*args, "exit" == 0))
-        builtin_exit(NULL);
+    else if (strcmp(*args, "exit") == 0)
+        builtin_exit();
     /**
      * Below, implement the part where we run a builtin shell function, if
      * feeded. Refer to builtins.c  and the declarations in shell.h to

@@ -18,12 +18,12 @@
 #define DEFAULT_PROMPT "> "
 
 static char *builtins[] = {
-        "cd",
+        "print",
         "exit"
 };
 
 static int(*builtin_funcs[]) (char **) = {
-        &builtin_cd,
+        &builtin_print,
         &builtin_exit
 };
 
