@@ -29,9 +29,9 @@
 /*    RGB DISPLAY VARS    */
 /**************************/
 int bits[8] = {128, 64, 32, 16, 8, 4, 2, 1};
-int clock = 11; // Pin SCK del display
-int data = 13;  // Pin DI del display
-int cs = 12;    // Pin CS del display
+int clock = 3; // Pin SCK del display
+int data = 5;  // Pin DI del display
+int cs = 4;    // Pin CS del display
 byte clr = BLUE; // What color the display is by default
 byte txt = WHITE;
 byte disp[8][8] = {{clr, clr, clr, clr, clr, clr, clr, clr}, {clr, clr, clr, clr, clr, clr, clr, clr}, {clr, clr, clr, clr, clr, clr, clr, clr}, {clr, clr, clr, clr, clr, clr, clr, clr}, {clr, clr, clr, clr, clr, clr, clr, clr}, {clr, clr, clr, clr, clr, clr, clr, clr}, {clr, clr, clr, clr, clr, clr, clr, clr}, {clr, clr, clr, clr, clr, clr, clr, clr}};

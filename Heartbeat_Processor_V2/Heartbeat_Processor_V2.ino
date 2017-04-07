@@ -36,6 +36,8 @@ void setup()
     init();
     Serial.begin(9600);
 
+    Serial.println("Hello");
+
     // Initialize RGB LED matrix
     initMatrix();
     
