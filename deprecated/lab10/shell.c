@@ -62,6 +62,7 @@ void print_prompt(void)
         printf("%s@", pw->pw_name);
 
         /* Get hostname */
+        int HOST_NAME_MAX=0;
         host = malloc(HOST_NAME_MAX + 1);
         if (gethostname(host, HOST_NAME_MAX + 1)) {
                 perror("psh");
@@ -139,7 +140,7 @@ char **tok_line(char *line)
  */
 int shell_exec(char **args)
 {
-    int i;
+  //  int i;
 
     /* Check for empty command */
     if (args[0] == NULL)
@@ -171,8 +172,8 @@ int shell_exec(char **args)
  */
 int shell_run(char **args)
 {
-        pid_t pid;
-        int status;
+        //pid_t pid;
+        //int status;
         int i;
         int concurrent = 0;
 
@@ -196,3 +197,8 @@ int shell_run(char **args)
 
         return 0;
 }
+
+
+
+
+
