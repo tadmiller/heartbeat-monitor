@@ -1,9 +1,13 @@
 
-//////////
-/////////  All Serial Handling Code,
-/////////  It's Changeable with the 'outputType' variable
-/////////  It's declared at start of code.
-/////////
+#define PROCESSING_VISUALIZER 1
+#define SERIAL_PLOTTER  2
+
+//  Variables
+static int outputType = SERIAL_PLOTTER;
+char cmd = 0;
+boolean paused = false;
+boolean ledStatus = false;
+int dispVal = 0;
 
 void serialOutput()
 {   // Decide How To Output Serial.
@@ -55,13 +59,12 @@ void updateCmd()
     if (QS == true && cmd == 0 && !paused)
     {
         serialOutput();
-        BPM = BPM > 99 ? 99 : BPM; // We can't send values higher than 99 since the display is only two numbers.
+        procBPM = procBPM > 99 ? 99 : procBPM; // We can't send values higher than 99 since the display is only two numbers.
 
-        //serialOutputWhenBeatHappens();   // A Beat Happened, Output that to serial.
         QS = false;                      // reset the Quantified Self flag for next time
 
         // Then we write our new BPM to the display
-        matrixWrite(BPM);
+        matrixWrite(procBPM);
     }
     else
     {   // 112 == 'p' which means we pause the program state.
@@ -71,19 +74,18 @@ void updateCmd()
             paused = false;
         else if (cmd == 115) // 115 is 's' which means we're going to display the number that comes after
         {
-            showValue = 0;
+            dispVal = 0;
             delay(100);
 
             // Wait until we receive a number. Then display it.
-            while (showValue <= 0 || showValue >= 100)
+            while (dispVal <= 0 || dispVal >= 100)
             {
-                showValue = Serial.read();
+                dispVal = Serial.read();
                 delay(30);
             }
 
-            BPM = showValue;
             paused = true;
-            matrixWrite(BPM);
+            matrixWrite(dispVal);
         }
 
         cmd = 0;

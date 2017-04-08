@@ -13,28 +13,10 @@
  * 
  ******************/
 
-#define PROCESSING_VISUALIZER 1
-#define SERIAL_PLOTTER  2
-
-//  Variables
-int pulsePin = 0;                 // Pulse Sensor purple wire connected to analog pin 0
-
-// Volatile Variables, used in the interrupt service routine!
-volatile int BPM;                   // int that holds raw Analog in 0. updated every 2mS
-volatile int Signal;                // holds the incoming raw data
-volatile int IBI = 600;             // int that holds the time interval between beats! Must be seeded!
-volatile boolean Pulse = false;     // "True" when User's live heartbeat is detected. "False" when not a "live beat".
-volatile boolean QS = false;        // becomes true when Arduoino finds a beat.
-char cmd = 0;
-boolean paused = false;
-boolean ledStatus = false;
-int showValue = 0;
-static int outputType = SERIAL_PLOTTER;
-
 void setup()
 {
 	Serial.begin(9600);
-	//init();
+
 	initMatrix();   // Initialize RGB Matrix
 	initClock();    // Initialize clock
 	initHeartbeat(); // sets up to read Pulse Sensor signal every 2mS

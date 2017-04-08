@@ -25,9 +25,9 @@
 /*    RGB DISPLAY PINS    */
 /**************************/
 
-#define RGB_SCLK_PIN 3  // Pin SCK del display
-#define RGB_CS_PIN 4    // Pin RGB_CS_PIN del display
-#define RGB_MOSI_PIN 5  // Pin DI del display
+#define PIN_RGB_SCLK 3  // Pin SCK del display
+#define PIN_RGB_CS 4    // Pin PIN_RGB_CS del display
+#define PIN_RGB_MOSI 5  // Pin DI del display
 
 /**************************/
 /*    RGB DISPLAY VARS    */
@@ -44,12 +44,12 @@ byte tmpDisp[8][8];
 // Initialize the matrix. Might need to be in an object eventually
 void initMatrix()
 {
-	pinMode(RGB_SCLK_PIN, OUTPUT); // sets the digital pin as output 
-	pinMode(RGB_MOSI_PIN, OUTPUT); 
-	pinMode(RGB_CS_PIN, OUTPUT);
+	pinMode(PIN_RGB_SCLK, OUTPUT); // sets the digital pin as output 
+	pinMode(PIN_RGB_MOSI, OUTPUT); 
+	pinMode(PIN_RGB_CS, OUTPUT);
 
-	digitalWrite(RGB_SCLK_PIN, HIGH);  //sets the RGB_SCLK_PIN for each display, running through 0 then 1
-	digitalWrite(RGB_CS_PIN, HIGH);     //ditto for RGB_CS_PIN.
+	digitalWrite(PIN_RGB_SCLK, HIGH);  //sets the PIN_RGB_SCLK for each display, running through 0 then 1
+	digitalWrite(PIN_RGB_CS, HIGH);     //ditto for PIN_RGB_CS.
 
 	memcpy(tmpDisp, disp, sizeof(disp));
 	updateDisplay(disp);
@@ -160,10 +160,10 @@ void updateDisplay(byte frame[8][8]) //used to change frame, constantly updated 
 
 void drawFrame(byte frame[8][8])  //draws frame on 8x8 matrix
 {
-	digitalWrite(RGB_SCLK_PIN, LOW);  //sets the RGB_SCLK_PIN for each display, running through 0 then 1
-	digitalWrite(RGB_MOSI_PIN, LOW);   //ditto for RGB_MOSI_PIN.
+	digitalWrite(PIN_RGB_SCLK, LOW);  //sets the PIN_RGB_SCLK for each display, running through 0 then 1
+	digitalWrite(PIN_RGB_MOSI, LOW);   //ditto for PIN_RGB_MOSI.
 	delayMicroseconds(10);
-	digitalWrite(RGB_CS_PIN, LOW);     //ditto for RGB_CS_PIN.
+	digitalWrite(PIN_RGB_CS, LOW);     //ditto for PIN_RGB_CS.
 	delayMicroseconds(10);
 	
 	for(int x = 0; x < 8; x++)
@@ -177,7 +177,7 @@ void drawFrame(byte frame[8][8])  //draws frame on 8x8 matrix
 	}
 	
 	delayMicroseconds(10);
-	digitalWrite(RGB_CS_PIN, HIGH);
+	digitalWrite(PIN_RGB_CS, HIGH);
 }
 
 // prints out bytes. Each colour is printed out.
@@ -185,16 +185,16 @@ void writeByte(byte myByte)
 {
 	for (int b = 0; b < 8; b++)
 	{  // converting it to binary from colour code.
-		digitalWrite(RGB_SCLK_PIN, LOW);
+		digitalWrite(PIN_RGB_SCLK, LOW);
 		
 		if ((myByte & bits[b]) > 0)
-			digitalWrite(RGB_MOSI_PIN, HIGH);
+			digitalWrite(PIN_RGB_MOSI, HIGH);
 		else
-			digitalWrite(RGB_MOSI_PIN, LOW);
+			digitalWrite(PIN_RGB_MOSI, LOW);
 			
-		digitalWrite(RGB_SCLK_PIN, HIGH); 
+		digitalWrite(PIN_RGB_SCLK, HIGH); 
 		delayMicroseconds(10);
-		digitalWrite(RGB_SCLK_PIN, LOW); 
+		digitalWrite(PIN_RGB_SCLK, LOW); 
 	}
 }
 
