@@ -24,7 +24,7 @@ static char *builtins[] = {
 
 static int(*builtin_funcs[]) (char **) = {
         &builtin_print,
-       // &builtin_exit
+       //&builtin_exit
        
 };
 
