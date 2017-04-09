@@ -147,10 +147,47 @@ int shell_exec(char **args)
 	if (args[0] == NULL)
 		return 0;
 
+//////////////////////////////////////////////ADDED IN//////////////////////////////////////////////
+
+
+ char e[30] = "exit";
+    char r[30] = "resume";
+    char p[30] = "pause";
+    char s[30] = "show";
+    char input[30];
+
+
+    while(1)    //infinitely looping while
+    {
+        printf("Enter command: ");  //ask user to enter command
+        scanf("%s", input); 
+
+        if(strcmp(input, r) == 0)   //if input is resume then start resume method
+            resume();
+        else if(strcmp(input, p) == 0) //if input is pause then start pause method
+            pauseProg();
+        else if(strcmp(input, s) == 0) //if input is show X then start show method
+            show();
+        else if(strcmp(input, e) == 0 || strcmp(input, "quit") == 0) //if exit or quit then exit program
+            exit(0);
+        else
+            printf("Invalid input!\n"); //anything else is read as invalid 
+
+    }
+   // printf("You exited the program\n");
+   
+
+
+//////////////////////////////////////////////ADDED IN//////////////////////////////////////////////
+
+
+
+
 	if (strcmp(*args, "cd") == 0)
 		builtin_exit();
 	else if (strcmp(*args, "exit") == 0 || strcmp(*args, "quit") == 0 || strcmp(*args, "q") == 0)
 		builtin_exit();
+		
 	/**
 	 * Below, implement the part where we run a builtin shell function, if
 	 * feeded. Refer to builtins.c  and the declarations in shell.h to
