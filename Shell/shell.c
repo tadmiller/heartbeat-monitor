@@ -20,6 +20,7 @@
 
 int main()
 {
+<<<<<<< HEAD
         char *line;
         char **args;
         size_t line_len;
@@ -43,10 +44,36 @@ int main()
         } while (status >= 0);
 
         return EXIT_SUCCESS;
+=======
+	char *line;
+	char **args;
+	size_t line_len;
+	int status;
+
+	do {
+			/* Give the user a prompt */
+			print_prompt();
+
+			/* Read and parse the input */
+			line_len = read_line(&line);
+			if (line_len == 0) continue;
+			args = tok_line(line);
+
+			/* Run the command */
+			status = shell_exec(args);
+
+			/* Cleanup memory */
+			free(line);
+			free(args);
+	} while (status >= 0);
+
+	return EXIT_SUCCESS;
+>>>>>>> origin/master
 }
 
 void print_prompt(void)
 {
+<<<<<<< HEAD
         struct passwd *pw;
         char *host;
         char *dir = NULL;
@@ -82,20 +109,66 @@ void print_prompt(void)
         base = basename(dir);
         printf("%s $ ", base);
         free(dir);
+=======
+	struct passwd *pw;
+	char *host;
+	char *dir = NULL;
+	char *base;
+	size_t size = 0;
+
+	/* Get user name from /etc/passwd file */
+	pw = getpwuid(getuid());
+	if (!pw) {
+			printf("%s", DEFAULT_PROMPT);
+			return;
+	}
+	printf("%s@", pw->pw_name);
+
+	/* Get hostname */
+	host = malloc(HOST_NAME_MAX + 1);
+	if (gethostname(host, HOST_NAME_MAX + 1)) {
+			perror("psh");
+			printf("%s", DEFAULT_PROMPT);
+			return;
+	}
+	printf("%s ", host);
+	free(host);
+
+	/* Get current working directory */
+	dir = getcwd(dir, size);
+	if (!dir) {
+			perror("psh");
+			printf("%s", DEFAULT_PROMPT);
+			return;
+	}
+	base = basename(dir);
+	printf("%s $ ", base);
+	free(dir);
+>>>>>>> origin/master
 }
 
 size_t read_line(char **line)
 {
+<<<<<<< HEAD
         size_t size = 0;
 
         /* Read a line from the user */
         getline(line, &size, stdin);
 
         return size;
+=======
+	size_t size = 0;
+
+	/* Read a line from the user */
+	getline(line, &size, stdin);
+
+	return size;
+>>>>>>> origin/master
 }
 
 char **tok_line(char *line)
 {
+<<<<<<< HEAD
         int buffer = TOK_BUFSIZE;
         int position = 0;
         char *token;
@@ -131,6 +204,46 @@ char **tok_line(char *line)
         }
         tokens[position] = NULL;
         return tokens;
+=======
+	int buffer = TOK_BUFSIZE;
+	int position = 0;
+	char *token;
+	char **tokens;
+	char **tokens_backup;
+
+	tokens = malloc(buffer * sizeof(char *));
+
+	if (!tokens)
+	{
+			fprintf(stderr, "psh: Allocation failure :(\n");
+			exit(EXIT_FAILURE);
+	}
+
+	/* Tokenize the input string
+	 * Can't handle spaces inside quoted strings :(  */
+	token = strtok(line, TOK_DELIM);
+	while (token)
+	{
+			tokens[position++] = token;
+
+			if (position >= buffer) {
+					/* If the new string is greater than our buffer, increase the size
+					 * Make sure to backup the old version, in case realloc fails */
+					buffer += TOK_BUFSIZE;
+					tokens_backup = tokens;
+					tokens = realloc(tokens, buffer * sizeof(char *));
+					if (!tokens) {
+							/* Free the pre-realloc array and exit with failure */
+							free(tokens_backup);
+							fprintf(stderr, "psh: Allocation failure :(\n");
+							exit(EXIT_FAILURE);
+					}
+			}
+			token = strtok(NULL, TOK_DELIM);
+	}
+	tokens[position] = NULL;
+	return tokens;
+>>>>>>> origin/master
 }
 
 /*
@@ -140,6 +253,7 @@ char **tok_line(char *line)
  */
 int shell_exec(char **args)
 {
+<<<<<<< HEAD
     int i;
 
     /* Check for empty command */
@@ -168,6 +282,29 @@ int shell_exec(char **args)
 
     /* Simple fork/exec */
     return shell_run(args);
+=======
+	/* Check for empty command */
+	if (args[0] == NULL)
+		return 0;
+
+	if (strcmp(*args, "cd") == 0)
+		builtin_exit();
+	else if (strcmp(*args, "exit") == 0 || strcmp(*args, "quit") == 0 || strcmp(*args, "q") == 0)
+		builtin_exit();
+	/**
+	 * Below, implement the part where we run a builtin shell function, if
+	 * feeded. Refer to builtins.c  and the declarations in shell.h to
+	 * understand how the builtin functions work. If the first command
+	 * matches any of them, run the function pointer at the proper
+	 * index of the builtins array and return from this function.
+	 */
+
+	/* Check the list of builtin functions first */
+	// TODO
+
+	/* Simple fork/exec */
+	return shell_run(args);
+>>>>>>> origin/master
 }
 
 /*
@@ -175,6 +312,7 @@ int shell_exec(char **args)
  */
 int shell_run(char **args)
 {
+<<<<<<< HEAD
         pid_t pid;
         int status;
         int i;
@@ -199,6 +337,32 @@ int shell_run(char **args)
         printf("\nCMD IS: %s\n", *args + 0);
 
         return 0;
+=======
+	// pid_t pid;
+	// int status;
+	// int i = 0;
+	/* // Check if the last argument is "&"
+	int concurrent = 0;
+	while (args[i]) i++;
+		if (strcmp("&", args[i - 1]) == 0)
+		{
+			concurrent = 1;
+			args[i - 1] = NULL;
+		}
+	*/
+
+	/* Fork the process and execute stuff!
+	 * In the child process, run the command the user desires
+	 * Be sure to implement robust error checking.
+	 * If the concurrent variable is true, then we should not wait
+	 * for the subprocess to finish, but instead print out its PID
+	 */
+	// TODO
+
+	printf("\nCMD IS: %s\n", *args + 0);
+
+	return 0;
+>>>>>>> origin/master
 }
 
 

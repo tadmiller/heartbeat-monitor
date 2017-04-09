@@ -49,6 +49,7 @@ void builtin_exit()
  * arduino in order to process specific actions on the display (resume, pause, show X, and exit)
  * 
  */
+<<<<<<< HEAD
 
 int fd;
 int count;
@@ -79,6 +80,24 @@ int init_tty(int fd)
     {
         perror("ctsetospeed");
         return -1;
+=======
+/*
+static const char *__get_home_dir(void)
+{
+    char *dir;
+    struct passwd *pw;
+
+    // Switch to the user's home directory
+    dir = getenv(HOME_DIR_ENV);
+    if (!dir) {
+            // Environment variable not set, read from /etc/passwd
+            pw = getpwuid(getuid());
+            if (!pw) {
+                    return NULL;
+            }
+            dir = pw->pw_dir;
+            free(pw);
+>>>>>>> origin/master
     }
     if (cfsetispeed(&tty, (speed_t)B9600) == -1)
     {
@@ -160,6 +179,7 @@ int sendBytes(char byte)
         printf("(%d): %s", count, buf);
         return 0;
 }
+<<<<<<< HEAD
 
 void resume()   //sends char r to arduino to provoke actions on display
 {
@@ -279,3 +299,6 @@ int init_tty(int fd);
 
 
 
+=======
+*/
+>>>>>>> origin/master
