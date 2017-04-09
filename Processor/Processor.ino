@@ -27,7 +27,9 @@ void loop()
 {
 	updateClock();
 	updateCmd();
-	delay(20);
+
+	handleComs(sys_hour, sys_minute, sys_second, procBPM);
+	delay(1000);
 
 	// Allows us to make the LED flash at the rate of the heart beat
 //    if (showValue > 0 && paused)

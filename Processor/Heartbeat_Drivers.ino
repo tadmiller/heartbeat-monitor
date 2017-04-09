@@ -11,7 +11,7 @@ volatile int T = 512;                     // used to find trough in pulse wave, 
 volatile int thresh = 530;                // used to find instant moment of heart beat, seeded
 volatile int amp = 0;                   // used to hold amplitude of pulse waveform, seeded
 volatile int BPM;                   // int that holds raw Analog in 0. updated every 2mS
-volatile int procBPM;	// We will read from BPM to determine bad values and store correct reads in here.
+volatile int procBPM = 80;	// We will read from BPM to determine bad values and store correct reads in here.
 volatile int Signal;                // holds the incoming raw data
 volatile int IBI = 600;             // int that holds the time interval between beats! Must be seeded!
 
@@ -25,7 +25,7 @@ void initHeartbeat()
 	// Initializes Timer2 to throw an interrupt every 2mS.
 	TCCR2A = 0x02;     // DISABLE PWM ON DIGITAL PINS 3 AND 11, AND GO INTO CTC MODE
 	TCCR2B = 0x06;     // DON'T FORCE COMPARE, 256 PRESCALER
-	OCR2A = 0X7C;      // SET THE TOP OF THE COUNT TO 124 FOR 500Hz SAMPLE RATE
+	OCR2A  = 0X7C;      // SET THE TOP OF THE COUNT TO 124 FOR 500Hz SAMPLE RATE
 	TIMSK2 = 0x02;     // ENABLE INTERRUPT ON MATCH BETWEEN TIMER2 AND OCR2A
 
 	sei();             // MAKE SURE GLOBAL INTERRUPTS ARE ENABLED
@@ -111,7 +111,7 @@ ISR(TIMER2_COMPA_vect)
 		secondBeat = false;								// when we get the heartbeat back
 	}
 
-	if (BPM > 30 || BPM < 120)
+	if (BPM > 30 && BPM < 120)
 		procBPM = BPM;
 
 	sei();												// enable interrupts when youre done!
