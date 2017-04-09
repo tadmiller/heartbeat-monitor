@@ -23,6 +23,13 @@ SparkFun Real Time Clock Module (v14)
 #define PIN_CLOCK_INT 2   // Pin to plug clock INT into
 #define PIN_CLOCK_LED 13 // LED to indicate SQW's state
 
+String sys_time;
+int sys_hour;
+int sys_minute;
+int sys_second;
+
+String sys_date;
+
 void initClock()
 {
 	pinMode(PIN_CLOCK_INT, INPUT_PULLUP);
@@ -49,10 +56,18 @@ void updateClock()
 	
 	if (rtc.second() != lastSecond) // If the second has changed
 	{
-		printTime(); // Print the new time
+		//printTime(); // Print the new time
 		lastSecond = rtc.second(); // Update lastSecond value
+
+		sys_time = String(rtc.hour()) + ":";//+  + ;
+		sys_time += rtc.minute() < 10 ? "0" : "" + String(rtc.minute()) + ":";
+		sys_time += rtc.second() < 10 ? "0" : "" + String(rtc.second());
+
+		sys_hour = rtc.hour();
+		sys_minute = rtc.minute();
+		sys_second = rtc.second();
 	}
-	
+
 	digitalWrite(PIN_CLOCK_LED, digitalRead(PIN_CLOCK_INT));
 }
 
