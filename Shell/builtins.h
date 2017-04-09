@@ -10,7 +10,7 @@ int shell_builtin_count(void);
 
 //int builtin_cd(char **args);
 
-int builtin_exit();
+void builtin_exit();
 
 
 #endif
