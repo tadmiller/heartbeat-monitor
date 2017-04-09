@@ -24,7 +24,7 @@ int shell_builtin_count()
 /* Leave. */
 int builtin_exit()
 {
-    //exit(0);
+    exit(0);
 
     return -1;
 }

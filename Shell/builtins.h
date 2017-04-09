@@ -6,8 +6,6 @@
 #ifndef _SHELL_BUILTINS_H
 #define _SHELL_BUILTINS_H
 
-#define BUILTIN_COUNT 2
-
 int shell_builtin_count(void);
 
 //int builtin_cd(char **args);
