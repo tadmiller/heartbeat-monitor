@@ -160,6 +160,9 @@ int shell_exec(char **args)
      * index of the builtins array and return from this function.
      */
 
+    connectArduino(argc, *argv, "/dev/cu.usbmodem1421");
+    inputCmd();
+
     /* Check the list of builtin functions first */
     // TODO
 
