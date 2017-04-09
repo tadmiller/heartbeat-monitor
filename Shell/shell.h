@@ -17,29 +17,25 @@
 /* Fallback prompt to show */
 #define DEFAULT_PROMPT "> "
 
-static char *builtins[] = {
-        "cd",
-        "exit"
-};
+// static char *builtins[] = {
+//         "cd",
+//         "exit"
+// };
 
-static int(*builtin_funcs[]) (char **) = {
-        &builtin_cd,
-        &builtin_exit
-};
+// static int(*builtin_funcs[]) (char **) = 
+// {
+// 	//&builtin_NAME,
+//     &builtin_exit
+// };
 
-void
-print_prompt(void);
+void print_prompt(void);
 
-size_t
-read_line(char **);
+size_t read_line(char **);
 
-char **
-tok_line(char *line);
+char **tok_line(char *line);
 
-int
-shell_exec(char **args);
+int shell_exec(char **args);
 
-int
-shell_run(char **args);
+int shell_run(char **args);
 
 #endif

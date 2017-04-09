@@ -8,14 +8,11 @@
 
 #define BUILTIN_COUNT 2
 
-int
-shell_builtin_count(void);
+int shell_builtin_count(void);
 
-int
-builtin_cd(char **args);
+//int builtin_cd(char **args);
 
-int
-builtin_exit(char **args);
+int builtin_exit();
 
 
 #endif

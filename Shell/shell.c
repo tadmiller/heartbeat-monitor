@@ -142,16 +142,14 @@ char **tok_line(char *line)
  */
 int shell_exec(char **args)
 {
-    int i;
-
     /* Check for empty command */
     if (args[0] == NULL)
         return 0;
 
     if (strcmp(*args, "cd") == 0)
-        builtin_cd(args);
+        builtin_exit();
     else if (strcmp(*args, "exit") == 0 || strcmp(*args, "quit") == 0 || strcmp(*args, "q") == 0)
-        builtin_exit(NULL);
+        builtin_exit();
     /**
      * Below, implement the part where we run a builtin shell function, if
      * feeded. Refer to builtins.c  and the declarations in shell.h to
