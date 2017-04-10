@@ -19,5 +19,5 @@ int sendReading(String data)
 
 void handleComs(int hour, int min, int sec, int reading)
 {
-	sendReading("B[" + String((char)reading) + "]H[" + String((char)(hour + 16)) + "]M[" + String((char)(min + 16)) + "]S[" + String((char)(sec + 16)) + "]");
+	sendReading("B[" + String((char)reading) + "]H[" + String((char)(hour + 32)) + "]M[" + String((char)(min + 32)) + "]S[" + String((char)(sec + 32)) + "]");
 }

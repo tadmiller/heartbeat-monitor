@@ -11,6 +11,22 @@
 #include <termios.h>
 #include <stdint.h>
 
+int fd;
+int count;
+char *device;
+char byte;
+char buf[32];
+
+int msg;
+int bpm;
+int hour;
+int min;
+int sec;
+
+/*
+**INIT_TTY*********************************************************************
+*/
+
 int init_tty(int fd)
 {
     struct termios tty;
@@ -70,62 +86,190 @@ int init_tty(int fd)
     return 0;
 }
 
-
+/*
+**SEND BYTES*********************************************************************
+*/
 
 int sendBytes(char byte)
 {
-    // Write this letter of the alphabet
-    char buf[32];
-    int count = 0;
-    int fd = 0;
+      // Write this letter of the alphabet
+        count = write(fd, &byte, 1);
+        if (count == -1)
+        {
+            perror("write");
+            close(fd);
+            return -1;
+        }
+        else if (count == 0)
+        {
+            fprintf(stderr, "No data written\n");
+            close(fd);
+            return -1;
+        }
 
-    count = write(fd, &byte, 1);
-    if (count == -1)
-    {
-        perror("write");
-        close(fd);
-        return -1;
-    }
-    else if (count == 0)
-    {
-        fprintf(stderr, "No data written\n");
-        close(fd);
-        return -1;
-    }
+        // Wait for data to transmit
+        sleep(1);
 
-    // Wait for data to transmit
-    sleep(1);
+        // Read the response
+        count = read(fd, &buf, 32);
+        if (count == -1) 
+        {
+            perror("read");
+            close(fd);
+            return -1;
+        }
+        else if (count == 0)
+        {
+            fprintf(stderr, "No data returned\n");
+            //continue;
+            return 0;
+        }
 
-    // Read the response
-    while (1)
-    {
-    count = read(fd, &buf, 32);
-    if (count == -1) {
-        perror("read");
-        close(fd);
-        return -1;
-    } else if (count == 0) {
-        fprintf(stderr, "No data returned\n");
-        //continue;
+        // Ensure the response is null-terminated
+        buf[count] = 0;
+        //printf("(%d): %s", count, buf);
         return 0;
-    }
-
-    // Ensure the response is null-terminated
-    buf[count] = 0;
-    printf("(%d): %s", count, buf);
-    sleep(10);
-    }
-    return 0;
 }
 
+void resume()   //sends char r to arduino to provoke actions on display
+{
+    printf("you resumed!!\n");
+    sendBytes('r');
+}
+
+void pauseProg() //sends char p to arduino to provoke actions on display
+{
+    printf("you paused!!\n");
+    sendBytes('p');
+}
+
+void show() //sends char s to arduino to provoke actions on display
+{
+    int num;
+    sendBytes('s');
+    //printf("Input what integer you want to be shown: ");
+    scanf("%d", &num);
+    sendBytes(num);
+}
+
+void printHistogram(int bpms[10], int hours[10], int mins[10], int secs[10])
+{
+    int i;
+    int j;
+
+    for (i = 0; i < 10; i++)
+    {
+        printf("\n");
+        
+        printf(hours[i] < 10 ? "0%d" : "%d", hours[i]);
+        printf(mins[i] < 10 ? ":0%d" : ":%d", mins[i]);
+        printf(secs[i] < 10 ? ":0%d" : ":%d", secs[i]);
+
+        printf(" | ");
+
+        for (j = 0; j < bpms[i]; j++)
+            printf("*");
+    }
+}
+
+void visualize()
+{
+    int i;
+    int count = 0;
+    int bpms[10];
+    int hours[10];
+    int mins[10];
+    int secs[10];
+
+    while (1)
+    {
+        sendBytes('c');
+
+        i = 0;
+
+        while (buf[i] != 'C')
+            i++;
+        msg = buf[i + 2];
+
+        while (buf[i] != 'B')
+            i++;
+        bpm = (int) buf[i + 2];
+
+        while (buf[i] != 'H')
+            i++;
+        hour = (int) buf[i + 2] - 32;
+
+        while (buf[i] != 'M')
+            i++;
+        min = (int) buf[i + 2] - 32;
+        
+        while (buf[i] != 'S')
+            i++;
+        sec = (int) buf[i + 2] - 32;
+
+        //printf("\nBPM: %d at %d:%d:%d", bpm, hour, min, sec);
+
+        hours[count] = hour;
+        mins[count] = min;
+        secs[count] = sec;
+        bpms[count] = bpm;
+
+        count++;
+
+        if (count == 10)
+        {
+            printHistogram(bpms, hours, mins, secs);
+            count = 0;
+        }
+
+        usleep(100);
+    }
+}
+
+/*
+**InputCmd*********************************************************************
+*/
+
+void inputCmd()
+{
+    char input[30];
+
+
+    while(1)    //infinitely looping while
+    {
+        printf("Enter command: ");  //ask user to enter command
+        scanf("%s", input); 
+
+        if(strcmp(input, "resume") == 0)   //if input is resume then start resume method
+            resume();
+        else if(strcmp(input, "pause") == 0) //if input is pause then start pause method
+            pauseProg();
+        else if(strcmp(input, "show") == 0) //if input is show X then start show method
+            show();
+        else if(strcmp(input, "q") == 0 || strcmp(input, "quit") == 0 || strcmp(input, "exit") == 0) //if exit or quit then exit program
+            exit(0);
+        else if (strcmp(input, "v") == 0 || strcmp(input, "visualize") == 0)
+            visualize();
+            //printf("Invalid input!\n"); //anything else is read as invalid 
+
+    }
+   // printf("You exited the program\n");
+   
+}
+
+/*
+**ConnectArduino********************************************************************
+*/
 
 int connectArduino()
 {
-	char *device = "/dev/cu.usbmodem1421";
     /*
      * Read the device path from input,
      * or default to /dev/ttyACM0
      */
+
+	char *device = "/dev/cu.usbmodem1421";
+    printf("Connecting to %s\n", device);
 
     /*
      * Need the following flags to open:
@@ -133,7 +277,7 @@ int connectArduino()
      * O_NOCTTY: Do not become the process's controlling terminal
      * O_NDELAY: Open the resource in nonblocking mode
      */
-    int fd = open(device, O_RDWR | O_NOCTTY | O_NDELAY);
+    fd = open(device, O_RDWR | O_NOCTTY | O_NDELAY);
     if (fd == -1) {
         perror("Error opening serial");
         return -1;
@@ -152,22 +296,14 @@ int connectArduino()
     /* Flush whatever is remaining in the buffer */
     tcflush(fd, TCIFLUSH);
 
-        printf("\nConnected to Arduino");
+    inputCmd();
 
-	while (1)
-	{
-        printf("\nSending bytes");
-		sendBytes('0');
-		sleep(500);
-	}
-
-    //inputCmd();
-
-    //close(fd);
-
+    close(fd);
     return 0;
 }
 
+
+int init_tty(int fd);
 
 int main()
 {
