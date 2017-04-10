@@ -10,6 +10,8 @@ int outputType = SERIAL_PLOTTER;
 int dispVal = 0;
 int cmd = 0;
 
+int ledCount = 0;
+
 void serialOutput()
 {   // Decide How To Output Serial.
     switch(outputType)
@@ -48,6 +50,18 @@ void sendToSerial(char symbol, int data )
 {
     Serial.print(symbol);
     Serial.println(data);
+}
+
+void blinkLED(int bpms)
+{
+  ledCount++;
+  if (ledCount > 900 / bpms)
+  {
+    digitalWrite(6, HIGH);
+    ledCount = 0;
+  }
+  else
+    digitalWrite(6, LOW);
 }
 
 void updateCmd()

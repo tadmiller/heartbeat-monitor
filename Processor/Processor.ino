@@ -20,13 +20,14 @@ void setup()
 	initMatrix();   // Initialize RGB Matrix
 	initClock();    // Initialize clock
 	initHeartbeat(); // sets up to read Pulse Sensor signal every 2mS
-	//pinMode(8, OUTPUT);
+	pinMode(6, OUTPUT);
 }
 
 void loop()
 {
 	updateClock();
 	updateCmd();
+  blinkLED(procBPM);
 
 	delay(50);
 
