@@ -11,6 +11,9 @@ int shell_builtin_count(void);
 //int builtin_cd(char **args);
 
 void builtin_exit();
-
+void resume();
+void pauseProg();
+void show();
+int connectArduino(int argc, char **argv, char *device);
 
 #endif

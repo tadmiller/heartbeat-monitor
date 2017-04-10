@@ -147,14 +147,16 @@ int shell_exec(char **args)
 	if (args[0] == NULL)
 		return 0;
 
-    if(strcmp(*args, "resume") == 0)   //if input is resume then start resume method
+    if (strcmp(*args, "resume") == 0)   //if input is resume then start resume method
         resume();
-    else if(strcmp(*args, "pause") == 0) //if input is pause then start pause method
+    else if (strcmp(*args, "connect") == 0)
+    	connectArduino();
+    else if (strcmp(*args, "pause") == 0) //if input is pause then start pause method
         pauseProg();
-    else if(strcmp(*args, "show") == 0) //if input is show X then start show method
+    else if (strcmp(*args, "show") == 0) //if input is show X then start show method
         show();
 	else if (strcmp(*args, "exit") == 0 || strcmp(*args, "quit") == 0 || strcmp(*args, "q") == 0)
-		builtin_exit();
+		exit(0);
     else
         printf("Invalid input!\n"); //anything else is read as invalid 
 		

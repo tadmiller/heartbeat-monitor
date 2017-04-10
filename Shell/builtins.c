@@ -1,48 +1,3 @@
-/************************************************
- *              CSCI 3410, Week 10
- *                  Mini Shell
- *************************************************/
-
-#define _GNU_SOURCE
-
-#include <pwd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/types.h>
-
-#include "builtins.h"
-
-#define HOME_DIR_ENV "HOME"
-//static const char *__get_home_dir(void);
-
-int shell_builtin_count() {
-    return BUILTIN_COUNT;
-}
-
-/* cd implementation */
-int builtin_print(char **args)
-{
-    //char buf[4096];
-
-    printf("\n%s\n", *(args + 1));
-
-    // FILE *fp = fopen(*args + 1, "r");
-
-    // while(fgets(buf, 4096, fp) != 0) {
-    //     // do stuff
-    // }
-    // fclose(fp);
-
-    return 0;
-}
-
-/* Leave. */
-void builtin_exit()
-{
-    exit(0);
-}
-
 /*
  * Authors: Danny Nsouli and Tad Miller
  * Purpose: To allow the user to input commands that will be sent to the 
@@ -50,11 +5,22 @@ void builtin_exit()
  * 
  */
 
-int fd;
-int count;
+#define _GNU_SOURCE
+
+#include "builtins.h"
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <termios.h>
+#include <stdint.h>
+
+#define HOME_DIR_ENV "HOME"
 char *device;
-char byte;
-char buf[32];
 
 /*
 **INIT_TTY*********************************************************************
@@ -125,40 +91,44 @@ int init_tty(int fd)
 
 int sendBytes(char byte)
 {
-      // Write this letter of the alphabet
-        count = write(fd, &byte, 1);
-        if (count == -1)
-        {
-            perror("write");
-            close(fd);
-            return -1;
-        }
-        else if (count == 0)
-        {
-            fprintf(stderr, "No data written\n");
-            close(fd);
-            return -1;
-        }
+    // Write this letter of the alphabet
+    char buf[32];
+    int count;
+    int fd;
 
-        // Wait for data to transmit
-        sleep(1);
+    count = write(fd, &byte, 1);
+    if (count == -1)
+    {
+        perror("write");
+        close(fd);
+        return -1;
+    }
+    else if (count == 0)
+    {
+        fprintf(stderr, "No data written\n");
+        close(fd);
+        return -1;
+    }
 
-        // Read the response
-        count = read(fd, &buf, 32);
-        if (count == -1) {
-            perror("read");
-            close(fd);
-            return -1;
-        } else if (count == 0) {
-            fprintf(stderr, "No data returned\n");
-            //continue;
-            return 0;
-        }
+    // Wait for data to transmit
+    sleep(1);
 
-        // Ensure the response is null-terminated
-        buf[count] = 0;
-        printf("(%d): %s", count, buf);
+    // Read the response
+    count = read(fd, &buf, 32);
+    if (count == -1) {
+        perror("read");
+        close(fd);
+        return -1;
+    } else if (count == 0) {
+        fprintf(stderr, "No data returned\n");
+        //continue;
         return 0;
+    }
+
+    // Ensure the response is null-terminated
+    buf[count] = 0;
+    printf("(%d): %s", count, buf);
+    return 0;
 }
 
 void resume()   //sends char r to arduino to provoke actions on display
@@ -183,44 +153,10 @@ void show() //sends char s to arduino to provoke actions on display
 }
 
 /*
-**InputCmd*********************************************************************
-*/
-
-void inputCmd()
-{
-    char e[30] = "exit";
-    char r[30] = "resume";
-    char p[30] = "pause";
-    char s[30] = "show";
-    char input[30];
-
-
-    while(1)    //infinitely looping while
-    {
-        printf("Enter command: ");  //ask user to enter command
-        scanf("%s", input); 
-
-        if(strcmp(input, r) == 0)   //if input is resume then start resume method
-            resume();
-        else if(strcmp(input, p) == 0) //if input is pause then start pause method
-            pauseProg();
-        else if(strcmp(input, s) == 0) //if input is show X then start show method
-            show();
-        else if(strcmp(input, e) == 0 || strcmp(input, "quit") == 0) //if exit or quit then exit program
-            exit(0);
-        else
-            printf("Invalid input!\n"); //anything else is read as invalid 
-
-    }
-   // printf("You exited the program\n");
-   
-}
-
-/*
 **ConnectArduino********************************************************************
 */
 
-int connectArduino(int argc, char **argv, char* device)
+int connectArduino(int argc, char **argv, char *device)
 {
     /*
      * Read the device path from input,
@@ -254,28 +190,9 @@ int connectArduino(int argc, char **argv, char* device)
     /* Flush whatever is remaining in the buffer */
     tcflush(fd, TCIFLUSH);
 
-    inputCmd();
+    //inputCmd();
 
-    close(fd);
+    //close(fd);
+
     return 0;
 }
-
-
-int init_tty(int fd);
-
-/**
- * Run this program and pass the location of the serial file descriptor as an argument
- * On linux, this is likely /dev/ttyACM0
- * On OSX, this may be similar to /dev/cu.usbmodem1D1131
- */
-
-//int main(int argc, char **argv)
-//{
-    //connectArduino(argc, *argv, "/dev/cu.usbmodem1421");
-    //inputCmd();
-//}
-
-
-
-
-
