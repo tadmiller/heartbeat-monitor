@@ -1,3 +1,10 @@
+/*
+ * @auth: Danny Nsouli and Tad Miller
+ * @desc: This program extends the shell of part 1. It incorporates a data
+ *        visualizer.
+ * 
+ */
+
 //#define _XOPEN_SOURCE 500
 //#define CRTSCTS  020000000000
 #include <sys/types.h>
@@ -23,15 +30,10 @@ int hour;
 int min;
 int sec;
 
+// Open and append 10 BPMs to a file
 int mmap_write(int bpms[10])
-{       
-    /* Open a file for writing.
-     *  - Creating the file if it doesn't exist.
-     *  - Truncating it to 0 size if it already exists. (not really needed)
-     *
-     * Note: "O_WRONLY" mode is not sufficient when mmaping.
-     */
-    
+{
+    // Our file set
     const char *filepath = "/tmp/histogram.csv";
 
     int fd = open(filepath, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
@@ -110,6 +112,7 @@ int mmap_write(int bpms[10])
     return 0;
 }
 
+// Initialize the connection to the Arduino.
 int init_tty(int fd)
 {
     struct termios tty;
@@ -169,6 +172,7 @@ int init_tty(int fd)
     return 0;
 }
 
+// Send a byte to the Arduino. Read the response into the character array "buf".
 int sendBytes(char byte)
 {
       // Write this letter of the alphabet
@@ -210,19 +214,22 @@ int sendBytes(char byte)
         return 0;
 }
 
-void resume()   //sends char r to arduino to provoke actions on display
+// Sends char r to arduino to provoke actions on display
+void resume()
 {
     printf("you resumed!!\n");
     sendBytes('r');
 }
 
-void pauseProg() //sends char p to arduino to provoke actions on display
+// Sends char p to arduino to provoke actions on display
+void pauseProg()
 {
     printf("you paused!!\n");
     sendBytes('p');
 }
 
-void show() //sends char s to arduino to provoke actions on display
+// Sends char s to arduino to provoke actions on display
+void show()
 {
     int num;
     sendBytes('s');
@@ -231,6 +238,7 @@ void show() //sends char s to arduino to provoke actions on display
     sendBytes(num);
 }
 
+// Print a star histogram using the recorded dates and times.
 void printHistogram(int bpms[10], int hours[10], int mins[10], int secs[10])
 {
     int i;
@@ -251,6 +259,8 @@ void printHistogram(int bpms[10], int hours[10], int mins[10], int secs[10])
     }
 }
 
+// Data visualizer. Reads data from Arduino and stores into 10 character array.
+// Gets sent to mmap'd file after 10 reads.
 void visualize()
 {
     int i;
@@ -266,22 +276,27 @@ void visualize()
 
         i = 0;
 
+        // Read the message count. Can be used to retransmit data from Arduino
         while (buf[i] != 'C')
             i++;
         msg = buf[i + 2];
 
+        // Read the bpm
         while (buf[i] != 'B')
             i++;
         bpm = (int) buf[i + 2];
 
+        // Read the hour of the BPM recorded
         while (buf[i] != 'H')
             i++;
         hour = (int) buf[i + 2] - 32;
 
+        // Read the minute of the BPM recorded
         while (buf[i] != 'M')
             i++;
         min = (int) buf[i + 2] - 32;
         
+        // Read the second of the BPM recorded
         while (buf[i] != 'S')
             i++;
         sec = (int) buf[i + 2] - 32;
@@ -295,6 +310,7 @@ void visualize()
 
         count++;
 
+        // If we have 10 records, print out a histogram. Reset the count to zero.
         if (count == 10)
         {
             printHistogram(bpms, hours, mins, secs);

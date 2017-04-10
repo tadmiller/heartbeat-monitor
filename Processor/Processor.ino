@@ -1,6 +1,6 @@
 /*/
- * @name Heartbeat_Processor.ino 
- * @vers 0.21
+ * @name Processor.ino 
+ * @vers 0.3
  * @auth Theodore Miller, Danny Nsouli
  * @desc This code reads data from the heartbeat monitor
  *       and displays it on the RGB 8x8 LED matrix. It can
@@ -27,7 +27,7 @@ void loop()
 {
 	updateClock();
 	updateCmd();
-  blinkLED(procBPM);
+	blinkLED(procBPM);
 
 	delay(50);
 

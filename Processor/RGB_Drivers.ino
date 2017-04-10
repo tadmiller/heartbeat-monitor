@@ -1,6 +1,6 @@
 /*
  * @name RGB_Drivers.ino 
- * @vers 1.00
+ * @vers 1.01
  * @auth Theodore Miller, Danny Nsouli
  * @desc This ino drivers the RGB 8x8 Matrix display.
  *       Methods can be invoked to display certain numbers on the screen,

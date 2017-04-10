@@ -30,6 +30,7 @@ int sys_second;
 
 String sys_date;
 
+// Initialize the Arduino clock
 void initClock()
 {
 	pinMode(PIN_CLOCK_INT, INPUT_PULLUP);
@@ -41,11 +42,13 @@ void initClock()
 	// (Pull-up resistor is required to use the SQW pin.)
 	rtc.writeSQW(SQW_SQUARE_1);
 	
+	// Uses the time stored at compilation, __TIME__ macro.
 	rtc.setHour(String(__TIME__).substring(0, 2).toInt());
 	rtc.setMinute(String(__TIME__).substring(3, 5).toInt());
 	rtc.setSecond(String(__TIME__).substring(6, 8).toInt());
 }
 
+// Update the reading of the clock to the latest recorded time.
 void updateClock()
 {
 	static int8_t lastSecond = -1;
