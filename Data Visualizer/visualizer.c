@@ -1,5 +1,5 @@
-#define _XOPEN_SOURCE 500
-#define CRTSCTS  020000000000
+//#define _XOPEN_SOURCE 500
+//#define CRTSCTS  020000000000
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -71,6 +71,54 @@ int init_tty(int fd)
 }
 
 
+
+int sendBytes(char byte)
+{
+    // Write this letter of the alphabet
+    char buf[32];
+    int count = 0;
+    int fd = 0;
+
+    count = write(fd, &byte, 1);
+    if (count == -1)
+    {
+        perror("write");
+        close(fd);
+        return -1;
+    }
+    else if (count == 0)
+    {
+        fprintf(stderr, "No data written\n");
+        close(fd);
+        return -1;
+    }
+
+    // Wait for data to transmit
+    sleep(1);
+
+    // Read the response
+    while (1)
+    {
+    count = read(fd, &buf, 32);
+    if (count == -1) {
+        perror("read");
+        close(fd);
+        return -1;
+    } else if (count == 0) {
+        fprintf(stderr, "No data returned\n");
+        //continue;
+        return 0;
+    }
+
+    // Ensure the response is null-terminated
+    buf[count] = 0;
+    printf("(%d): %s", count, buf);
+    sleep(10);
+    }
+    return 0;
+}
+
+
 int connectArduino()
 {
 	char *device = "/dev/cu.usbmodem1421";
@@ -104,6 +152,15 @@ int connectArduino()
     /* Flush whatever is remaining in the buffer */
     tcflush(fd, TCIFLUSH);
 
+        printf("\nConnected to Arduino");
+
+	while (1)
+	{
+        printf("\nSending bytes");
+		sendBytes('0');
+		sleep(500);
+	}
+
     //inputCmd();
 
     //close(fd);
@@ -111,58 +168,12 @@ int connectArduino()
     return 0;
 }
 
-int sendBytes(char byte)
-{
-    // Write this letter of the alphabet
-    char buf[32];
-    int count = 0;
-    int fd = 0;
-
-    count = write(fd, &byte, 1);
-    if (count == -1)
-    {
-        perror("write");
-        close(fd);
-        return -1;
-    }
-    else if (count == 0)
-    {
-        fprintf(stderr, "No data written\n");
-        close(fd);
-        return -1;
-    }
-
-    // Wait for data to transmit
-    sleep(1);
-
-    // Read the response
-    count = read(fd, &buf, 32);
-    if (count == -1) {
-        perror("read");
-        close(fd);
-        return -1;
-    } else if (count == 0) {
-        fprintf(stderr, "No data returned\n");
-        //continue;
-        return 0;
-    }
-
-    // Ensure the response is null-terminated
-    buf[count] = 0;
-    printf("(%d): %s", count, buf);
-    return 0;
-}
-
 
 int main()
 {
+    printf("\nConnecting to Arduino");
 	connectArduino();
 
-	while (1)
-	{
-		sendBytes('0');
-		sleep(500);
-	}
 
 	return 0;
 }
