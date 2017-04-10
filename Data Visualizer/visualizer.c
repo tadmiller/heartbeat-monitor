@@ -1,6 +1,5 @@
 //#define _XOPEN_SOURCE 500
 //#define CRTSCTS  020000000000
-
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -10,6 +9,7 @@
 #include <string.h>
 #include <termios.h>
 #include <stdint.h>
+#include <sys/mman.h>
 
 int fd;
 int count;
@@ -23,9 +23,92 @@ int hour;
 int min;
 int sec;
 
-/*
-**INIT_TTY*********************************************************************
-*/
+int mmap_write(int bpms[10])
+{       
+    /* Open a file for writing.
+     *  - Creating the file if it doesn't exist.
+     *  - Truncating it to 0 size if it already exists. (not really needed)
+     *
+     * Note: "O_WRONLY" mode is not sufficient when mmaping.
+     */
+    
+    const char *filepath = "/tmp/histogram.csv";
+
+    int fd = open(filepath, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
+    
+    if (fd == -1)
+    {
+        perror("Error opening file for writing");
+        exit(EXIT_FAILURE);
+    }
+
+    // Stretch the file size to the size of the (mmapped) array of char
+
+    size_t textsize = 51; // + \0 null character
+    
+    if (lseek(fd, textsize-1, SEEK_SET) == -1)
+    {
+        close(fd);
+        perror("Error calling lseek() to 'stretch' the file");
+        exit(EXIT_FAILURE);
+    }
+    
+    if (write(fd, "", 1) == -1)
+    {
+        close(fd);
+        perror("Error writing last byte of the file");
+        exit(EXIT_FAILURE);
+    }
+
+    // Now the file is ready to be mmapped.
+    char *map = mmap(0, textsize, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    if (map == MAP_FAILED)
+    {
+        close(fd);
+        perror("Error mmapping the file");
+        exit(EXIT_FAILURE);
+    }
+    
+    int count = 0;
+    char snum[6];
+    // format for CSV: 120,\n
+    for (size_t i = 0; i < 10; i++)
+    {
+        sprintf(snum, "%.3d," , bpms[i]);
+
+        if (i < 9)
+        {
+            snum[4] = '\n';
+            snum[5] = '\0';
+        }
+        else
+            snum[3] = '\0';
+
+        //printf("\n%s", snum);
+
+        for (size_t j = count; j < count + 5; j++)
+            map[j] = snum[j % 5];
+
+        count += 5;
+    }
+
+    // Write it now to disk
+    if (msync(map, textsize, MS_SYNC) == -1)
+        perror("Could not sync the file to disk");
+    
+    // Don't forget to free the mmapped memory
+    if (munmap(map, textsize) == -1)
+    {
+        close(fd);
+        perror("Error un-mmapping the file");
+        exit(EXIT_FAILURE);
+    }
+
+    // Un-mmaping doesn't close the file, so we still need to do that.
+    close(fd);
+
+    return 0;
+}
 
 int init_tty(int fd)
 {
@@ -85,10 +168,6 @@ int init_tty(int fd)
 
     return 0;
 }
-
-/*
-**SEND BYTES*********************************************************************
-*/
 
 int sendBytes(char byte)
 {
@@ -219,16 +298,13 @@ void visualize()
         if (count == 10)
         {
             printHistogram(bpms, hours, mins, secs);
+            mmap_write(bpms);
             count = 0;
         }
 
         usleep(100);
     }
 }
-
-/*
-**InputCmd*********************************************************************
-*/
 
 void inputCmd()
 {
@@ -302,14 +378,10 @@ int connectArduino()
     return 0;
 }
 
-
-int init_tty(int fd);
-
 int main()
 {
     printf("\nConnecting to Arduino");
 	connectArduino();
-
 
 	return 0;
 }

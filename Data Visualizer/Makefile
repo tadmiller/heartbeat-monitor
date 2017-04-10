@@ -9,4 +9,4 @@ visualizer: visualizer.c
 	${CC} ${CFLAGS} visualizer.c -o visualizer.o
 
 clean:
-	@rm -f build/*
+	@rm -rf *.o
