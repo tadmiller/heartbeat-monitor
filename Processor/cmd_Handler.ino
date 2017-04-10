@@ -60,8 +60,6 @@ void updateCmd()
     if (QS == true && cmd == 0 && !paused)
     {
         //serialOutput();
-        
-
         QS = false;                      // reset the Quantified Self flag for next time
 
         // We can't send values higher than 99 since the display is only two numbers.
@@ -89,6 +87,8 @@ void updateCmd()
             paused = true;
             matrixWrite(dispVal);
         }
+        else if (cmd == 99)
+            handleComs(sys_hour, sys_minute, sys_second, procBPM);
 
         cmd = 0;
     }
