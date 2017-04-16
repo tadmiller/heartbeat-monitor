@@ -24,6 +24,8 @@ char *device;
 char byte;
 char buf[32];
 
+int count = 0;
+
 int msg;
 int bpm;
 int hour;
@@ -31,12 +33,12 @@ int min;
 int sec;
 
 // Open and append 10 BPMs to a file
-int mmap_write(int bpms[10])
+int mmap_write(int bpms[10], int hours[10], int mins[10], int secs[10])
 {
     // Our file set
     const char *filepath = "/tmp/histogram.csv";
 
-    int fd = open(filepath, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
+    int fd = open(filepath, O_RDWR | O_CREAT, (mode_t)0600);
     
     if (fd == -1)
     {
@@ -46,7 +48,7 @@ int mmap_write(int bpms[10])
 
     // Stretch the file size to the size of the (mmapped) array of char
 
-    size_t textsize = 51; // + \0 null character
+    size_t textsize = 150; // + \0 null character
     
     if (lseek(fd, textsize-1, SEEK_SET) == -1)
     {
@@ -72,26 +74,27 @@ int mmap_write(int bpms[10])
     }
     
     int count = 0;
-    char snum[6];
+    char snum[15];
     // format for CSV: 120,\n
     for (size_t i = 0; i < 10; i++)
     {
-        sprintf(snum, "%.3d," , bpms[i]);
+        printf("%.3d,%.2d:%.2d:%.2d,", bpms[i], hours[i], mins[i], secs[i]);
+        sprintf(snum, "%.3d,%.2d:%.2d:%.2d,", bpms[i], hours[i], mins[i], secs[i]);
 
         if (i < 9)
         {
-            snum[4] = '\n';
-            snum[5] = '\0';
+            snum[13] = '\n';
+            snum[14] = '\0';
         }
         else
-            snum[3] = '\0';
+            snum[13] = '\0';
 
         //printf("\n%s", snum);
 
-        for (size_t j = count; j < count + 5; j++)
-            map[j] = snum[j % 5];
+        for (size_t j = count; j < count + 15; j++)
+            map[j] = snum[j % 15];
 
-        count += 5;
+        count += 15;
     }
 
     // Write it now to disk
@@ -314,7 +317,7 @@ void visualize()
         if (count == 10)
         {
             printHistogram(bpms, hours, mins, secs);
-            mmap_write(bpms);
+            mmap_write(bpms, hours, mins, secs);
             count = 0;
         }
 
@@ -328,12 +331,8 @@ void visualize()
 
 int arduinoConnect()
 {
-    /*
-     * Read the device path from input,
-     * or default to /dev/ttyACM0
-     */
-
-	char *device = "/dev/cu.usbmodem1421";
+    // Read the device path from input, or default to /dev/ttyACM0   
+	char *device = "/dev/ttyACM0";
     printf("Connecting to %s\n", device);
 
     /*
@@ -373,12 +372,54 @@ void arduinoClose()
 
 void arduinoRate()
 {
+    int i = 0;
 
+    sendBytes('c');
+
+    // Read the message count. Can be used to retransmit data from Arduino
+    while (buf[i] != 'C')
+        i++;
+    msg = buf[i + 2];
+
+    // Read the bpm
+    while (buf[i] != 'B')
+        i++;
+    bpm = (int) buf[i + 2];
+
+    // Read the hour of the BPM recorded
+    while (buf[i] != 'H')
+        i++;
+    hour = (int) buf[i + 2] - 32;
+
+    // Read the minute of the BPM recorded
+    while (buf[i] != 'M')
+        i++;
+    min = (int) buf[i + 2] - 32;
+    
+    // Read the second of the BPM recorded
+    while (buf[i] != 'S')
+        i++;
+    sec = (int) buf[i + 2] - 32;
+
+    printf("\n%.3d BPM at %.2d:%.2d:%.2d", bpm, hour, min, sec);
+    printf("\n\n");
 }
 
 void arduinoEnv()
 {
+    sendBytes('e');
+}
 
+void clearFile()
+{
+
+}
+
+void sysExit()
+{
+    arduinoClose();
+
+    exit(0);
 }
 
 void inputCmd()
@@ -403,9 +444,10 @@ void inputCmd()
             arduinoEnv();
         else if (strcmp(input, "hist") == 0)
             visualize();
-        //else if (strcmp(input, "reset") == 0)
+        else if (strcmp(input, "reset") == 0)
+            clearFile();
         else if(strcmp(input, "q") == 0 || strcmp(input, "quit") == 0 || strcmp(input, "exit") == 0 || strcmp(input, "x") == 0) //if exit or quit then exit program
-            exit(0);
+            sysExit();
         else if (strcmp(input, "c") == 0 || strcmp(input, "connect") == 0)
             arduinoConnect();
         else if (strcmp(input, "close") == 0)
@@ -419,6 +461,8 @@ void inputCmd()
 
 int main()
 {
+    //pid_t pid = fork();
+
     inputCmd();
 
 	return 0;
