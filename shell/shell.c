@@ -363,7 +363,7 @@ void printHistogram(int bpms[10], int hours[10], int mins[10], int secs[10])
 
 // Data visualizer. Reads data from Arduino and stores into 10 character array.
 // Gets sent to mmap'd file after 10 reads.
-void visualize()
+void process_rate()
 {
     int i;
     int count = 0;
@@ -372,8 +372,8 @@ void visualize()
     int mins[10];
     int secs[10];
 
-    //while (1)
-    //{
+    while (1)
+    {
         sendBytes('c');
 
         i = 0;
@@ -420,8 +420,8 @@ void visualize()
             count = 0;
         }
 
-        usleep(100);
-    //}
+        usleep(1000 * 1000);
+    }
 }
 
 /*
@@ -577,7 +577,7 @@ int main()
 
     if (pid == 0)
     {
-
+        arduinoConnect()
     }
     else
         inputCmd();
