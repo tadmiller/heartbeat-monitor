@@ -550,16 +550,16 @@ void inputCmd()
 
 int main()
 {
-    pid_t pid = fork();
+    //pid_t pid = fork();
 
-    if (pid == 0)
+    //if (pid == 0)
         inputCmd();
-    else
-    {
-        arduinoConnect();
-        usleep(1000 * 1000 * 5);
-        visualize();
-    }
+    //else
+    //{
+     //   arduinoConnect();
+    //    usleep(1000 * 1000 * 5);
+    //    visualize();
+    //}
 
 	return 0;
 }
