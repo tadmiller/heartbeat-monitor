@@ -316,7 +316,7 @@ void visualize()
         // If we have 10 records, print out a histogram. Reset the count to zero.
         if (count == 10)
         {
-            printHistogram(bpms, hours, mins, secs);
+            //printHistogram(bpms, hours, mins, secs);
             mmap_write(bpms, hours, mins, secs);
             count = 0;
         }
@@ -461,9 +461,16 @@ void inputCmd()
 
 int main()
 {
-    //pid_t pid = fork();
+    pid_t pid = fork();
 
-    inputCmd();
+    if (pid == 0)
+        inputCmd();
+    else
+    {
+        arduinoConnect();
+        usleep(1000 * 1000 * 5);
+        visualize();
+    }
 
 	return 0;
 }
