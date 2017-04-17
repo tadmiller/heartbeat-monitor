@@ -431,7 +431,7 @@ void process_rate()
 int arduinoConnect()
 {
     // Read the device path from input, or default to /dev/ttyACM0   
-	char *device = "/dev/tty.usbmodem1421";
+	char *device = "/dev/ttyACM0";
     printf("Connecting to %s\n", device);
 
     /*
@@ -577,7 +577,8 @@ int main()
 
     if (pid == 0)
     {
-        arduinoConnect()
+        arduinoConnect();
+        process_rate();
     }
     else
         inputCmd();
