@@ -175,43 +175,43 @@ int init_tty(int fd)
 // Send a byte to the Arduino. Read the response into the character array "buf".
 int sendBytes(char byte)
 {
-      // Write this letter of the alphabet
-        count = write(fd, &byte, 1);
-        if (count == -1)
-        {
-            perror("write");
-            close(fd);
-            return -1;
-        }
-        else if (count == 0)
-        {
-            fprintf(stderr, "No data written\n");
-            close(fd);
-            return -1;
-        }
+  // Write this letter of the alphabet
+    count = write(fd, &byte, 1);
+    if (count == -1)
+    {
+        perror("write");
+        close(fd);
+        return -1;
+    }
+    else if (count == 0)
+    {
+        fprintf(stderr, "No data written\n");
+        close(fd);
+        return -1;
+    }
 
-        // Wait for data to transmit
-        sleep(1);
+    // Wait for data to transmit
+    sleep(1);
 
-        // Read the response
-        count = read(fd, &buf, 32);
-        if (count == -1) 
-        {
-            perror("read");
-            close(fd);
-            return -1;
-        }
-        else if (count == 0)
-        {
-            fprintf(stderr, "No data returned\n");
-            //continue;
-            return 0;
-        }
-
-        // Ensure the response is null-terminated
-        buf[count] = 0;
-        //printf("(%d): %s", count, buf);
+    // Read the response
+    count = read(fd, &buf, 32);
+    if (count == -1) 
+    {
+        perror("read");
+        close(fd);
+        return -1;
+    }
+    else if (count == 0)
+    {
+        fprintf(stderr, "No data returned\n");
+        //continue;
         return 0;
+    }
+
+    // Ensure the response is null-terminated
+    buf[count] = 0;
+    //printf("(%d): %s", count, buf);
+    return 0;
 }
 
 // Sends char r to arduino to provoke actions on display
@@ -371,7 +371,7 @@ void arduinoClose()
     close(fd);
 }
 
-void arduinoRate();
+void arduinoRate()
 {
 
 }
@@ -391,29 +391,27 @@ void inputCmd()
         printf("processor/shell$ ");  //ask user to enter command
         scanf("%s", input); 
 
-        if(strcmp(input, "resume") == 0)   //if input is resume then start resume method
-            resume();
-        else if(strcmp(input, "pause") == 0) //if input is pause then start pause method
-            pauseProg();
-        else if(strcmp(input, "show") == 0) //if input is show X then start show method
+        if (strcmp(input, "show") == 0) //if input is show X then start show method
             show();
-        else if(strcmp(input, "q") == 0 || strcmp(input, "quit") == 0 || strcmp(input, "exit") == 0 || strcmp(input, "x") == 0) //if exit or quit then exit program
-            exit(0);
-        else if (strcmp(input, "v") == 0 || strcmp(input, "visualize") == 0)
-            visualize();
-        else if (strcmp(input, "c") == 0 || strcmp(input, "connect") == 0)
-            arduinoConnect();
-        else if (strcmp(input, "close") == 0)
-            arduinoClose();
+        else if (strcmp(input, "pause") == 0) //if input is pause then start pause method
+            pauseProg();
+        else if (strcmp(input, "resume") == 0)   //if input is resume then start resume method
+            resume();
         else if (strcmp(input, "rate") == 0)
             arduinoRate();
         else if (strcmp(input, "env") == 0)
             arduinoEnv();
-        //else if (strcmp(input, "hist") == 0)
+        else if (strcmp(input, "hist") == 0)
+            visualize();
         //else if (strcmp(input, "reset") == 0)
-
-            //printf("Invalid input!\n"); //anything else is read as invalid 
-
+        else if(strcmp(input, "q") == 0 || strcmp(input, "quit") == 0 || strcmp(input, "exit") == 0 || strcmp(input, "x") == 0) //if exit or quit then exit program
+            exit(0);
+        else if (strcmp(input, "c") == 0 || strcmp(input, "connect") == 0)
+            arduinoConnect();
+        else if (strcmp(input, "close") == 0)
+            arduinoClose();
+        else
+            printf("\t\t cmd error: %s not found\n", input);
     }
    // printf("You exited the program\n");
    
