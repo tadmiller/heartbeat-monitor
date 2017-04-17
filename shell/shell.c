@@ -120,27 +120,29 @@ int mmap_write(int bpms[10], int hours[10], int mins[10], int secs[10])
     return 0;
 }
 
-void processMap(char *map)
+void processHist(char *map)
 {
-    printf("%s", map);
-    int bpms[strlen(map) % 4];
+    char bpm[4];
+    char time[9];
+    //bool onbpm = true; // false means on time
 
-    for (size_t i = 0; i < strlen(map); i++)
+    for (size_t i = 0; i < strlen(map); i += 14)
     {
-        int itr = 4 * i;
-        if (itr < strlen(map))
-        {
-            char bpm[3];
-            bpm[0] = map[itr];
-            bpm[1] = map[itr + 1];
-            bpm[2] = map[itr + 2];
+        bpm[0] = map[i];
+        bpm[1] = map[i + 1];
+        bpm[2] = map[i + 2];
+        bpm[3] = '\0';
 
-            printf("\n%s", bpm);
-            bpms[i] = atoi(bpm);
-        }
+        strncpy(time, map + i + 4, 8);
+        time[10] = '\0';
+
+        printf("\n%s bpm | %s | ", bpm, time);
+
+        for (size_t j = 0; j < atoi(bpm); j++)
+            printf("*");
     }
 
-    printf("\n\n%d", bpms[0]);
+    printf("\n");
 }
 
 int mmap_read()
@@ -169,7 +171,7 @@ int mmap_read()
         exit(EXIT_FAILURE);
     }
     
-    printf("File size is %ji\n", (intmax_t)fileInfo.st_size);
+    //printf("File size is %ji\n", (intmax_t)fileInfo.st_size);
     
     char *map = mmap(0, fileInfo.st_size, PROT_READ, MAP_SHARED, fd, 0);
     if (map == MAP_FAILED)
@@ -179,12 +181,12 @@ int mmap_read()
         exit(EXIT_FAILURE);
     }
     
-    for (off_t i = 0; i < fileInfo.st_size; i++)
-    {
-        printf("Found character %c at %ji\n", map[i], (intmax_t)i);
-    }
+    // for (off_t i = 0; i < fileInfo.st_size; i++)
+    // {
+    //     printf("Found character %c at %ji\n", map[i], (intmax_t)i);
+    // }
 
-    processMap(map);
+    processHist(map);
     
     // Don't forget to free the mmapped memory
     if (munmap(map, fileInfo.st_size) == -1)
@@ -531,7 +533,7 @@ void inputCmd()
         else if (strcmp(input, "env") == 0)
             arduinoEnv();
         else if (strcmp(input, "hist") == 0)
-            visualize();
+            mmap_read();
         else if (strcmp(input, "reset") == 0)
             clearFile();
         else if(strcmp(input, "q") == 0 || strcmp(input, "quit") == 0 || strcmp(input, "exit") == 0 || strcmp(input, "x") == 0) //if exit or quit then exit program
@@ -549,9 +551,16 @@ void inputCmd()
 
 int main()
 {
-    //pid_t pid = fork();
+    pid_t pid;// = fork();
 
     //if (pid == 0)
+    pid = fork();
+
+    if (pid == 0)
+    {
+        
+    }
+    else
         inputCmd();
     //else
     //{
