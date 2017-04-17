@@ -43,25 +43,28 @@ int mmap_write(int bpms[10], int hours[10], int mins[10], int secs[10])
     if (fd == -1)
     {
         perror("Error opening file for writing");
-        exit(EXIT_FAILURE);
+        return 1;
+        //exit(EXIT_FAILURE);
     }
 
     // Stretch the file size to the size of the (mmapped) array of char
 
-    size_t textsize = 150; // + \0 null character
+    size_t textsize = 140; // + \0 null character
     
     if (lseek(fd, textsize-1, SEEK_SET) == -1)
     {
         close(fd);
         perror("Error calling lseek() to 'stretch' the file");
-        exit(EXIT_FAILURE);
+        return 1;
+        //exit(EXIT_FAILURE);
     }
     
     if (write(fd, "", 1) == -1)
     {
         close(fd);
         perror("Error writing last byte of the file");
-        exit(EXIT_FAILURE);
+        return 1;
+        //exit(EXIT_FAILURE);
     }
 
     // Now the file is ready to be mmapped.
@@ -70,36 +73,32 @@ int mmap_write(int bpms[10], int hours[10], int mins[10], int secs[10])
     {
         close(fd);
         perror("Error mmapping the file");
-        exit(EXIT_FAILURE);
+        return 1;
+        //exit(EXIT_FAILURE);
     }
     
     int count = 0;
-    char snum[15];
+    char snum[14];
 
     if (bpms == NULL || hours == NULL || mins == NULL || secs == NULL)
     {
-        //fclose(fopen(filepath, "w"));
+        fclose(fopen(filepath, "w"));
     }
     else
         for (size_t i = 0; i < 10; i++)
         {
-            printf("%.3d,%.2d:%.2d:%.2d,", bpms[i], hours[i], mins[i], secs[i]);
+            //printf("%.3d,%.2d:%.2d:%.2d,", bpms[i], hours[i], mins[i], secs[i]);
             sprintf(snum, "%.3d,%.2d:%.2d:%.2d,", bpms[i], hours[i], mins[i], secs[i]);
 
             if (i < 9)
-            {
                 snum[13] = '\n';
-                snum[14] = '\0';
-            }
-            else
-                snum[13] = '\0';
 
             //printf("\n%s", snum);
 
-            for (size_t j = count; j < count + 15; j++)
-                map[j] = snum[j % 15];
+            for (size_t j = count; j < count + 14; j++)
+                map[j] = snum[j % 14];
 
-            count += 15;
+            count += 14;
         }
 
     // Write it now to disk
@@ -128,9 +127,11 @@ void processHist(char *map)
     //bool onbpm = true; // false means on time
 
     if (strcmp(r_time, "-1") == 0)
-        printf("no time selected");
+        printf("No time selected");
     else
         selected = false;
+
+    //printf("%s", map);
 
     for (size_t i = 0; i < strlen(map); i += 14)
     {
@@ -145,7 +146,7 @@ void processHist(char *map)
         if (strcmp(r_time, time) == 0)
             selected = true;
 
-        if (selected)
+        if (selected == true)
         {
             printf("\n%s bpm | %s | ", bpm, time);
 
@@ -166,7 +167,8 @@ int mmap_read()
     if (fd == -1)
     {
         perror("Error opening file for writing");
-        exit(EXIT_FAILURE);
+        return 1;
+        //exit(EXIT_FAILURE);
     }        
     
     struct stat fileInfo = {0};
@@ -174,13 +176,15 @@ int mmap_read()
     if (fstat(fd, &fileInfo) == -1)
     {
         perror("Error getting the file size");
-        exit(EXIT_FAILURE);
+        return 1;
+        //exit(EXIT_FAILURE);
     }
     
     if (fileInfo.st_size == 0)
     {
         fprintf(stderr, "Error: File is empty, nothing to do\n");
-        exit(EXIT_FAILURE);
+        return 1;
+        //exit(EXIT_FAILURE);
     }
     
     //printf("File size is %ji\n", (intmax_t)fileInfo.st_size);
@@ -305,7 +309,7 @@ int sendBytes(char byte)
     }
     else if (count == 0)
     {
-        fprintf(stderr, "No data returned\n");
+        //fprintf(stderr, "No data returned\n");
         //continue;
         return 0;
     }
@@ -420,8 +424,27 @@ void process_rate()
             count = 0;
         }
 
-        usleep(1000 * 1000);
+        usleep(1000 * 1000 * 3);
     }
+}
+
+void flush()
+{
+    fflush(stdin);
+    fflush(stdout);
+    sendBytes('c');
+    fflush(stdin);
+    fflush(stdout);
+    tcflush(fd, TCIFLUSH);
+
+    usleep(1000 * 1000 * 2);
+
+    fflush(stdin);
+    fflush(stdout);
+    sendBytes('c');
+    fflush(stdin);
+    fflush(stdout);
+    tcflush(fd, TCIFLUSH);
 }
 
 /*
@@ -458,6 +481,8 @@ int arduinoConnect()
 
     /* Flush whatever is remaining in the buffer */
     tcflush(fd, TCIFLUSH);
+
+    flush();
 
     return 0;
 }
@@ -500,6 +525,9 @@ void arduinoRate()
         i++;
     sec = (int) buf[i + 2] - 32;
 
+    fflush(stdin);
+    fflush(stdout);
+    //printf("%s", buf);
     printf("\n%.3d BPM at %.2d:%.2d:%.2d", bpm, hour, min, sec);
     printf("\n\n");
 }
@@ -561,8 +589,10 @@ void inputCmd()
             arduinoConnect();
         else if (strcmp(input, "close") == 0)
             arduinoClose();
-        else
-            printf("\t\t cmd error: %s not found\n", input);
+        else if (strcmp(input, "flush") == 0)
+            flush();
+        //else
+        //    process_rate();
     }
    // printf("You exited the program\n");
    
@@ -570,24 +600,16 @@ void inputCmd()
 
 int main()
 {
-    pid_t pid;// = fork();
-
-    //if (pid == 0)
-    pid = fork();
+    arduinoConnect();
+    pid_t pid = fork();
 
     if (pid == 0)
-    {
-        arduinoConnect();
-        process_rate();
-    }
-    else
         inputCmd();
-    //else
-    //{
-     //   arduinoConnect();
-    //    usleep(1000 * 1000 * 5);
-    //    visualize();
-    //}
+    else
+    {
+       usleep(1000 * 1000 * 10);
+       process_rate();
+    }
 
 	return 0;
 }
