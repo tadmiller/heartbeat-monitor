@@ -5,8 +5,8 @@
  * 
  */
 
-//#define _XOPEN_SOURCE 500
-//#define CRTSCTS  020000000000
+#define _XOPEN_SOURCE 500
+#define CRTSCTS  020000000000
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -38,7 +38,7 @@ int mmap_write(int bpms[10], int hours[10], int mins[10], int secs[10])
     // Our file set
     const char *filepath = "/tmp/histogram.csv";
 
-    int fd = open(filepath, O_RDWR | O_CREAT, (mode_t)0600);
+    int fd = open(filepath, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
     
     if (fd == -1)
     {
@@ -77,28 +77,30 @@ int mmap_write(int bpms[10], int hours[10], int mins[10], int secs[10])
     char snum[15];
 
     if (bpms == NULL || hours == NULL || mins == NULL || secs == NULL)
-
-
-    for (size_t i = 0; i < 10; i++)
     {
-        printf("%.3d,%.2d:%.2d:%.2d,", bpms[i], hours[i], mins[i], secs[i]);
-        sprintf(snum, "%.3d,%.2d:%.2d:%.2d,", bpms[i], hours[i], mins[i], secs[i]);
-
-        if (i < 9)
-        {
-            snum[13] = '\n';
-            snum[14] = '\0';
-        }
-        else
-            snum[13] = '\0';
-
-        //printf("\n%s", snum);
-
-        for (size_t j = count; j < count + 15; j++)
-            map[j] = snum[j % 15];
-
-        count += 15;
+        //fclose(fopen(filepath, "w"));
     }
+    else
+        for (size_t i = 0; i < 10; i++)
+        {
+            printf("%.3d,%.2d:%.2d:%.2d,", bpms[i], hours[i], mins[i], secs[i]);
+            sprintf(snum, "%.3d,%.2d:%.2d:%.2d,", bpms[i], hours[i], mins[i], secs[i]);
+
+            if (i < 9)
+            {
+                snum[13] = '\n';
+                snum[14] = '\0';
+            }
+            else
+                snum[13] = '\0';
+
+            //printf("\n%s", snum);
+
+            for (size_t j = count; j < count + 15; j++)
+                map[j] = snum[j % 15];
+
+            count += 15;
+        }
 
     // Write it now to disk
     if (msync(map, textsize, MS_SYNC) == -1)
