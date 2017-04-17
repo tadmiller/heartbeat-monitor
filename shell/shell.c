@@ -17,15 +17,15 @@
 #include <termios.h>
 #include <stdint.h>
 #include <sys/mman.h>
+#include <stdbool.h>
 
 int fd;
 int count;
 char *device;
 char byte;
 char buf[32];
-
+char r_time[8];
 int count = 0;
-
 int msg;
 int bpm;
 int hour;
@@ -124,7 +124,13 @@ void processHist(char *map)
 {
     char bpm[4];
     char time[9];
+    bool selected = true;
     //bool onbpm = true; // false means on time
+
+    if (strcmp(r_time, "-1") == 0)
+        printf("no time selected");
+    else
+        selected = false;
 
     for (size_t i = 0; i < strlen(map); i += 14)
     {
@@ -136,10 +142,16 @@ void processHist(char *map)
         strncpy(time, map + i + 4, 8);
         time[10] = '\0';
 
-        printf("\n%s bpm | %s | ", bpm, time);
+        if (strcmp(r_time, time) == 0)
+            selected = true;
 
-        for (size_t j = 0; j < atoi(bpm); j++)
-            printf("*");
+        if (selected)
+        {
+            printf("\n%s bpm | %s | ", bpm, time);
+
+            for (size_t j = 0; j < atoi(bpm); j++)
+                printf("*");
+        }
     }
 
     printf("\n");
@@ -512,6 +524,13 @@ void sysExit()
     exit(0);
 }
 
+void getHist()
+{
+    scanf("%s", r_time);
+
+    mmap_read();
+}
+
 void inputCmd()
 {
     char input[30];
@@ -533,7 +552,7 @@ void inputCmd()
         else if (strcmp(input, "env") == 0)
             arduinoEnv();
         else if (strcmp(input, "hist") == 0)
-            mmap_read();
+            getHist();
         else if (strcmp(input, "reset") == 0)
             clearFile();
         else if(strcmp(input, "q") == 0 || strcmp(input, "quit") == 0 || strcmp(input, "exit") == 0 || strcmp(input, "x") == 0) //if exit or quit then exit program
@@ -558,7 +577,7 @@ int main()
 
     if (pid == 0)
     {
-        
+
     }
     else
         inputCmd();
