@@ -24,5 +24,5 @@ void handleComs(int hour, int min, int sec, int reading)
 
 void sendRGB(int r, int g, int b)
 {
-	sendReading("R[" + String((char) r) + "]G[" + String((char) g) + "]B[" + String((char) b) + "]");
+	sendReading("R[" + String(r) + "]G[" + String(g) + "]B[" + String(b) + "]");
 }
