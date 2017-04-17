@@ -75,7 +75,10 @@ int mmap_write(int bpms[10], int hours[10], int mins[10], int secs[10])
     
     int count = 0;
     char snum[15];
-    // format for CSV: 120,\n
+
+    if (bpms == NULL || hours == NULL || mins == NULL || secs == NULL)
+
+
     for (size_t i = 0; i < 10; i++)
     {
         printf("%.3d,%.2d:%.2d:%.2d,", bpms[i], hours[i], mins[i], secs[i]);
@@ -112,6 +115,86 @@ int mmap_write(int bpms[10], int hours[10], int mins[10], int secs[10])
     // Un-mmaping doesn't close the file, so we still need to do that.
     close(fd);
 
+    return 0;
+}
+
+void processMap(char *map)
+{
+    printf("%s", map);
+    int bpms[strlen(map) % 4];
+
+    for (size_t i = 0; i < strlen(map); i++)
+    {
+        int itr = 4 * i;
+        if (itr < strlen(map))
+        {
+            char bpm[3];
+            bpm[0] = map[itr];
+            bpm[1] = map[itr + 1];
+            bpm[2] = map[itr + 2];
+
+            printf("\n%s", bpm);
+            bpms[i] = atoi(bpm);
+        }
+    }
+
+    printf("\n\n%d", bpms[0]);
+}
+
+int mmap_read()
+{    
+    const char *filepath = "/tmp/histogram.csv";
+
+    int fd = open(filepath, O_RDONLY, (mode_t)0600);
+    
+    if (fd == -1)
+    {
+        perror("Error opening file for writing");
+        exit(EXIT_FAILURE);
+    }        
+    
+    struct stat fileInfo = {0};
+    
+    if (fstat(fd, &fileInfo) == -1)
+    {
+        perror("Error getting the file size");
+        exit(EXIT_FAILURE);
+    }
+    
+    if (fileInfo.st_size == 0)
+    {
+        fprintf(stderr, "Error: File is empty, nothing to do\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    printf("File size is %ji\n", (intmax_t)fileInfo.st_size);
+    
+    char *map = mmap(0, fileInfo.st_size, PROT_READ, MAP_SHARED, fd, 0);
+    if (map == MAP_FAILED)
+    {
+        close(fd);
+        perror("Error mmapping the file");
+        exit(EXIT_FAILURE);
+    }
+    
+    for (off_t i = 0; i < fileInfo.st_size; i++)
+    {
+        printf("Found character %c at %ji\n", map[i], (intmax_t)i);
+    }
+
+    processMap(map);
+    
+    // Don't forget to free the mmapped memory
+    if (munmap(map, fileInfo.st_size) == -1)
+    {
+        close(fd);
+        perror("Error un-mmapping the file");
+        exit(EXIT_FAILURE);
+    }
+
+    // Un-mmaping doesn't close the file, so we still need to do that.
+    close(fd);
+    
     return 0;
 }
 
@@ -273,8 +356,8 @@ void visualize()
     int mins[10];
     int secs[10];
 
-    while (1)
-    {
+    //while (1)
+    //{
         sendBytes('c');
 
         i = 0;
@@ -322,7 +405,7 @@ void visualize()
         }
 
         usleep(100);
-    }
+    //}
 }
 
 /*
@@ -355,7 +438,7 @@ int arduinoConnect()
     }
 
     /* Wait for Arduino to reboot */
-    usleep(1000*1000);
+    usleep(1000 * 1000);
 
     /* Flush whatever is remaining in the buffer */
     tcflush(fd, TCIFLUSH);
@@ -408,11 +491,17 @@ void arduinoRate()
 void arduinoEnv()
 {
     sendBytes('e');
+    char r[4];
+    char g[4];
+    char b[4];
+
+    printf("\n%s", buf);
+    printf("\n\n");
 }
 
 void clearFile()
 {
-
+    mmap_write(NULL, NULL, NULL, NULL);
 }
 
 void sysExit()
