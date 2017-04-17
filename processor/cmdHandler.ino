@@ -55,7 +55,7 @@ void sendToSerial(char symbol, int data )
 void blinkLED(int bpms)
 {
   ledCount++;
-  if (ledCount > 900 / bpms)
+  if (ledCount > 90 / bpms)
   {
     digitalWrite(6, HIGH);
     ledCount = 0;

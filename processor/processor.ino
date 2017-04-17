@@ -28,7 +28,6 @@ void loop()
 {
 	updateClock();
 	updateCmd();
-	blinkLED(procBPM);
 
 	delay(50);
 

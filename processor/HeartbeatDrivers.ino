@@ -115,4 +115,5 @@ ISR(TIMER2_COMPA_vect)
 		procBPM = BPM;
 
 	sei();												// enable interrupts when youre done!
+	blinkLED(procBPM);
 }
