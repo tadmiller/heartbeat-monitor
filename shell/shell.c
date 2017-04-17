@@ -5,8 +5,8 @@
  * 
  */
 
-#define _XOPEN_SOURCE 500
-#define CRTSCTS  020000000000
+//#define _XOPEN_SOURCE 500
+//#define CRTSCTS  020000000000
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -415,7 +415,7 @@ void visualize()
 int arduinoConnect()
 {
     // Read the device path from input, or default to /dev/ttyACM0   
-	char *device = "/dev/ttyACM0";
+	char *device = "/dev/tty.usbmodem1421";
     printf("Connecting to %s\n", device);
 
     /*
@@ -491,11 +491,8 @@ void arduinoRate()
 void arduinoEnv()
 {
     sendBytes('e');
-    char r[4];
-    char g[4];
-    char b[4];
 
-    printf("\n%s", buf);
+    printf("\n%.25s", buf);
     printf("\n\n");
 }
 
