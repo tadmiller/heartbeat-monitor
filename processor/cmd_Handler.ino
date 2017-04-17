@@ -103,6 +103,8 @@ void updateCmd()
         }
         else if (cmd == 99)
             handleComs(sys_hour, sys_minute, sys_second, procBPM);
+        else if (cmd == 101)
+            printADJD_S311Values();
 
         cmd = 0;
     }
