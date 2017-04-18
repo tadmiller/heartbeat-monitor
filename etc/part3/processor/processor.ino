@@ -12,6 +12,7 @@
  * 
  * 
  ******************/
+int procBPM = 80;
 
 void setup()
 {
@@ -29,6 +30,7 @@ void loop()
 	updateClock();
 	updateCmd();
 	blinkLED(procBPM);
+printADJD_S311Values();
 
 	delay(50);
 

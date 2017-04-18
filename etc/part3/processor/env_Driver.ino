@@ -116,37 +116,36 @@ new values.
 */
 void printADJD_S311Values()
 {
-	/**
-  Serial.println("\t\t Red \t Green \t Blue \t Clear");
-  Serial.print("Data: \t\t ");
-  for (int i=0; i<4; i++)
-  {
-	Serial.print(colorData[i]);
-	Serial.print("\t ");
-  }
-  Serial.println();
-  Serial.print("Caps: \t\t ");
-  for (int i=0; i<4; i++)
-  {
-	Serial.print(readRegister(CAP_RED+i), DEC);
-	Serial.print("\t ");
-  }
-  Serial.println();
-  Serial.print("Int: \t\t ");
-  for (int i=0; i<4; i++)
-  {
-	Serial.print(readRegisterInt(INT_RED_LO+(i*2)), DEC);
-	Serial.print("\t ");
-  }
-  Serial.println();
-  Serial.print("Offset: \t ");
-  for (int i=0; i<4; i++)
-  {
-	Serial.print((signed char) readRegister(OFFSET_RED+i), DEC);
-	Serial.print("\t ");
-  }
-  Serial.println(); */
-	sendRGB(colorData[0], colorData[1], colorData[2]);
+	Serial.println("\t\t Red \t Green \t Blue \t Clear");
+	Serial.print("Data: \t\t ");
+	for (int i=0; i<4; i++)
+	{
+		Serial.print(colorData[i]);
+		Serial.print("\t ");
+	}
+	Serial.println();
+	Serial.print("Caps: \t\t ");
+	for (int i=0; i<4; i++)
+	{
+		Serial.print(readRegister(CAP_RED+i), DEC);
+		Serial.print("\t ");
+	}
+	Serial.println();
+	Serial.print("Int: \t\t ");
+	for (int i=0; i<4; i++)
+	{
+		Serial.print(readRegisterInt(INT_RED_LO+(i*2)), DEC);
+		Serial.print("\t ");
+	}
+	Serial.println();
+	Serial.print("Offset: \t ");
+	for (int i=0; i<4; i++)
+	{
+		Serial.print((signed char) readRegister(OFFSET_RED+i), DEC);
+		Serial.print("\t ");
+	}
+	Serial.println();
+	//sendRGB(colorData[0], colorData[1], colorData[2]);
 }
 
 /* initADJD_S311() - This function initializes the ADJD-S311 and its

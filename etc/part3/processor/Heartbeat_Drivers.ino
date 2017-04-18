@@ -11,7 +11,7 @@ volatile int T = 512;                     // used to find trough in pulse wave, 
 volatile int thresh = 530;                // used to find instant moment of heart beat, seeded
 volatile int amp = 0;                   // used to hold amplitude of pulse waveform, seeded
 volatile int BPM;                   // int that holds raw Analog in 0. updated every 2mS
-volatile int procBPM = 80;	// We will read from BPM to determine bad values and store correct reads in here.
+//volatile int procBPM = 80;	// We will read from BPM to determine bad values and store correct reads in here.
 volatile int Signal;                // holds the incoming raw data
 volatile int IBI = 600;             // int that holds the time interval between beats! Must be seeded!
 
