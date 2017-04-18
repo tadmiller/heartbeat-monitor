@@ -1,17 +1,14 @@
 #define _GNU_SOURCE
-#include <libgen.h>
-#include <limits.h>
 #include <pwd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/wait.h>
 #include <unistd.h>
 
 #include "shell.h"
 #include "ardlib.h"
 
-int main()
+int shell_init()
 {
     char *line;
     char **args;
