@@ -21,8 +21,12 @@ void arduino_pause();
 
 void arduino_resume();
 
+void arduino_clock_sync();
+
 int send_bytes(char byte);
 
 int init_tty(int fd);
+
+void fork_heartrate();
 
 #endif
