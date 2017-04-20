@@ -9,7 +9,7 @@ void arduino_heartrate();
 
 void arduino_close();
 
-int arduino_connect();
+int arduino_connect(char **args);
 
 void process_rate();
 

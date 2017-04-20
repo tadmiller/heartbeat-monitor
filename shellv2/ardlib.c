@@ -23,18 +23,8 @@
 #include "ardlib.h"
 #include "utils.h"
 
+char buffer[32];
 int fd;
-int count;
-char *device;
-char byte;
-char buf[32];
-char r_time[8];
-int count = 0;
-int msg;
-int bpm;
-int hour;
-int min;
-int sec;
 bool readingBuffer = false;
 
 // Initialize the connection to the Arduino.
@@ -105,7 +95,7 @@ int send_bytes(char byte)
         usleep(1000 * 1000);
 
     readingBuffer = true;
-    count = write(fd, &byte, 1);
+    int count = write(fd, &byte, 1);
     if (count == -1)
     {
         perror("write");
@@ -123,7 +113,7 @@ int send_bytes(char byte)
     sleep(1);
 
     // Read the response
-    count = read(fd, &buf, 32);
+    count = read(fd, &buffer, 32);
     if (count == -1) 
     {
         perror("read");
@@ -138,7 +128,7 @@ int send_bytes(char byte)
     }
 
     // Ensure the response is null-terminated
-    buf[count] = 0;
+    buffer[count] = 0;
     readingBuffer = false;
     //printf("(%d): %s", count, buf);
     return 0;
@@ -177,36 +167,41 @@ void process_rate()
     int mins[10];
     int secs[10];
 
+    int bpm;
+    int hour;
+    int min;
+    int sec;
+
     while (1)
     {
         send_bytes('c');
 
         i = 0;
 
-        // Read the message count. Can be used to retransmit data from Arduino
-        while (buf[i] != 'C')
-            i++;
-        msg = buf[i + 2];
+        // // Read the message count. Can be used to retransmit data from Arduino
+        // while (buf[i] != 'C')
+        //     i++;
+        // msg = buf[i + 2];
 
         // Read the bpm
-        while (buf[i] != 'B')
+        while (buffer[i] != 'B')
             i++;
-        bpm = (int) buf[i + 2];
+        bpm = (int) buffer[i + 2];
 
         // Read the hour of the BPM recorded
-        while (buf[i] != 'H')
+        while (buffer[i] != 'H')
             i++;
-        hour = (int) buf[i + 2] - 32;
+        hour = (int) buffer[i + 2] - 32;
 
         // Read the minute of the BPM recorded
-        while (buf[i] != 'M')
+        while (buffer[i] != 'M')
             i++;
-        min = (int) buf[i + 2] - 32;
+        min = (int) buffer[i + 2] - 32;
         
         // Read the second of the BPM recorded
-        while (buf[i] != 'S')
+        while (buffer[i] != 'S')
             i++;
-        sec = (int) buf[i + 2] - 32;
+        sec = (int) buffer[i + 2] - 32;
 
         //printf("\nBPM: %d at %d:%d:%d", bpm, hour, min, sec);
 
@@ -252,12 +247,11 @@ void flush()
 **ConnectArduino********************************************************************
 */
 
-int arduino_connect()
-{
-    // Read the device path from input, or default to /dev/ttyACM0   
-	char *device = "/dev/ttyACM0";
-    printf("Connecting to %s\n", device);
+int arduino_connect(char **args)
+{   // Read the device path from input, or default to /dev/ttyACM0   
+    char *device = *(args + 1) != NULL ? *(args + 1) : "/dev/ttyACM0";
 
+    printf("Connecting to %s\n", device);
     /*
      * Need the following flags to open:
      * O_RDWR: to read from/write to the devices
@@ -265,13 +259,15 @@ int arduino_connect()
      * O_NDELAY: Open the resource in nonblocking mode
      */
     fd = open(device, O_RDWR | O_NOCTTY | O_NDELAY);
-    if (fd == -1) {
+    if (fd == -1)
+    {
         perror("Error opening serial");
         return -1;
     }
 
     /* Configure settings on the serial port */
-    if (init_tty(fd) == -1) {
+    if (init_tty(fd) == -1)
+    {
         perror("init");
         close(fd);
         return -1;
@@ -316,31 +312,36 @@ void arduino_heartrate()
 {
     int i = 0;
 
+    int bpm;
+    int hour;
+    int min;
+    int sec;
+
     send_bytes('c');
 
     // Read the bpm
-    while (buf[i] != 'B')
+    while (buffer[i] != 'B')
         i++;
-    bpm = (int) buf[i + 2];
+    bpm = (int) buffer[i + 2];
 
     // Read the hour of the BPM recorded
-    while (buf[i] != 'H')
+    while (buffer[i] != 'H')
         i++;
-    hour = (int) buf[i + 2] - 32;
+    hour = (int) buffer[i + 2] - 32;
 
     // Read the minute of the BPM recorded
-    while (buf[i] != 'M')
+    while (buffer[i] != 'M')
         i++;
-    min = (int) buf[i + 2] - 32;
+    min = (int) buffer[i + 2] - 32;
     
     // Read the second of the BPM recorded
-    while (buf[i] != 'S')
+    while (buffer[i] != 'S')
         i++;
-    sec = (int) buf[i + 2] - 32;
+    sec = (int) buffer[i + 2] - 32;
 
     fflush(stdin);
     fflush(stdout);
-    //printf("%s", buf);
+    //printf("%s", buffer);
     printf("\n%.3d BPM at %.2d:%.2d:%.2d", bpm, hour, min, sec);
     printf("\n\n");
 }
@@ -349,7 +350,7 @@ void arduino_env()
 {
     send_bytes('e');
 
-    printf("\n%.25s", buf);
+    printf("\n%.25s", buffer);
     printf("\n\n");
 }
 
@@ -362,7 +363,7 @@ void sys_exit()
 
 void get_hist()
 {
-    scanf("%s", r_time);
+    //scanf("%s", r_time);
 
     mmap_read();
 }
