@@ -146,10 +146,8 @@ char *mmap_read(char *file)
 	const char *filepath = file != NULL ? file : "/tmp/histogram.csv";
 	const int fd = open(filepath, O_RDONLY, (mode_t) 0600);
 
-	printf("\nfile is: %s", filepath);
-
 	struct stat fileInfo = {0};
-	//char *map;
+	char *map;
 
 	if (fd == -1)
 	{
@@ -169,7 +167,7 @@ char *mmap_read(char *file)
 		return NULL;
 	}  //printf("File size is %ji\n", (intmax_t)fileInfo.st_size);
 
-	char *map = mmap(0, fileInfo.st_size, PROT_READ, MAP_SHARED, fd, 0);
+	map = mmap(0, fileInfo.st_size, PROT_READ, MAP_SHARED, fd, 0);
 
 	if (map == MAP_FAILED)
 	{
@@ -184,19 +182,39 @@ char *mmap_read(char *file)
 	return map;
 }
 
+void print_stars(int len)
+{
+	for (size_t i = 0; i < len; i++)
+		printf("*");
+}
+
+int get_mean(int *group)
+{
+	int sum = 0;
+
+	for (size_t i = 1; i < group[0]; i++)
+		sum += group[i];
+
+	return sum / (group[0] - 1);
+}
+
+int get_std_dev(int *group)
+{
+	return 0;
+}
 
 // Print a star histogram using the recorded dates and times.
 void print_hist(int **groups, int len)
 {
 	for (size_t i = 0; i < len; i++)
 	{
-		printf("\n%.2d:%.2d", inverse_bucket_h(i), inverse_bucket_m(i));
-
 		if (groups[i])
 		{
-			//printf("\n");
-			for (size_t j = 1; j < groups[i][j]; j++)
-				printf("\t%d ", groups[i][j]);
+			printf("\n%.2d:%.2d | μ %.2d |\t", inverse_bucket_h(i), inverse_bucket_m(i), get_mean(groups[i]));
+			print_stars(groups[i][1]);
+			printf("\n      | σ %.2d |\t", 0);
+			print_stars(groups[i][1]);
+			printf("\n");
 		}
 	}
 
@@ -242,8 +260,6 @@ void parse_hist_csv(char *map, int len, int *bpms, int *hours, int *mins, int *s
 {
 	size_t j = 0;
 
-	printf("\n%d:", arrLen);
-
 	for (size_t i = 0; i < arrLen; i++)
 	{
 		parse_commas(map, len, bpms, i, &j);
@@ -255,12 +271,12 @@ void parse_hist_csv(char *map, int len, int *bpms, int *hours, int *mins, int *s
 
 int inverse_bucket_h(int bucket)
 {
-	return 0;
+	return bucket / 4;
 }
 
 int inverse_bucket_m(int bucket)
 {
-	return 0;
+	return (bucket % 4) * 15;
 }
 
 int get_bucket(int hour, int min)
@@ -286,16 +302,10 @@ void process_groups(int *bpms, int *hours, int *mins, int *secs, int arrLen, int
 			groups[bucket] = malloc(sizeof(int) * arrLen + 1);
 			**(groups + bucket) = 0;
 		}
-		else
-		{
-			//printf("%d", **(groups + bucket));
-			groups[bucket][groups[bucket][0]] = bpms[i];
-			
-		}
+
 		groups[bucket][0] += 1;
-		//printf("%d", GET_BUCKET());
+		groups[bucket][groups[bucket][0]] = bpms[i];
 	}
-	//groups = malloc(sizeof(int *) * 10);
 }
 
 void process_hist_v2(char **args)
