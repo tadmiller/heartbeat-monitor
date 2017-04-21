@@ -12,6 +12,8 @@
 #include <math.h>
 #include "utils.h"
 
+#define GROUP_SIZE 96
+
 // Open and append 10 BPMs to a file
 int mmap_write(int bpms[10], int hours[10], int mins[10], int secs[10])
 {
@@ -184,12 +186,9 @@ char *mmap_read(char *file)
 
 
 // Print a star histogram using the recorded dates and times.
-void print_hist(int *bpms, int *hours, int *mins, int *secs)
+void print_hist(int *bpms, int *hours, int *mins, int *secs, int arrLen)
 {
-	int i;
-	int j;
-
-	for (i = 0; i < 10; i++)
+	for (size_t i = 0; i < 4; i++)
 	{
 		printf("\n");
 		
@@ -199,9 +198,11 @@ void print_hist(int *bpms, int *hours, int *mins, int *secs)
 
 		printf(" | ");
 
-		for (j = 0; j < bpms[i]; j++)
+		for (size_t j = 0; j < bpms[i]; j++)
 			printf("*");
 	}
+
+	printf("\n");
 }
 
 // str = map, len = strlen(map)
@@ -254,6 +255,41 @@ void parse_hist_csv(char *map, int len, int *bpms, int *hours, int *mins, int *s
 	}
 }
 
+int get_bucket(int hour, int min)
+{
+	if (hour > 23)
+		hour = 23;
+	if (min > 59)
+		min = 59;
+
+	return (hour * 4) + (min / 15);
+}
+
+void process_groups(int *bpms, int *hours, int *mins, int *secs, int arrLen, int **groups)
+{
+	int bucket = 0;
+
+	for (size_t i = 0; i < arrLen; i++)
+	{
+		bucket = get_bucket(hours[i], mins[i]);
+
+		if (groups[bucket] == NULL)
+		{	// arrLen is max elems
+			groups[bucket] = malloc(sizeof(int) * arrLen + 1);
+			**(groups + bucket) = 0;
+		}
+		else
+		{
+			//printf("%d", **(groups + bucket));
+			groups[bucket][groups[bucket][0]] = bpms[i];
+			
+		}
+		groups[bucket][0] += 1;
+		//printf("%d", GET_BUCKET());
+	}
+	//groups = malloc(sizeof(int *) * 10);
+}
+
 void process_hist_v2(char **args)
 {
 	char *map = mmap_read(*(args + 1));
@@ -265,6 +301,9 @@ void process_hist_v2(char **args)
 	int *secs;
 	int arrLen;
 
+	// We'll use size 96 as a static size. This is because we have 4 15 minute intervals, times 24 hours. 4 * 24 = 96.
+	int **groups;
+
 	if (map == NULL)
 		return;
 
@@ -272,19 +311,36 @@ void process_hist_v2(char **args)
 	if (len < 13)
 		return;
 
-	arrLen = len / 15;
+	arrLen = (len / 15) + 1;
 	bpms = malloc(sizeof(int) * arrLen);
 	hours = malloc(sizeof(int) * arrLen);
 	mins = malloc(sizeof(int) * arrLen);
 	secs = malloc(sizeof(int) * arrLen);
 
+	groups = malloc(sizeof(int *) * GROUP_SIZE);
+	for (size_t i = 0; i < GROUP_SIZE; i++)
+		groups[i] = NULL;
+
 	parse_hist_csv(map, len, bpms, hours, mins, secs, arrLen);
+	process_groups(bpms, hours, mins, secs, arrLen, groups);
+	print_hist(groups);
 
 	munmap(map, strlen(map));
 	free(bpms);
 	free(hours);
 	free(mins);
 	free(secs);
+
+	for (size_t i = 0; i < 96; i++)
+	{
+		if (*(groups + i))
+		{
+			printf("\nnot null: %ld:%d", i, groups[i][0]);
+			free(groups[i]);
+		}
+	}
+
+	free(groups);
 }
 
 void clear_mmap()
