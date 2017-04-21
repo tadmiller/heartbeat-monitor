@@ -138,7 +138,7 @@ int shell_exec(char **args)
 
 	// Required commands
 	if (strcmp(*args, "date") == 0)   //if input is resume then start resume method
-		printf("date");
+		arduino_clock(args);
 	else if (strcmp(*args, "regression") == 0)   //if input is resume then start resume method
 		printf("regression");
 	// else if (strcmp(*args, "stat") == 0)
@@ -161,8 +161,6 @@ int shell_exec(char **args)
 	// else if (strcmp(*args, "flush") == 0)
 	else if (strcmp(*args, "collect") == 0)
 		fork_heartrate();
-	else if (strcmp(*args, "sync") == 0)
-		arduino_clock_sync();
 
 
 	//     connectArduino();

@@ -89,7 +89,7 @@ int init_tty(int fd)
 }
 
 // Send a byte to the Arduino. Read the response into the character array "buf".
-int send_bytes(char byte)
+int send_byte(char byte)
 {
   // Write this letter of the alphabet
 	while (readingBuffer)
@@ -138,23 +138,23 @@ int send_bytes(char byte)
 // Sends char r to arduino to provoke actions on display
 void arduino_resume()
 {
-	send_bytes('r');
+	send_byte('r');
 }
 
 // Sends char p to arduino to provoke actions on display
 void arduino_pause()
 {
-	send_bytes('p');
+	send_byte('p');
 }
 
 // Sends char s to arduino to provoke actions on display
 void arduino_show()
 {
 	int num;
-	send_bytes('s');
+	send_byte('s');
 	//printf("Input what integer you want to be shown: ");
 	scanf("%d", &num);
-	send_bytes(num);
+	send_byte(num);
 }
 
 // Data visualizer. Reads data from Arduino and stores into 10 character array.
@@ -175,7 +175,7 @@ void process_rate()
 
 	while (1)
 	{
-		send_bytes('c');
+		send_byte('c');
 
 		i = 0;
 
@@ -229,7 +229,7 @@ void flush()
 {
 	fflush(stdin);
 	fflush(stdout);
-	send_bytes('c');
+	send_byte('c');
 	fflush(stdin);
 	fflush(stdout);
 	tcflush(fd, TCIFLUSH);
@@ -238,7 +238,7 @@ void flush()
 
 	fflush(stdin);
 	fflush(stdout);
-	send_bytes('c');
+	send_byte('c');
 	fflush(stdin);
 	fflush(stdout);
 	tcflush(fd, TCIFLUSH);
@@ -318,7 +318,7 @@ void arduino_heartrate()
 	int min;
 	int sec;
 
-	send_bytes('c');
+	send_byte('c');
 
 	// Read the bpm
 	while (buffer[i] != 'B')
@@ -349,7 +349,7 @@ void arduino_heartrate()
 
 void arduino_env()
 {
-	send_bytes('e');
+	send_byte('e');
 
 	printf("\n%.25s", buffer);
 	printf("\n\n");
@@ -407,6 +407,16 @@ void get_hist()
 //    // printf("You exited the program\n");
    
 // }
+
+void arduino_clock(char **args)
+{
+	if (*(args + 1) != NULL)
+		if (strcmp(*(args + 1), "sync") == 0)
+			printf("sync");
+
+	send_byte('t');
+	printf("date");
+}
 
 void arduino_clock_sync()
 {

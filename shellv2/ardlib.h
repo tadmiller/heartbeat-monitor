@@ -21,7 +21,9 @@ void arduino_pause();
 
 void arduino_resume();
 
-void arduino_clock_sync();
+//void arduino_clock_sync();
+
+void arduino_clock(char **args);
 
 int send_bytes(char byte);
 
