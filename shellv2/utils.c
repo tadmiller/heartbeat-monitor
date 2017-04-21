@@ -350,10 +350,8 @@ void process_hist_v2(char **args)
 	free(secs);
 
 	for (size_t i = 0; i < 96; i++)
-	{
 		if (*(groups + i))
 			free(groups[i]);
-	}
 
 	free(groups);
 }

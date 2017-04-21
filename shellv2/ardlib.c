@@ -24,7 +24,8 @@
 #include "ardlib.h"
 #include "utils.h"
 
-char buffer[32];
+#define BUFFER_SIZE 32
+
 int fd;
 bool readingBuffer = false;
 
@@ -89,50 +90,55 @@ int init_tty(int fd)
 }
 
 // Send a byte to the Arduino. Read the response into the character array "buf".
-int send_byte(char byte)
+char *send_byte(char byte)
 {
-  // Write this letter of the alphabet
+	int count;
+	char *buffer;
+
 	while (readingBuffer)
 		usleep(1000 * 1000);
 
 	readingBuffer = true;
-	int count = write(fd, &byte, 1);
+	count = write(fd, &byte, 1);
+
 	if (count == -1)
 	{
 		perror("write");
 		close(fd);
-		return -1;
+		return NULL;
 	}
 	else if (count == 0)
 	{
 		fprintf(stderr, "No data written\n");
 		close(fd);
-		return -1;
+		return NULL;
 	}
 
 	// Wait for data to transmit
 	sleep(1);
 
 	// Read the response
-	count = read(fd, &buffer, 32);
+	buffer = malloc(sizeof(char) * BUFFER_SIZE);
+	count = read(fd, &buffer, BUFFER_SIZE);
+
 	if (count == -1) 
 	{
 		perror("read");
 		close(fd);
-		return -1;
+		free(buffer);
+		return NULL;
 	}
 	else if (count == 0)
 	{
-		//fprintf(stderr, "No data returned\n");
-		//continue;
-		return 0;
+		free(buffer);
+		return NULL;
 	}
 
 	// Ensure the response is null-terminated
 	buffer[count] = 0;
 	readingBuffer = false;
 	//printf("(%d): %s", count, buf);
-	return 0;
+	return buffer;
 }
 
 // Sends char r to arduino to provoke actions on display
@@ -161,7 +167,7 @@ void arduino_show()
 // Gets sent to mmap'd file after 10 reads.
 void process_rate()
 {
-	int i;
+	/*int i;
 	int count = 0;
 	int bpms[10];
 	int hours[10];
@@ -175,7 +181,7 @@ void process_rate()
 
 	while (1)
 	{
-		send_byte('c');
+		char *buffer = send_byte('c');
 
 		i = 0;
 
@@ -222,7 +228,7 @@ void process_rate()
 		}
 
 		usleep(1000 * 1000 * 3);
-	}
+	}*/
 }
 
 void flush()
@@ -318,7 +324,7 @@ void arduino_heartrate()
 	int min;
 	int sec;
 
-	send_byte('c');
+	char *buffer = send_byte('c');
 
 	// Read the bpm
 	while (buffer[i] != 'B')
@@ -339,6 +345,7 @@ void arduino_heartrate()
 	while (buffer[i] != 'S')
 		i++;
 	sec = (int) buffer[i + 2] - 32;
+	free(buffer);
 
 	fflush(stdin);
 	fflush(stdout);
@@ -349,9 +356,10 @@ void arduino_heartrate()
 
 void arduino_env()
 {
-	send_byte('e');
+	char *buffer = send_byte('e');
 
 	printf("\n%.25s", buffer);
+	free(buffer);
 	printf("\n\n");
 }
 

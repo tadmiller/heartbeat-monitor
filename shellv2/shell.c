@@ -153,10 +153,9 @@ int shell_exec(char **args)
 	// else if (strcmp(*args, "reset") == 0)
 	// else if (strcmp(*args, "resume") == 0)
 	// else if (strcmp(*args, "show") == 0)
-	else if (strcmp(*args, "connect") == 0)
+	else if (strcmp(*args, "connect") == 0 || strcmp(*args, "c") == 0)
 		arduino_connect(args);
 	// Additional commands
-	// else if (strcmp(*args, "connect") == 0 || strcmp(*args, "c") == 0)
 	// else if (strcmp(*args, "close") == 0)
 	// else if (strcmp(*args, "flush") == 0)
 	else if (strcmp(*args, "collect") == 0)
