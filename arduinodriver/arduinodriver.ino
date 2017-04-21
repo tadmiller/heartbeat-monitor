@@ -1,4 +1,4 @@
-/*/
+/*
  * @name Processor.ino 
  * @vers 0.3
  * @auth Theodore Miller, Danny Nsouli
@@ -12,6 +12,17 @@
  * 
  * 
  ******************/
+
+#include <Arduino.h>
+#include <Wire.h>
+
+#include "rgblib.h"
+#include "comslib.h"
+#include "cmdlib.h"
+//#include "envlib.h"
+#include "rtclib.h"
+#include "heartbeatlib.h"
+
 int procBPM = 80;
 
 void setup()
@@ -21,7 +32,7 @@ void setup()
 	initMatrix();   // Initialize RGB Matrix
 	initClock();    // Initialize clock
 	initHeartbeat(); // sets up to read Pulse Sensor signal every 2mS
-	initLightSensor();
+	//initLightSensor();
 	pinMode(6, OUTPUT);
 }
 
@@ -30,7 +41,6 @@ void loop()
 	updateClock();
 	updateCmd();
 	blinkLED(procBPM);
-printADJD_S311Values();
 
 	delay(50);
 
