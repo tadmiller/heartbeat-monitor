@@ -14,6 +14,12 @@
 // Initialize the Arduino clock
 void initClock();
 
+int getSysHour();
+
+int getSysMin();
+
+int getSysSec();
+
 // Update the reading of the clock to the latest recorded time.
 void updateClock();
 

@@ -6,6 +6,7 @@
 #include "rgblib.h"
 #include "heartbeatlib.h"
 #include "rtclib.h"
+#include "comslib.h"
 
 #define PROCESSING_VISUALIZER 1
 #define SERIAL_PLOTTER 2

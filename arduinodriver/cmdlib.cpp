@@ -3,7 +3,6 @@
 boolean paused = false;
 boolean ledStatus = false;
 
-int outputType = SERIAL_PLOTTER;
 int dispVal = 0;
 int cmd = 0;
 int ledCount = 0;
@@ -35,14 +34,14 @@ void updateCmd()
 		cmd = Serial.read();
 	
 	// If there's a new pulse, and we haven't received a command, and we're not paused from the cmd prompt
-	if (QS == true && cmd == 0 && !paused)
+	if (getPulse() && cmd == 0 && !paused)
 	{
 		//serialOutput();
-		QS = false;                      // reset the Quantified Self flag for next time
+		receivedPulse(false);                      // reset the Quantified Self flag for next time
 
 		// We can't send values higher than 99 since the display is only two numbers.
 		// Then we write our new BPM to the display
-		matrixWrite(procBPM > 99 ? 99 : procBPM);
+		matrixWrite(getBPM() > 99 ? 99 : getBPM());
 	}
 	else
 	{   // 112 == 'p' which means we pause the program state.
@@ -66,7 +65,7 @@ void updateCmd()
 			matrixWrite(dispVal);
 		}
 		else if (cmd == 99)
-			handleComs(sys_hour, sys_minute, sys_second, procBPM);
+			handleComs(getSysHour(), getSysMin(), getSysSec(), getBPM());
 		// else if (cmd == 101)
 		// 	printADJD_S311Values();
 

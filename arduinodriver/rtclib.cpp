@@ -25,6 +25,21 @@ void initClock()
 	rtc.setSecond(String(__TIME__).substring(6, 8).toInt());
 }
 
+int getSysHour()
+{
+	return sys_hour;
+}
+
+int getSysMin()
+{
+	return sys_minute;
+}
+
+int getSysSec()
+{
+	return sys_second;
+}
+
 // Update the reading of the clock to the latest recorded time.
 void updateClock()
 {

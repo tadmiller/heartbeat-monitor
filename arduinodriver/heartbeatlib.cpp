@@ -36,6 +36,16 @@ int getBPM()
 	return stableBPM;
 }
 
+boolean getPulse()
+{
+	return QS;
+}
+
+void receivedPulse(boolean status)
+{
+	QS = status;
+}
+
 // THIS IS THE TIMER 2 INTERRUPT SERVICE ROUTINE.
 // Timer 2 makes sure that we take a reading every 2 miliseconds
 ISR(TIMER2_COMPA_vect)
