@@ -99,10 +99,16 @@ char *send_byte(char byte)
 	char *buffer;
 
 	while (readingBuffer == true)
+	{
+		printf("\nWaiting for thread to finish reading buffer...");
 		usleep(1000 * 1000);
+	}
 
+	printf("\nsending: %d", byte);
 	readingBuffer = true;
 	count = write(fd, &byte, 1);
+
+	printf("\ndone write");
 
 	if (count == -1)
 	{
@@ -119,6 +125,8 @@ char *send_byte(char byte)
 
 	// Wait for data to transmit
 	sleep(1);
+
+	printf("\nbuilding response");
 
 	// Read the response
 	buffer = malloc(sizeof(char) * BUFFER_SIZE);
