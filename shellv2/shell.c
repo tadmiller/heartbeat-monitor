@@ -148,15 +148,19 @@ int shell_exec(char **args)
 		sys_exit();
 	else if (strcmp(*args, "hist") == 0)
 		process_hist_v2(args);
-	// else if (strcmp(*args, "pause") == 0)
+	else if (strcmp(*args, "pause") == 0)
+		arduino_pause();
 	// else if (strcmp(*args, "rate") == 0)
 	// else if (strcmp(*args, "reset") == 0)
-	// else if (strcmp(*args, "resume") == 0)
-	// else if (strcmp(*args, "show") == 0)
+	else if (strcmp(*args, "resume") == 0)
+		arduino_resume();
+	else if (strcmp(*args, "show") == 0)
+		arduino_show(args);
 	else if (strcmp(*args, "connect") == 0 || strcmp(*args, "c") == 0)
 		arduino_connect(args);
 	// Additional commands
-	// else if (strcmp(*args, "close") == 0)
+	else if (strcmp(*args, "close") == 0)
+		arduino_close();
 	// else if (strcmp(*args, "flush") == 0)
 	else if (strcmp(*args, "collect") == 0)
 		fork_heartrate();

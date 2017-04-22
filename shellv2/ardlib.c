@@ -144,23 +144,28 @@ char *send_byte(char byte)
 // Sends char r to arduino to provoke actions on display
 void arduino_resume()
 {
-	send_byte('r');
+	char *c = send_byte('r');
+
+	if (c != NULL)
+		free(c);
 }
 
 // Sends char p to arduino to provoke actions on display
 void arduino_pause()
 {
-	send_byte('p');
+	char *c = send_byte('p');
+
+	if (c != NULL)
+		free(c);
 }
 
 // Sends char s to arduino to provoke actions on display
-void arduino_show()
+void arduino_show(char **args)
 {
-	int num;
-	send_byte('s');
-	//printf("Input what integer you want to be shown: ");
-	scanf("%d", &num);
-	send_byte(num);
+	char *num = *(args + 1) != NULL ? *(args + 1) : 0;
+
+	free(send_byte('s'));
+	free(send_byte(atoi(num)));
 }
 
 // Data visualizer. Reads data from Arduino and stores into 10 character array.
