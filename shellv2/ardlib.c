@@ -419,34 +419,43 @@ void get_hist()
 
 void arduino_clock(char **args)
 {
+	char *time;
+
 	if (*(args + 1) != NULL)
 		if (strcmp(*(args + 1), "sync") == 0)
 			arduino_clock_sync();
 
-	send_byte('t');
-	printf("date");
+	time = send_byte('t');
+
+	printf("%s", time);
+
+	free(time);
 }
 
 void arduino_clock_sync()
 {
 	time_t t;
 	struct tm *curr_time;
-	char *out = malloc(sizeof(char));
 
 	time(&t);
 	curr_time = localtime(&t);
 
 	send_byte('c');
 
+	printf("\nSending hour...");
+
 	send_byte('h');
 	send_byte(curr_time -> tm_hour);
+
+	printf("\nSending minute...");
 
 	send_byte('m');
 	send_byte(curr_time -> tm_min);
 
+	printf("\nSending second...");
+
 	send_byte('s');
 	send_byte(curr_time -> tm_sec);
-	//printf("\n%d:%d:%d\n", curr_time -> tm_hour, curr_time -> tm_min, curr_time -> tm_sec);
 }
 
 void fork_heartrate()
@@ -458,19 +467,3 @@ void fork_heartrate()
 	else
 		process_rate();
 }
-
-// int main()
-// {
-//     arduinoConnect();
-//     pid_t pid = fork();
-
-//     if (pid == 0)
-//         inputCmd();
-//     else
-//     {
-//        usleep(1000 * 1000 * 10);
-//        process_rate();
-//     }
-
-// 	return 0;
-// }

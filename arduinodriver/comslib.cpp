@@ -30,8 +30,7 @@ void sendRGB(int r, int g, int b)
 
 void receiveClock()
 {
-	if (Serial.available() > 0)
-		cmd = Serial.read();
+
 }
 
 char receiveByte()
