@@ -436,15 +436,16 @@ void arduino_clock_sync()
 	time(&t);
 	curr_time = localtime(&t);
 
-	//out = send_byte('d');
+	send_byte('c');
 
-	do
-	{
-		free(out);
+	send_byte('h');
+	send_byte(curr_time -> tm_hour);
 
-		out = send_byte('d');
-	}
-	while (strcmp(out, "d") != 0)
+	send_byte('m');
+	send_byte(curr_time -> tm_min);
+
+	send_byte('s');
+	send_byte(curr_time -> tm_sec);
 	//printf("\n%d:%d:%d\n", curr_time -> tm_hour, curr_time -> tm_min, curr_time -> tm_sec);
 }
 

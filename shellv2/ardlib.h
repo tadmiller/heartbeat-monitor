@@ -53,6 +53,8 @@ char *arduino_rate(bool keep);
 
 void arduino_clock(char **args);
 
+void arduino_clock_sync();
+
 int send_bytes(char byte);
 
 int init_tty(int fd);

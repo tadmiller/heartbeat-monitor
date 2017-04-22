@@ -66,7 +66,7 @@ void updateCmd()
 		}
 		else if (cmd == 99)
 			handleComs(getSysHour(), getSysMin(), getSysSec(), getBPM());
-		else if (cmd == 111)
+		else if (cmd == 'c')
 			receiveClock();
 		// else if (cmd == 101)
 		// 	printADJD_S311Values();
