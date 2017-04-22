@@ -1,6 +1,32 @@
 #ifndef _ARDLIB_H
 #define _ARDLIB_H
 
+#ifndef _XOPEN_SOURCE
+#define _XOPEN_SOURCE 500
+#endif
+
+#ifndef CRTSCTS
+#define CRTSCTS 020000000000
+#endif
+
+#define BUFFER_SIZE 32
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <termios.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <sys/mman.h>
+#include <stdbool.h>
+#include <time.h>
+
+#include "utils.h"
+
 void sys_exit();
 
 void arduino_env();
@@ -20,6 +46,8 @@ void arduino_show();
 void arduino_pause();
 
 void arduino_resume();
+
+char *arduino_rate(bool keep);
 
 //void arduino_clock_sync();
 

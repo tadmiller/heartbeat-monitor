@@ -150,7 +150,8 @@ int shell_exec(char **args)
 		process_hist_v2(args);
 	else if (strcmp(*args, "pause") == 0)
 		arduino_pause();
-	// else if (strcmp(*args, "rate") == 0)
+	else if (strcmp(*args, "rate") == 0)
+		arduino_rate(0);
 	// else if (strcmp(*args, "reset") == 0)
 	else if (strcmp(*args, "resume") == 0)
 		arduino_resume();

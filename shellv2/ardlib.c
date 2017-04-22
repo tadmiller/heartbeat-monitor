@@ -6,25 +6,7 @@
  */
  // http://www.wassen.net/sqlite-c.html
 
-#define _XOPEN_SOURCE 500
-#define CRTSCTS  020000000000
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <termios.h>
-#include <stdint.h>
-#include <sys/mman.h>
-#include <stdbool.h>
-#include <time.h>
-
 #include "ardlib.h"
-#include "utils.h"
-
-#define BUFFER_SIZE 32
 
 int fd;
 bool readingBuffer = false;
@@ -152,33 +134,32 @@ char *send_byte(char byte)
 	return buffer;
 }
 
+char *arduino_rate(bool keep)
+{
+	return NULL;
+}
+
 // Sends char r to arduino to provoke actions on display
 void arduino_resume()
 {
-	char *c = send_byte('r');
-
-	if (c != NULL)
-		free(c);
+	send_byte('r');
 }
 
 // Sends char p to arduino to provoke actions on display
 void arduino_pause()
 {
-	char *c = send_byte('p');
-
-	if (c != NULL)
-		free(c);
+	send_byte('p');
 }
 
 // Sends char s to arduino to provoke actions on display
 void arduino_show(char **args)
 {
-	char *num = *(args + 1) != NULL ? *(args + 1) : "0\0";
+	int num = *(args + 1) != NULL ? atoi(*(args + 1)) : 0;
 
-	printf("num is: %d:%d\n", atoi(num), fd);
+	printf("num is: %d:%d\n", num, fd);
 
 	send_byte('s');
-	send_byte(atoi(num));
+	send_byte(num);
 
 	printf("\ndone show\n");
 }
