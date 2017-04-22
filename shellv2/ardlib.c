@@ -131,6 +131,7 @@ char *send_byte(char byte)
 	// Read the response
 	buffer = malloc(sizeof(char) * BUFFER_SIZE);
 	count = read(fd, &buffer, BUFFER_SIZE);
+	readingBuffer = false;
 
 	if (count == -1) 
 	{
@@ -147,7 +148,6 @@ char *send_byte(char byte)
 
 	// Ensure the response is null-terminated
 	buffer[count] = 0;
-	readingBuffer = false;
 	//printf("(%d): %s", count, buf);
 	return buffer;
 }
