@@ -421,7 +421,7 @@ void arduino_clock(char **args)
 {
 	if (*(args + 1) != NULL)
 		if (strcmp(*(args + 1), "sync") == 0)
-			printf("sync");
+			arduino_clock_sync();
 
 	send_byte('t');
 	printf("date");
@@ -431,10 +431,21 @@ void arduino_clock_sync()
 {
 	time_t t;
 	struct tm *curr_time;
+	char *out = malloc(sizeof(char));
 
 	time(&t);
 	curr_time = localtime(&t);
-	printf("\n%d:%d:%d\n", curr_time -> tm_hour, curr_time -> tm_min, curr_time -> tm_sec);
+
+	//out = send_byte('d');
+
+	do
+	{
+		free(out);
+
+		out = send_byte('d');
+	}
+	while (strcmp(out, "d") != 0)
+	//printf("\n%d:%d:%d\n", curr_time -> tm_hour, curr_time -> tm_min, curr_time -> tm_sec);
 }
 
 void fork_heartrate()

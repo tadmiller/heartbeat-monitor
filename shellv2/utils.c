@@ -105,7 +105,7 @@ void process_hist(char *map)
 {
 	char r_time[8];
 	char bpm[4];
-	char time[9];
+	char time[11];
 	bool selected = true;
 	//bool onbpm = true; // false means on time
 
