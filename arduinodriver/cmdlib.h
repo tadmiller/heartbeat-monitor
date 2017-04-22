@@ -3,6 +3,9 @@
 
 #include <Arduino.h>
 #include <Wire.h>
+#include "rgblib.h"
+#include "heartbeatlib.h"
+#include "rtclib.h"
 
 #define PROCESSING_VISUALIZER 1
 #define SERIAL_PLOTTER 2

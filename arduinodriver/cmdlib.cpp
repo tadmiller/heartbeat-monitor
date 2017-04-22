@@ -6,41 +6,7 @@ boolean ledStatus = false;
 int outputType = SERIAL_PLOTTER;
 int dispVal = 0;
 int cmd = 0;
-
 int ledCount = 0;
-
-void serialOutput()
-{   // Decide How To Output Serial.
-	switch(outputType)
-	{
-		case PROCESSING_VISUALIZER:
-			sendToSerial('S', Signal);     // goes to sendToSerial function
-			break;
-		case SERIAL_PLOTTER:  // open the Arduino Serial Plotter to visualize these data
-			Serial.print(BPM);
-			Serial.print(",");
-			Serial.print(IBI);
-			Serial.print(",");
-			Serial.println(Signal);
-			break;
-		default: 
-			break;
-	}
-}
-
-//  Decides How To OutPut BPM and IBI Data
-void serialOutputWhenBeatHappens()
-{
-	switch(outputType)
-	{
-		case PROCESSING_VISUALIZER:    // find it here https://github.com/WorldFamousElectronics/PulseSensor_Amped_Processing_Visualizer
-			sendToSerial('B',BPM);   // send heart rate with a 'B' prefix
-			sendToSerial('Q',IBI);   // send time between beats with a 'Q' prefix
-			break;
-		default:
-			break;
-	}
-}
 
 //  Sends Data to Pulse Sensor Processing App, Native Mac App, or Third-party Serial Readers.
 void sendToSerial(char symbol, int data)
@@ -51,14 +17,15 @@ void sendToSerial(char symbol, int data)
 
 void blinkLED(int bpms)
 {
-  ledCount++;
-  if (ledCount > 900 / bpms)
-  {
-	digitalWrite(6, HIGH);
-	ledCount = 0;
-  }
-  else
-	digitalWrite(6, LOW);
+	ledCount++;
+	
+	if (ledCount > 900 / bpms)
+	{
+		digitalWrite(6, HIGH);
+		ledCount = 0;
+	}
+	else
+		digitalWrite(6, LOW);
 }
 
 void updateCmd()

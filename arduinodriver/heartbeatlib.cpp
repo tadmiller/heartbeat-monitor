@@ -1,3 +1,4 @@
+#include "heartbeatlib.h"
 
 // Volatile Variables, used in the interrupt service routine!
 
@@ -10,7 +11,7 @@ volatile int T = 512;                     // used to find trough in pulse wave, 
 volatile int thresh = 530;                // used to find instant moment of heart beat, seeded
 volatile int amp = 0;                   // used to hold amplitude of pulse waveform, seeded
 volatile int BPM;                   // int that holds raw Analog in 0. updated every 2mS
-//volatile int procBPM = 80;	// We will read from BPM to determine bad values and store correct reads in here.
+volatile int stableBPM = 80;	// We will read from BPM to determine bad values and store correct reads in here.
 volatile int Signal;                // holds the incoming raw data
 volatile int IBI = 600;             // int that holds the time interval between beats! Must be seeded!
 
@@ -28,6 +29,11 @@ void initHeartbeat()
 	TIMSK2 = 0x02;     // ENABLE INTERRUPT ON MATCH BETWEEN TIMER2 AND OCR2A
 
 	sei();             // MAKE SURE GLOBAL INTERRUPTS ARE ENABLED
+}
+
+int getBPM()
+{
+	return stableBPM;
 }
 
 // THIS IS THE TIMER 2 INTERRUPT SERVICE ROUTINE.
@@ -111,7 +117,7 @@ ISR(TIMER2_COMPA_vect)
 	}
 
 	if (BPM > 30 && BPM < 120)
-		procBPM = BPM;
+		stableBPM = BPM;
 
 	sei();												// enable interrupts when youre done!
 }
