@@ -43,7 +43,7 @@ void get_TCS34725ID(void);
 
 void init_env();
 
-int findColor(void);
+void findColor();
 
 int get_RedVal(void);
 

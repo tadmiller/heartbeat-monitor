@@ -74,7 +74,7 @@ Reads the register values for clear, red, green, and blue.
 
 
 
-void findColor(void){
+void findColor(){
 
  unsigned int clear_color = 0;
   unsigned int red_color = 0;
