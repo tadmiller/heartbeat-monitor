@@ -20,6 +20,8 @@ int getSysMin();
 
 int getSysSec();
 
+void setClock(int h, int m, int s);
+
 // Update the reading of the clock to the latest recorded time.
 void updateClock();
 

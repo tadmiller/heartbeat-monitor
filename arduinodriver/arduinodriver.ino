@@ -17,7 +17,7 @@
 #include <Wire.h>
 
 #include "rgblib.h"
-//#include "comslib.h"
+#include "comslib.h"
 #include "cmdlib.h"
 //#include "envlib.h"
 
@@ -29,7 +29,7 @@ void setup()
 	Serial.begin(9600);
 
 	initMatrix();   // Initialize RGB Matrix
-	//initClock();    // Initialize clock
+	initClock();    // Initialize clock
 	initHeartbeat(); // sets up to read Pulse Sensor signal every 2mS
 	//initLightSensor();
 	pinMode(6, OUTPUT);
@@ -37,7 +37,7 @@ void setup()
 
 void loop()
 {
-	//updateClock();
+	updateClock();
 	updateCmd();
 	//blinkLED(getBPM());
 

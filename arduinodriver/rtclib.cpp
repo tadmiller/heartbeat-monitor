@@ -40,6 +40,13 @@ int getSysSec()
 	return sys_second;
 }
 
+void setClock(int h, int m, int s)
+{
+	rtc.setHour(h);
+	rtc.setMinute(m);
+	rtc.setSecond(s);
+}
+
 // Update the reading of the clock to the latest recorded time.
 void updateClock()
 {

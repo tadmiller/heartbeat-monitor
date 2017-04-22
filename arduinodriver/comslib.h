@@ -10,4 +10,6 @@ void handleComs(int hour, int min, int sec, int reading);
 
 void sendRGB(int r, int g, int b);
 
+void receiveClock();
+
 #endif
