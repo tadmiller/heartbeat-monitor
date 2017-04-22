@@ -92,10 +92,13 @@ int init_tty(int fd)
 // Send a byte to the Arduino. Read the response into the character array "buf".
 char *send_byte(char byte)
 {
+	if (fd == 0)
+		return NULL;
+
 	int count;
 	char *buffer;
 
-	while (readingBuffer)
+	while (readingBuffer == true)
 		usleep(1000 * 1000);
 
 	readingBuffer = true;
@@ -162,10 +165,14 @@ void arduino_pause()
 // Sends char s to arduino to provoke actions on display
 void arduino_show(char **args)
 {
-	char *num = *(args + 1) != NULL ? *(args + 1) : 0;
+	char *num = *(args + 1) != NULL ? *(args + 1) : "0\0";
 
-	free(send_byte('s'));
-	free(send_byte(atoi(num)));
+	printf("num is: %d:%d\n", atoi(num), fd);
+
+	send_byte('s');
+	send_byte(atoi(num));
+
+	printf("\ndone show\n");
 }
 
 // Data visualizer. Reads data from Arduino and stores into 10 character array.
