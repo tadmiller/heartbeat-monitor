@@ -291,7 +291,7 @@ int arduino_connect(char **args)
 	/* Flush whatever is remaining in the buffer */
 	tcflush(fd, TCIFLUSH);
 
-	flush();
+	//flush();
 
 	return 0;
 }
