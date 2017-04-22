@@ -19,7 +19,7 @@
 #include "rgblib.h"
 #include "comslib.h"
 #include "cmdlib.h"
-//#include "envlib.h"
+#include "envlib.h"
 
 #include "rtclib.h"
 #include "heartbeatlib.h"

@@ -10,11 +10,10 @@ See the user datasheet at www.solutions-cubed.com for additional information.
 
 */
 
+#include <Arduino.h>
+
 #include <Wire.h>
 #include <Math.h>
-
-byte i2cWriteBuffer[10];
-byte i2cReadBuffer[10];
 
 #define SensorAddressWrite 0x29 //
 #define SensorAddressRead 0x29 // 
@@ -44,12 +43,15 @@ void get_TCS34725ID(void);
 
 void init_env();
 
-int get_RedVal();
+int findColor(void);
 
-int get_GreenVal():
+int get_RedVal(void);
 
-int get_BlueVal();
+int get_GreenVal(void);
 
+int get_BlueVal(void);
+
+#endif
 
 
 
