@@ -20,7 +20,7 @@ int sendReading(String data)
 
 void handleComs(int hour, int min, int sec, int reading)
 {
-	sendReading("B[" + String((char)reading) + "]H[" + String((char)(hour + 32)) + "]M[" + String((char)(min + 32)) + "]S[" + String((char)(sec + 32)) + "]");
+	sendReading("B[" + String(reading) + "]H[" + String(hour) + "]M[" + String(min) + "]S[" + String(sec) + "]");
 }
 
 void sendRGB(int r, int g, int b)

@@ -77,7 +77,7 @@ char *send_byte(char send)
 	if (fd == 0)
 		return NULL;
 
-	int count;
+	int count = 0;
 	char *buffer;
 
 	while (readingBuffer == true)
@@ -113,7 +113,7 @@ char *send_byte(char send)
 	// Read the response
 	buffer = malloc(sizeof(char) * BUFFER_SIZE);
 	printf("\nReading...");
-	count = read(fd, &buffer, BUFFER_SIZE - 1);
+	count = read(fd, buffer, BUFFER_SIZE - 1);
 	readingBuffer = false;
 
 	printf("\nDone read.");
