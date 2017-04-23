@@ -77,6 +77,8 @@ char *send_byte(char send)
 	if (fd == 0)
 		return NULL;
 
+	printf("\nFD is: %d\n", fd);
+
 	int count = 0;
 	char *buffer;
 

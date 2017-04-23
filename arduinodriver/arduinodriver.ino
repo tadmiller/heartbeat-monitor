@@ -39,7 +39,7 @@ void loop()
 {
 	updateClock();
 	updateCmd();
-	//blinkLED(getBPM());
+	blinkLED(getBPM());
 
 	delay(50);
 
