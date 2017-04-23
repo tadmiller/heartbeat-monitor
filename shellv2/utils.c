@@ -18,8 +18,9 @@
 int mmap_write(char *data, char *file, char mode)
 {
 	// Our file set
-	const char *filepath = file != NULL ? file : "/tmp/histogram.csv";
+	char *filepath = file != NULL ? file : "/tmp/histogram.csv";
 	const int fd = open(filepath, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
+	char *readData = NULL;
 	size_t textsize;
 	
 	if (fd == -1)
@@ -30,7 +31,15 @@ int mmap_write(char *data, char *file, char mode)
 
 	// Stretch the file size to the size of the (mmapped) array of char
 
-	textsize = data != NULL ? strlen(data) : 0; // + \0 null character
+	if (mode == 'A')
+	{
+		readData = mmap_read(filepath);
+		textsize = readData != NULL ? (data != NULL ? strlen(readData) + strlen(data) : strlen(readData)) : 0; 
+	}
+	else if (mode == 'W')
+		textsize = data != NULL ? strlen(data) : 0; // + \0 null character
+	else
+		return 1;
 	
 	if (lseek(fd, textsize - 1, SEEK_SET) == -1)
 	{
