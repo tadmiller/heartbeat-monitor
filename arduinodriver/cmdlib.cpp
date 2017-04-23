@@ -65,7 +65,7 @@ void updateCmd()
 			matrixWrite(dispVal);
 		}
 		else if (cmd == 99)
-			handleComs(getSysHour(), getSysMin(), getSysSec(), getBPM());
+			sendBPM(getSysHour(), getSysMin(), getSysSec(), getBPM());
 		else if (cmd == 'c')
 			receiveClock();
 		// else if (cmd == 101)

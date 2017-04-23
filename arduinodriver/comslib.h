@@ -6,7 +6,7 @@
 
 int sendReading(String data);
 
-void handleComs(int hour, int min, int sec, int reading);
+void sendBPM(int hour, int min, int sec, int reading);
 
 void sendRGB(int r, int g, int b);
 

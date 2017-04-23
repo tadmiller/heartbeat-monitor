@@ -1,26 +1,15 @@
 #include "comslib.h"
 
-char msgCount = 32;
-
 int sendReading(String data)
 {
-	Serial.print("C[");
-	Serial.print(msgCount);
-	Serial.print("]");
-	Serial.print(data);
-	Serial.println("");
-
-	msgCount += 1;
-
-	if (msgCount >= 127)
-		msgCount = 32;
+	Serial.println(data);
 
 	return 0;
 }
 
-void handleComs(int hour, int min, int sec, int reading)
+void sendBPM(int hour, int min, int sec, int reading)
 {
-	sendReading("B[" + String(reading) + "]H[" + String(hour) + "]M[" + String(min) + "]S[" + String(sec) + "]");
+	sendReading(String(reading + ',' + hour + ',' + min + ',' + sec));
 }
 
 void sendRGB(int r, int g, int b)
