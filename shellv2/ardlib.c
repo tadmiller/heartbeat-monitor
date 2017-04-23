@@ -112,9 +112,11 @@ char *send_byte(char send)
 
 	// Read the response
 	buffer = malloc(sizeof(char) * BUFFER_SIZE);
-	count = read(fd, &buffer, BUFFER_SIZE);
+	printf("\nReading...");
+	count = read(fd, &buffer, BUFFER_SIZE - 1);
 	readingBuffer = false;
 
+	printf("\nDone read.");
 	if (count == -1) 
 	{
 		printf("\nRead error\n");
