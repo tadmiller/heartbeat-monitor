@@ -96,12 +96,16 @@ char *send_byte(char send)
 	{
 		printf("\nWrite error\n");
 		close(fd);
+
+		readingBuffer = false;
 		return NULL;
 	}
 	else if (count == 0)
 	{
 		printf("\nNo data written\n");
 		close(fd);
+
+		readingBuffer = false;
 		return NULL;
 	}
 
@@ -114,7 +118,6 @@ char *send_byte(char send)
 	buffer = malloc(sizeof(char) * BUFFER_SIZE);
 	printf("\nReading...");
 	count = read(fd, buffer, BUFFER_SIZE - 1);
-	readingBuffer = false;
 
 	printf("\nDone read.");
 	if (count == -1) 
@@ -122,16 +125,22 @@ char *send_byte(char send)
 		printf("\nRead error\n");
 		close(fd);
 		free(buffer);
+
+		readingBuffer = false;
 		return NULL;
 	}
 	else if (count == 0)
 	{
 		printf("\nNull response\n");
 		free(buffer);
+
+		readingBuffer = false;
 		return NULL;
 	}
 
 	printf("Count is: %d", count);
+	close(fd);
+	readingBuffer = false;
 
 	// Ensure the response is null-terminated
 	buffer[count] = 0;
@@ -153,7 +162,7 @@ char *arduino_rate(bool keep)
 
 	printf("BPM: %s", bpm);
 	free(bpm);
-	
+
 	return NULL;
 }
 
