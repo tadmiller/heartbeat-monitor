@@ -137,10 +137,7 @@ char *send_byte(char send)
 	buffer[count] = 0;
 
 	if (buffer != NULL)
-	{
-		//printf("Returning: %s", buffer);
 		return buffer;
-	}
 
 	printf("\nData malformed or no data returned\n");
 	free(buffer);
@@ -154,8 +151,9 @@ char *arduino_rate(bool keep)
 	if (keep)
 		return bpm;
 
-	//printf("BPM: %s", bpm);
-	//free(bpm);
+	printf("BPM: %s", bpm);
+	free(bpm);
+	
 	return NULL;
 }
 
