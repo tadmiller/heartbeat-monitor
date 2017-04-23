@@ -80,7 +80,7 @@ char *send_byte(char send)
 	printf("\nFD is: %d\n", fd);
 
 	int count = 0;
-	char *buffer;
+	char *buffer = NULL;
 
 	while (readingBuffer == true)
 	{
@@ -124,7 +124,7 @@ char *send_byte(char send)
 	printf("\nDone read.");
 	if (count == -1) 
 	{
-		printf("\nRead error\n");
+		printf("\nRead error. Device connection closed\n");
 		close(fd);
 		free(buffer);
 
@@ -141,7 +141,6 @@ char *send_byte(char send)
 	}
 
 	printf("Count is: %d", count);
-	close(fd);
 	readingBuffer = false;
 
 	// Ensure the response is null-terminated
