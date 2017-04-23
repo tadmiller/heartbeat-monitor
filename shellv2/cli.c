@@ -7,5 +7,4 @@ int main()
 {
 	printf("\n\n\n\n");
 	shell_init();
-	printf("\n\n\n\n");
 }

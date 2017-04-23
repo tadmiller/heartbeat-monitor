@@ -136,6 +136,13 @@ char *send_byte(char byte)
 
 char *arduino_rate(bool keep)
 {
+	char *bpm = send_byte('c');
+
+	if (keep)
+		return bpm;
+
+	printf("BPM: %s", bpm);
+	free(bpm);
 	return NULL;
 }
 
@@ -368,6 +375,7 @@ void sys_exit()
 {
 	arduino_close();
 
+	printf("\n\n\n\n");
 	exit(0);
 }
 

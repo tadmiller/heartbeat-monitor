@@ -163,6 +163,7 @@ int shell_exec(char **args)
 	else if (strcmp(*args, "close") == 0)
 		arduino_close();
 	// else if (strcmp(*args, "flush") == 0)
+	// else if (strcmp(*args, "set") == 0)
 	else if (strcmp(*args, "collect") == 0)
 		fork_heartrate();
 
