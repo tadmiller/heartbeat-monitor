@@ -15,30 +15,28 @@
 #define GROUP_SIZE 96
 
 // Open and append 10 BPMs to a file
-int mmap_write(int bpms[10], int hours[10], int mins[10], int secs[10])
+int mmap_write(char *data, char *file, char mode)
 {
 	// Our file set
-	const char *filepath = "/tmp/histogram.csv";
-
-	int fd = open(filepath, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
+	const char *filepath = file != NULL ? file : "/tmp/histogram.csv";
+	const int fd = open(filepath, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
+	size_t textsize;
 	
 	if (fd == -1)
 	{
 		perror("Error opening file for writing");
 		return 1;
-		//exit(EXIT_FAILURE);
 	}
 
 	// Stretch the file size to the size of the (mmapped) array of char
 
-	size_t textsize = 140; // + \0 null character
+	textsize = data != NULL ? strlen(data) : 0; // + \0 null character
 	
-	if (lseek(fd, textsize-1, SEEK_SET) == -1)
+	if (lseek(fd, textsize - 1, SEEK_SET) == -1)
 	{
 		close(fd);
 		perror("Error calling lseek() to 'stretch' the file");
 		return 1;
-		//exit(EXIT_FAILURE);
 	}
 	
 	if (write(fd, "", 1) == -1)
@@ -46,7 +44,6 @@ int mmap_write(int bpms[10], int hours[10], int mins[10], int secs[10])
 		close(fd);
 		perror("Error writing last byte of the file");
 		return 1;
-		//exit(EXIT_FAILURE);
 	}
 
 	// Now the file is ready to be mmapped.
@@ -59,29 +56,30 @@ int mmap_write(int bpms[10], int hours[10], int mins[10], int secs[10])
 		//exit(EXIT_FAILURE);
 	}
 	
-	int count = 0;
-	char snum[14];
+	//int count = 0;
 
-	if (bpms == NULL || hours == NULL || mins == NULL || secs == NULL)
+	if (data == NULL)
 	{
+		close(fd);
 		fclose(fopen(filepath, "w"));
+		return 0;
 	}
-	else
-		for (size_t i = 0; i < 10; i++)
-		{
-			//printf("%.3d,%.2d:%.2d:%.2d,", bpms[i], hours[i], mins[i], secs[i]);
-			sprintf(snum, "%.3d,%.2d:%.2d:%.2d,", bpms[i], hours[i], mins[i], secs[i]);
+	// else
+	// 	for (size_t i = 0; i < 10; i++)
+	// 	{
+	// 		//printf("%.3d,%.2d:%.2d:%.2d,", bpms[i], hours[i], mins[i], secs[i]);
+	// 		sprintf(snum, "%.3d,%.2d:%.2d:%.2d,", bpms[i], hours[i], mins[i], secs[i]);
 
-			if (i < 9)
-				snum[13] = '\n';
+	// 		if (i < 9)
+	// 			snum[13] = '\n';
 
-			//printf("\n%s", snum);
+	// 		//printf("\n%s", snum);
 
-			for (size_t j = count; j < count + 14; j++)
-				map[j] = snum[j % 14];
+	// 		for (size_t j = count; j < count + 14; j++)
+	// 			map[j] = snum[j % 14];
 
-			count += 14;
-		}
+	// 		count += 14;
+	// 	}
 
 	// Write it now to disk
 	if (msync(map, textsize, MS_SYNC) == -1)
@@ -358,5 +356,5 @@ void process_hist_v2(char **args)
 
 void clear_mmap()
 {
-	mmap_write(NULL, NULL, NULL, NULL);
+	//mmap_write(NULL, NULL, NULL, NULL);
 }
