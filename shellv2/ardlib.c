@@ -134,7 +134,7 @@ char *send_byte(char byte)
 
 	if (buffer != NULL)
 	{
-		printf("Returning: %s", buffer != NULL);
+		printf("Returning: %s", buffer);
 		return buffer;
 	}
 
