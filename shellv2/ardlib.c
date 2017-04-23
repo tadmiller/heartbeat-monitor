@@ -94,13 +94,13 @@ char *send_byte(char byte)
 
 	if (count == -1)
 	{
-		perror("write");
+		printf("\nWrite error");
 		close(fd);
 		return NULL;
 	}
 	else if (count == 0)
 	{
-		fprintf(stderr, "No data written\n");
+		printf("\nNo data written");
 		close(fd);
 		return NULL;
 	}
@@ -278,14 +278,14 @@ int arduino_connect(char **args)
 	fd = open(device, O_RDWR | O_NOCTTY | O_NDELAY);
 	if (fd == -1)
 	{
-		perror("Error opening serial");
+		printf("\nError opening serial");
 		return -1;
 	}
 
 	/* Configure settings on the serial port */
 	if (init_tty(fd) == -1)
 	{
-		perror("init");
+		printf("\nFailed init_tty");
 		close(fd);
 		return -1;
 	}
@@ -295,6 +295,8 @@ int arduino_connect(char **args)
 
 	/* Flush whatever is remaining in the buffer */
 	tcflush(fd, TCIFLUSH);
+
+	printf("\nSuccessfully connected to device");
 
 	//flush();
 
