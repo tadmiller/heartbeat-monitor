@@ -72,7 +72,7 @@ int init_tty(int fd)
 }
 
 // Send a byte to the Arduino. Read the response into the character array "buf".
-char *send_byte(char byte)
+char *send_byte(char send)
 {
 	if (fd == 0)
 		return NULL;
@@ -86,9 +86,9 @@ char *send_byte(char byte)
 		usleep(1000 * 1000);
 	}
 
-	printf("\nsending: %d", byte);
+	printf("\nsending: %d", send);
 	readingBuffer = true;
-	count = write(fd, &byte, 1);
+	count = write(fd, &send, 1);
 
 	printf("\ndone write");
 
@@ -129,12 +129,14 @@ char *send_byte(char byte)
 		return NULL;
 	}
 
+	printf("Count is: %d", count);
+
 	// Ensure the response is null-terminated
 	buffer[count] = 0;
 
 	if (buffer != NULL)
 	{
-		printf("Returning: %s", buffer);
+		//printf("Returning: %s", buffer);
 		return buffer;
 	}
 
