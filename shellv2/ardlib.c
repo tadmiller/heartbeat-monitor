@@ -146,7 +146,10 @@ char *send_byte(char send)
 	buffer[count] = 0;
 
 	if (buffer != NULL)
+	{
+		printf("Returning: %s", buffer);
 		return buffer;
+	}
 
 	printf("\nData malformed or no data returned\n");
 	free(buffer);

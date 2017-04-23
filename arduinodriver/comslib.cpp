@@ -9,7 +9,7 @@ int sendReading(String data)
 
 void sendBPM(int hour, int min, int sec, int reading)
 {
-	sendReading(String(reading + ',' + hour + ',' + min + ',' + sec));
+	sendReading(String(reading) + "," + String(hour) + "," + String(min) + "," + String(sec) + ",");
 }
 
 void sendRGB(int r, int g, int b)
