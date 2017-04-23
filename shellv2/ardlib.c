@@ -132,9 +132,15 @@ char *send_byte(char byte)
 	// Ensure the response is null-terminated
 	buffer[count] = 0;
 
-	printf("Returning: %s", buffer);
+	if (buffer != NULL)
+	{
+		printf("Returning: %s", buffer != NULL);
+		return buffer;
+	}
 
-	return buffer;
+	printf("\nData malformed or no data returned\n");
+	free(buffer);
+	return NULL;
 }
 
 char *arduino_rate(bool keep)
