@@ -130,7 +130,9 @@ char *send_byte(char byte)
 
 	// Ensure the response is null-terminated
 	buffer[count] = 0;
-	//printf("(%d): %s", count, buf);
+
+	printf("Returning: %s", buffer);
+
 	return buffer;
 }
 
