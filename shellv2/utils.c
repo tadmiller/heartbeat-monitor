@@ -21,13 +21,22 @@ int mmap_write(char *data, char *file, char mode)
 	char *filepath = file != NULL ? file : "/tmp/histogram.csv";
 	const int fd = open(filepath, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
 	char *readData = NULL;
-	size_t textsize = data != NULL ? strlen(data) : 0;
+
+	size_t rlen = 0;
+	size_t wlen = data != NULL ? strlen(data) : 0;
+
+	size_t textsize = wlen;
+	size_t itr;
 
 	// Stretch the file size to the size of the (mmapped) array of char
 	if (mode == 'A')
 	{
 		readData = mmap_read(filepath);
-		textsize += readData != NULL ? strlen(readData) : 0;
+
+		if (readData != NULL)
+			rlen = strlen(readData);
+
+		textsize += rlen;
 	}
 	//else if (mode == 'W')
 	//	textsize = data != NULL ? strlen(data) : 0; // + \0 null character
@@ -78,11 +87,12 @@ int mmap_write(char *data, char *file, char mode)
 		return 0;
 	}
 
-	if (data != NULL)
-		for (size_t i = 0; i < textsize; i++)
-		{
-			map[i] = data[i];
-		}
+	if (readData != NULL)
+		for (itr = 0; itr < rlen; itr++)
+			map[itr] = readData[itr];
+
+	for (itr = rlen; itr < textsize; itr++)
+		map[itr] = data[itr - rlen];
 	// else
 	// 	for (size_t i = 0; i < 10; i++)
 	// 	{
@@ -194,6 +204,8 @@ char *mmap_read(char *file)
 
 	// Un-mmaping doesn't close the file, so we still need to do that.
 	close(fd);
+
+	printf("\nReturning: %s\n", map);
 
 	return map;
 }
