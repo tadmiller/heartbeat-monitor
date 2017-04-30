@@ -22,12 +22,6 @@ int mmap_write(char *data, char *file, char mode)
 	const int fd = open(filepath, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
 	char *readData = NULL;
 	size_t textsize;
-	
-	if (fd == -1)
-	{
-		perror("Error opening file for writing");
-		return 1;
-	}
 
 	// Stretch the file size to the size of the (mmapped) array of char
 	if (mode == 'A')
@@ -39,8 +33,14 @@ int mmap_write(char *data, char *file, char mode)
 		textsize = data != NULL ? strlen(data) : 0; // + \0 null character
 	else
 		return 1;
+	
+	if (fd == -1)
+	{
+		perror("Error opening file for writing");
+		return 1;
+	}
 
-	printf("\nText size: %d", textsize);
+	printf("\nText size: %ld", textsize);
 	printf("\nData:%s", data);
 	printf("\nReadData: (may be null):%s", readData);
 	
