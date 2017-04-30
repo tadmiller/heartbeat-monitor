@@ -14,12 +14,19 @@ void sendBPM(int hour, int min, int sec, int reading)
 
 void sendRGB(int r, int g, int b)
 {
-	sendReading("R[" + String(r) + "]G[" + String(g) + "]B[" + String(b) + "]");
+	sendReading(String(r) + "," + String(g) + "," + String(b) + ",");
 }
 
 void receiveClock()
 {
+	char h = receiveByte();
+	while (h != 'h')
+	{
+		Serial.print("h is: ");
+		Serial.println(h);
 
+		h = receiveByte();
+	}
 }
 
 char receiveByte()

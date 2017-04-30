@@ -12,4 +12,6 @@ void sendRGB(int r, int g, int b);
 
 void receiveClock();
 
+char receiveByte();
+
 #endif
