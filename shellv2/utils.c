@@ -39,6 +39,10 @@ int mmap_write(char *data, char *file, char mode)
 		textsize = data != NULL ? strlen(data) : 0; // + \0 null character
 	else
 		return 1;
+
+	printf("\nText size: %d", textsize);
+	printf("\nData:%s", data);
+	printf("\nReadData: (may be null):%s", readData);
 	
 	if (lseek(fd, textsize - 1, SEEK_SET) == -1)
 	{
@@ -68,6 +72,7 @@ int mmap_write(char *data, char *file, char mode)
 
 	if (data == NULL)
 	{
+		munmap(map, textsize);
 		close(fd);
 		fclose(fopen(filepath, "w"));
 		return 0;

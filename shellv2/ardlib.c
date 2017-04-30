@@ -233,14 +233,14 @@ int arduino_connect(char **args)
 	fd = open(device, O_RDWR | O_NOCTTY | O_NDELAY);
 	if (fd == -1)
 	{
-		printf("\nError opening serial");
+		printf("\nError opening serial\n");
 		return -1;
 	}
 
 	/* Configure settings on the serial port */
 	if (init_tty(fd) == -1)
 	{
-		printf("\nFailed init_tty");
+		printf("\nFailed init_tty\n");
 		close(fd);
 		return -1;
 	}
@@ -251,7 +251,7 @@ int arduino_connect(char **args)
 	/* Flush whatever is remaining in the buffer */
 	tcflush(fd, TCIFLUSH);
 
-	printf("\nSuccessfully connected to device");
+	printf("\nSuccessfully connected to device\n");
 
 	//flush();
 
