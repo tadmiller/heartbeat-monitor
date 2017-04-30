@@ -32,6 +32,7 @@ int mmap_write(char *data, char *file, char mode)
 	if (mode == 'A')
 	{
 		readData = mmap_read(filepath);
+		printf("Read in: %s", readData);
 
 		if (readData != NULL)
 			rlen = strlen(readData);
@@ -51,7 +52,7 @@ int mmap_write(char *data, char *file, char mode)
 
 	printf("\nText size: %ld", textsize);
 	printf("\nData:%s", data);
-	printf("\nReadData: (may be null):%s", readData);
+	printf("\nReadData:%s", readData);
 	
 	if (lseek(fd, textsize - 1, SEEK_SET) == -1)
 	{
