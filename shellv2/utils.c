@@ -31,7 +31,7 @@ int mmap_write(char *data, char *file, char mode)
 	// Stretch the file size to the size of the (mmapped) array of char
 	if (mode == 'A')
 	{
-		readData = mmap_read(filepath);
+		*readData = *mmap_read(filepath);
 		printf("Read in: %s", readData);
 
 		if (readData != NULL)
@@ -122,6 +122,8 @@ int mmap_write(char *data, char *file, char mode)
 		perror("Error un-mmapping the file");
 		exit(EXIT_FAILURE);
 	}
+
+	//munmap(map, strlen(map));
 
 	// Un-mmaping doesn't close the file, so we still need to do that.
 	close(fd);
