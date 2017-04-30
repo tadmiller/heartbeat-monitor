@@ -19,7 +19,7 @@ int mmap_write(char *data, char *file, char mode)
 {
 	// Our file set
 	char *filepath = file != NULL ? file : "/tmp/histogram.csv";
-	const int fd = open(filepath, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
+	int fd;
 	char *readData = NULL;
 
 	size_t rlen = 0;
@@ -45,6 +45,8 @@ int mmap_write(char *data, char *file, char mode)
 	else
 		return 1;
 	
+	fd = open(filepath, O_RDWR | O_CREAT | O_TRUNC, (mode_t) 0600);
+
 	if (fd == -1)
 	{
 		perror("Error opening file for writing");
@@ -180,29 +182,32 @@ char *mmap_read(char *file)
 	struct stat fileInfo = {0};
 	char *map;
 
+	printf("\nReading %s\n", filepath);
+
 	if (fd == -1)
 	{
-		perror("Error opening file for writing");
+		printf("Error opening file for writing");
 		return NULL;
 	}
 	
 	if (fstat(fd, &fileInfo) == -1)
 	{
-		perror("Error getting the file size");
+		printf("Error getting the file size");
 		return NULL;
 	}
 	
 	// File is empty. Return NULL.
 	if (fileInfo.st_size == 0)
-		//fprintf(stderr, "Error: File is empty, nothing to do\n");
+	{
+		printf("Error: File is empty, nothing to do");
 		return NULL;  //printf("File size is %ji\n", (intmax_t)fileInfo.st_size);
-
+	}
 	map = mmap(0, fileInfo.st_size, PROT_READ, MAP_SHARED, fd, 0);
 
 	if (map == MAP_FAILED)
 	{
 		close(fd);
-		perror("Error mmapping the file");
+		printf("Error mmapping the file");
 		return NULL;
 	}
 
