@@ -31,7 +31,8 @@ int mmap_write(char *data, char *file, char mode)
 	// Stretch the file size to the size of the (mmapped) array of char
 	if (mode == 'A')
 	{
-		*readData = *mmap_read(filepath);
+		char *t = mmap_read(filepath);
+		readData = t;
 		printf("Read in: %s", readData);
 
 		if (readData != NULL)
