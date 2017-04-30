@@ -30,7 +30,6 @@ int mmap_write(char *data, char *file, char mode)
 	}
 
 	// Stretch the file size to the size of the (mmapped) array of char
-
 	if (mode == 'A')
 	{
 		readData = mmap_read(filepath);
@@ -168,11 +167,10 @@ char *mmap_read(char *file)
 		return NULL;
 	}
 	
+	// File is empty. Return NULL.
 	if (fileInfo.st_size == 0)
-	{
-		fprintf(stderr, "Error: File is empty, nothing to do\n");
-		return NULL;
-	}  //printf("File size is %ji\n", (intmax_t)fileInfo.st_size);
+		//fprintf(stderr, "Error: File is empty, nothing to do\n");
+		return NULL;  //printf("File size is %ji\n", (intmax_t)fileInfo.st_size);
 
 	map = mmap(0, fileInfo.st_size, PROT_READ, MAP_SHARED, fd, 0);
 

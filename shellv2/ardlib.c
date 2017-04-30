@@ -10,6 +10,7 @@
 
 int fd;
 bool readingBuffer = false;
+bool quitFork = false;
 
 // Initialize the connection to the Arduino.
 int init_tty(int fd)
@@ -193,74 +194,6 @@ void arduino_show(char **args)
 	send_byte(num);
 
 	printf("\ndone show\n");
-}
-
-// Data visualizer. Reads data from Arduino and stores into 10 character array.
-// Gets sent to mmap'd file after 10 reads.
-void process_rate()
-{
-	/*int i;
-	int count = 0;
-	int bpms[10];
-	int hours[10];
-	int mins[10];
-	int secs[10];
-
-	int bpm;
-	int hour;
-	int min;
-	int sec;
-
-	while (1)
-	{
-		char *buffer = send_byte('c');
-
-		i = 0;
-
-		// // Read the message count. Can be used to retransmit data from Arduino
-		// while (buf[i] != 'C')
-		//     i++;
-		// msg = buf[i + 2];
-
-		// Read the bpm
-		while (buffer[i] != 'B')
-			i++;
-		bpm = (int) buffer[i + 2];
-
-		// Read the hour of the BPM recorded
-		while (buffer[i] != 'H')
-			i++;
-		hour = (int) buffer[i + 2] - 32;
-
-		// Read the minute of the BPM recorded
-		while (buffer[i] != 'M')
-			i++;
-		min = (int) buffer[i + 2] - 32;
-		
-		// Read the second of the BPM recorded
-		while (buffer[i] != 'S')
-			i++;
-		sec = (int) buffer[i + 2] - 32;
-
-		//printf("\nBPM: %d at %d:%d:%d", bpm, hour, min, sec);
-
-		hours[count] = hour;
-		mins[count] = min;
-		secs[count] = sec;
-		bpms[count] = bpm;
-
-		count++;
-
-		// If we have 10 records, print out a histogram. Reset the count to zero.
-		if (count == 10)
-		{
-			//printHistogram(bpms, hours, mins, secs);
-			mmap_write(bpms, hours, mins, secs);
-			count = 0;
-		}
-
-		usleep(1000 * 1000 * 3);
-	}*/
 }
 
 void flush()
@@ -450,6 +383,23 @@ void get_hist()
 //    // printf("You exited the program\n");
    
 // }
+
+
+// Data visualizer. Reads data from Arduino and stores into 10 character array.
+// Gets sent to mmap'd file after 10 reads.
+void process_rate()
+{
+	while (!quitFork)
+	{
+		char *res = arduino_rate(true);
+
+		mmap_write(res, NULL, 'A');
+
+		free(res);
+
+		usleep(1000 * 1000 * 3);
+	}
+}
 
 void arduino_clock(char **args)
 {
