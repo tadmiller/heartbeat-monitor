@@ -21,16 +21,16 @@ int mmap_write(char *data, char *file, char mode)
 	char *filepath = file != NULL ? file : "/tmp/histogram.csv";
 	const int fd = open(filepath, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
 	char *readData = NULL;
-	size_t textsize;
+	size_t textsize = data != NULL ? strlen(data) : 0;
 
 	// Stretch the file size to the size of the (mmapped) array of char
 	if (mode == 'A')
 	{
 		readData = mmap_read(filepath);
-		textsize = readData != NULL ? (data != NULL ? strlen(readData) + strlen(data) : strlen(readData)) : 0; 
+		textsize += readData != NULL ? strlen(readData) : 0;
 	}
-	else if (mode == 'W')
-		textsize = data != NULL ? strlen(data) : 0; // + \0 null character
+	//else if (mode == 'W')
+	//	textsize = data != NULL ? strlen(data) : 0; // + \0 null character
 	else
 		return 1;
 	
@@ -77,6 +77,12 @@ int mmap_write(char *data, char *file, char mode)
 		fclose(fopen(filepath, "w"));
 		return 0;
 	}
+
+	if (data != NULL)
+		for (size_t i = 0; i < textsize; i++)
+		{
+			map[i] = data[i];
+		}
 	// else
 	// 	for (size_t i = 0; i < 10; i++)
 	// 	{
