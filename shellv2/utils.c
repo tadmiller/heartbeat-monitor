@@ -189,6 +189,7 @@ char *mmap_read(char *file)
 
 	struct stat fileInfo = {0};
 	char *map;
+	char *ret;
 
 	printf("\nReading %s\n", filepath);
 
@@ -222,9 +223,13 @@ char *mmap_read(char *file)
 	// Un-mmaping doesn't close the file, so we still need to do that.
 	close(fd);
 
-	printf("\nReturning: %s\n", map);
+	ret = malloc(sizeof(char) * strlen(map));
+	strncpy(ret, map, strlen(map));
+	munmap(map, strlen(map));
 
-	return map;
+	printf("\nReturning: %s\n", ret);
+
+	return ret;
 }
 
 void print_stars(int len)
@@ -388,7 +393,7 @@ void process_hist_v2(char **args)
 	process_groups(bpms, hours, mins, secs, arrLen, groups);
 	print_hist(groups, GROUP_SIZE);
 
-	munmap(map, strlen(map));
+	free(map);
 	free(bpms);
 	free(hours);
 	free(mins);
