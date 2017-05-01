@@ -33,7 +33,7 @@ int mmap_write(char *data, char *file, char mode)
 	{
 		char *t = mmap_read(filepath);
 		readData = t;
-		printf("Read in: %s", readData);
+		//printf("Read in: %s", readData);
 
 		if (readData != NULL)
 			rlen = strlen(readData);
@@ -49,27 +49,27 @@ int mmap_write(char *data, char *file, char mode)
 
 	if (fd == -1)
 	{
-		perror("Error opening file for writing");
+		//perror("Error opening file for writing");
 		return 1;
 	}
 
-	printf("\nText size: %ld", textsize);
-	printf("\nData:%s", data);
-	printf("\nwlen:%ld", wlen);
-	printf("\nReadData:%s", readData);
-	printf("\nrlen:%ld", rlen);
+	// printf("\nText size: %ld", textsize);
+	// printf("\nData:%s", data);
+	// printf("\nwlen:%ld", wlen);
+	// printf("\nReadData:%s", readData);
+	// printf("\nrlen:%ld", rlen);
 	
 	if (lseek(fd, textsize - 1, SEEK_SET) == -1)
 	{
 		close(fd);
-		perror("Error calling lseek() to 'stretch' the file");
+		//perror("Error calling lseek() to 'stretch' the file");
 		return 1;
 	}
 	
 	if (write(fd, "", 1) == -1)
 	{
 		close(fd);
-		perror("Error writing last byte of the file");
+		//perror("Error writing last byte of the file");
 		return 1;
 	}
 
@@ -78,7 +78,7 @@ int mmap_write(char *data, char *file, char mode)
 	if (map == MAP_FAILED)
 	{
 		close(fd);
-		perror("Error mmapping the file");
+		//perror("Error mmapping the file");
 		return 1;
 		//exit(EXIT_FAILURE);
 	}
@@ -95,36 +95,22 @@ int mmap_write(char *data, char *file, char mode)
 
 	if (readData != NULL)
 	{
-		printf("\nWriting rdata...");
+		//printf("\nWriting rdata...");
 
 		for (itr = 0; itr < rlen; itr++)
 			map[itr] = readData[itr];
+
+		free(readData);
 	}
 
-	printf("\nWriting wdata...");
+	//printf("\nWriting wdata...");
 
 	for (itr = rlen; itr < textsize; itr++)
 		map[itr] = data[itr - rlen];
-	// else
-	// 	for (size_t i = 0; i < 10; i++)
-	// 	{
-	// 		//printf("%.3d,%.2d:%.2d:%.2d,", bpms[i], hours[i], mins[i], secs[i]);
-	// 		sprintf(snum, "%.3d,%.2d:%.2d:%.2d,", bpms[i], hours[i], mins[i], secs[i]);
-
-	// 		if (i < 9)
-	// 			snum[13] = '\n';
-
-	// 		//printf("\n%s", snum);
-
-	// 		for (size_t j = count; j < count + 14; j++)
-	// 			map[j] = snum[j % 14];
-
-	// 		count += 14;
-	// 	}
 
 	// Write it now to disk
-	if (msync(map, textsize, MS_SYNC) == -1)
-		perror("Could not sync the file to disk");
+	//if (msync(map, textsize, MS_SYNC) == -1)
+	//	perror("Could not sync the file to disk");
 	
 	// Don't forget to free the mmapped memory
 	if (munmap(map, textsize) == -1)
@@ -195,20 +181,20 @@ char *mmap_read(char *file)
 
 	if (fd == -1)
 	{
-		printf("Error opening file for writing");
+		//printf("Error opening file for writing");
 		return NULL;
 	}
 	
 	if (fstat(fd, &fileInfo) == -1)
 	{
-		printf("Error getting the file size");
+		//printf("Error getting the file size");
 		return NULL;
 	}
 	
 	// File is empty. Return NULL.
 	if (fileInfo.st_size == 0)
 	{
-		printf("Error: File is empty, nothing to do");
+		//printf("Error: File is empty, nothing to do");
 		return NULL;  //printf("File size is %ji\n", (intmax_t)fileInfo.st_size);
 	}
 	map = mmap(0, fileInfo.st_size, PROT_READ, MAP_SHARED, fd, 0);
@@ -216,7 +202,7 @@ char *mmap_read(char *file)
 	if (map == MAP_FAILED)
 	{
 		close(fd);
-		printf("Error mmapping the file");
+		//printf("Error mmapping the file");
 		return NULL;
 	}
 
@@ -227,7 +213,7 @@ char *mmap_read(char *file)
 	strncpy(ret, map, strlen(map));
 	munmap(map, strlen(map));
 
-	printf("\nReturning: %s\n", ret);
+	//printf("\nReturning: %s\n", ret);
 
 	return ret;
 }
