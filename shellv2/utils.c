@@ -55,7 +55,9 @@ int mmap_write(char *data, char *file, char mode)
 
 	printf("\nText size: %ld", textsize);
 	printf("\nData:%s", data);
+	printf("\nwlen:%ld", wlen);
 	printf("\nReadData:%s", readData);
+	printf("\nrlen:%ld", rlen);
 	
 	if (lseek(fd, textsize - 1, SEEK_SET) == -1)
 	{
@@ -92,8 +94,14 @@ int mmap_write(char *data, char *file, char mode)
 	}
 
 	if (readData != NULL)
+	{
+		printf("\nWriting rdata...");
+
 		for (itr = 0; itr < rlen; itr++)
 			map[itr] = readData[itr];
+	}
+
+	printf("\nWriting wdata...");
 
 	for (itr = rlen; itr < textsize; itr++)
 		map[itr] = data[itr - rlen];
