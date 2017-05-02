@@ -4,11 +4,11 @@ sqlite3 *db;
 
 static int cb(void *NotUsed, int argc, char **argv, char **colName)
 {
-   for (size_t i =0; i< argc; i++)
-	  printf("%s = %s\n", colName[i], argv[i] ? argv[i] : "NULL");
+	for (size_t i =0; i< argc; i++)
+		printf("%s = %s\n", colName[i], argv[i] ? argv[i] : "NULL");
    
-   printf("\n");
-   return 0;
+	printf("\n");
+	return 0;
 }
 
 // int main(int argc, char* argv[])
@@ -30,15 +30,28 @@ static int cb(void *NotUsed, int argc, char **argv, char **colName)
 
 // }
 
+void db_handler(char **args)
+{
+	
+}
+
+void db_insert(int rate, char *env)
+{
+
+}
+
 void db_init()
 {
+	int rex = sqlite3_open("processor.db", &db);
 	char *err;
-	int rex = sqlite3_open("heartVENV.database", &db);
-	char *sql = "CREATE TABLE SensorData("            //creating table
-		 "TIME INT PRIMARY KEY     NOT NULL," \
-		 "HEARTRATE           INT    NOT NULL," \
-		 "ENV            INT     NOT NULL);";
+	char *sql = "CREATE TABLE SensorData"				\
+				"("										\
+					"TIME INT PRIMARY KEY NOT NULL,"	\
+					"RATE INT NOT NULL,"				\
+					"ENV  TEXT NOT NULL"				\
+				");";
 
 	rex = sqlite3_exec(db, sql, cb, 0, &err);
+
 	printf("%d", rex);
 }

@@ -10,6 +10,7 @@
 #include "shell.h"
 #include "ardlib.h"
 #include "utils.h"
+#include "db.h"
 
 int shell_init()
 {
@@ -168,6 +169,8 @@ int shell_exec(char **args)
 	// else if (strcmp(*args, "set") == 0)
 	else if (strcmp(*args, "collect") == 0)
 		fork_heartrate();
+	else if (strcmp(*args, "db") == 0)
+		db_handler(args);
 
 
 	//     connectArduino();
