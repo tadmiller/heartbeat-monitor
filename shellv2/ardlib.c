@@ -323,11 +323,15 @@ void arduino_heartrate()
 
 void arduino_env()
 {
-	char *buffer = send_byte('e');
+	char *env = send_byte('e');
 
-	printf("\n%.25s", buffer);
-	free(buffer);
-	printf("\n\n");
+	if (keep)
+		return env;
+
+	printf("RGB SENSOR: %s", env);
+	free(env);
+
+	return NULL;
 }
 
 void sys_exit()

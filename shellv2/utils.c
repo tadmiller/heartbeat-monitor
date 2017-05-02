@@ -227,11 +227,15 @@ void print_stars(int len)
 int get_mean(int *group)
 {
 	int sum = 0;
+	int n = group[0] - 1;
 
-	for (size_t i = 1; i < group[0]; i++)
+	if (n < 0)
+		return 0;
+
+	for (size_t i = 1; i < n; i++)
 		sum += group[i];
 
-	return sum / (group[0] - 1);
+	return sum;
 }
 
 int get_std_dev(int *group)
@@ -246,7 +250,7 @@ void print_hist(int **groups, int len)
 	{
 		if (groups[i])
 		{
-			printf("\n%.2d:%.2d | μ %.2d |\t", inverse_bucket_h(i), inverse_bucket_m(i), get_mean(groups[i]));
+			printf("\n%.2d:%.2d | μ %.2d |\t", inverse_bucket_h(i), inverse_bucket_m(i),0);
 			print_stars(groups[i][1]);
 			printf("\n      | σ %.2d |\t", 0);
 			print_stars(groups[i][1]);
@@ -335,6 +339,8 @@ void process_groups(int *bpms, int *hours, int *mins, int *secs, int arrLen, int
 
 		if (groups[bucket] == NULL)
 		{	// arrLen is max elems
+			printf("\n%d:%d, ", hours[i], mins[i]);
+			printf("Allocating bucket %d", bucket);
 			groups[bucket] = malloc(sizeof(int) * arrLen + 1);
 			**(groups + bucket) = 0;
 		}
@@ -362,7 +368,7 @@ void process_hist_v2(char **args)
 		return;
 
 	len = strlen(map);
-	if (len < 13)
+	if (len < 15)
 		return;
 
 	arrLen = (len / 15) + 1;
