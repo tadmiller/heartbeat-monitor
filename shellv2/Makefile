@@ -10,3 +10,6 @@ compile:
 
 clean:
 	@rm -rf *.o
+
+install:
+	sudo apt-get install libsqlite3-dev -y
