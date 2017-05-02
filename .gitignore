@@ -54,3 +54,4 @@ dkms.conf
 # CodeBlocks Project
 *.cbp
 *.layout
+*.database

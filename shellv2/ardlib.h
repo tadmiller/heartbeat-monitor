@@ -29,7 +29,7 @@
 
 void sys_exit();
 
-void arduino_env();
+char *arduino_env(bool keep);
 
 void arduino_heartrate();
 

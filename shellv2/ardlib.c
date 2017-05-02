@@ -321,7 +321,7 @@ void arduino_heartrate()
 	printf("\n\n");
 }
 
-void arduino_env()
+char *arduino_env(bool keep)
 {
 	char *env = send_byte('e');
 

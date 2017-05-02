@@ -5,6 +5,8 @@
 #include <string.h>
 #include <unistd.h>
 
+#include <sqlite3.h> 
+
 #include "shell.h"
 #include "ardlib.h"
 #include "utils.h"
