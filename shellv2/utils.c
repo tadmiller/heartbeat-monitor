@@ -423,7 +423,7 @@ void print_hist(int **groups, int len)
 {
 	for (size_t i = 0; i < len; i++)
 	{
-		if (groups[i])
+		if (groups[i] != NULL && groups[i][0] > 0)
 		{
 			printf("\n%.2d:%.2d | μ %.2d |\t", inverse_bucket_h(i), inverse_bucket_m(i), get_mean(groups[i]));
 			print_stars(groups[i][1]);
@@ -561,7 +561,7 @@ void process_hist_v2(char **args)
 
 	parse_hist_csv(map, len, bpms, hours, mins, secs, arrLen);
 	process_groups(bpms, hours, mins, secs, arrLen, groups);
-	//print_hist(groups, GROUP_SIZE);
+	print_hist(groups, GROUP_SIZE);
 
 	free(map);
 	free(bpms);
