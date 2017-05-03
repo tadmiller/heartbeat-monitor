@@ -13,4 +13,4 @@ clean:
 	@rm -rf *.o
 
 install:
-	sudo apt-get install libsqlite3-dev -y && sudo apt-get install sqlite3 -y
+	sudo apt-get update -y && sudo apt-get install libsqlite3-dev -y && sudo apt-get install sqlite3 -y
