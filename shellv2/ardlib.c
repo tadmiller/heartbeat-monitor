@@ -262,7 +262,7 @@ void process_rate()
 {
 	char *beat;
 	char *env;
-	//char *time;
+	char time[9];
 
 	while (!quitFork)
 	{
@@ -271,7 +271,9 @@ void process_rate()
 
 		printf("BEAT: %.3s", beat);
 		printf("ENV:  %s", env);
-		printf("TIME: %s", beat + 3);
+		sprintf(time, "%.8s", beat + 4);
+		time[8] = '\0';
+		printf("TIME: %s", time);
 		//mmap_write(beat, NULL, 'A');
 
 		// db_insert(beat, env);
