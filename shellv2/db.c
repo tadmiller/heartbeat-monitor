@@ -87,7 +87,6 @@ char ***db_calc_data(int *s)
 
 	db_select();
 
-	printf("\nDone processing db information.\n");
 	mode = 'V';
 
 	return data;

@@ -234,35 +234,112 @@ int get_bucket_time(char *timeStr)
 	return get_bucket(h, m);
 }
 
-double get_a(int *group)
+double get_a(int *x, int *y)
 {
-	return 0;
+	if (x == NULL || y == NULL || x[0] == 0 || y[0] == 0)
+		return 1;
+
+	double a = 0;
+	int len = y[0];
+	int ySum = 0;
+	int xSum = 0;
+	int xSqSum = 0;
+	int xySum = 0;
+
+	for (size_t i = 1; i < len; i++)
+	{
+		ySum += y[i];
+		xSum += x[i];
+		xSqSum += pow(x[i], 2);
+		xySum += x[i] * y[i];
+	}
+
+	a = (ySum * xSqSum) - (xSum * xySum);
+	a /= (len * xSqSum) - pow(xSum, 2);
+
+	return a;
 }
 
-double get_b(int *group)
+double get_b(int *x, int *y)
 {
-	return 0;
+	if (x == NULL || y == NULL || x[0] == 0 || y[0] == 0)
+		return 1;
+
+	double b = 0;
+	int len = y[0];
+	int ySum = 0;
+	int xSum = 0;
+	int xSqSum = 0;
+	int xySum = 0;
+
+	for (size_t i = 1; i < len; i++)
+	{
+		ySum += y[i];
+		xSum += x[i];
+		xSqSum += pow(x[i], 2);
+		xySum += x[i] * y[i];
+	}
+
+	b = (xySum * len) - (xSum * ySum);
+	b /= (len * xSqSum) - pow(xSum, 2);
+
+	return b;
 }
 
+double get_r(int *x, int *y)
+{
+	if (x == NULL || y == NULL || x[0] == 0 || y[0] == 0)
+		return 1;
+
+	double r = 0;
+	int len = y[0];
+	int ySum = 0;
+	int xSum = 0;
+	int xSqSum = 0;
+	int ySqSum = 0;
+	int xySum = 0;
+
+	for (size_t i = 1; i < len; i++)
+	{
+		ySum += y[i];
+		xSum += x[i];
+		xSqSum += pow(x[i], 2);
+		ySqSum += pow(y[i], 2);
+		xySum += x[i] * y[i];
+	}
+
+	r = (xySum * len) - (xSum * ySum);
+	r /= sqrt(((len * xSqSum) - pow(xSum, 2)) * ((len * ySqSum) - pow(ySum, 2)));
+
+	return r;
+}
+
+// ENV = A*HB + B
 void calc_regression(char *time)
 {
 	int bucket = get_bucket_time(time);
 	int dataSize;
 	char ***data = db_calc_data(&dataSize);
-	int group[dataSize];
-	group[0] = 0;
-	
+	int beats[dataSize];
+	int rgbs[dataSize];
+	beats[0] = 0;
+	rgbs[0] = 0;
+
 	for (size_t i = 0; i < dataSize; i++)
 		if (get_bucket_time(data[1][i]) == bucket)
 		{
-			group[0] += 1;
-			group[group[0]] = atoi(data[2][i]);
+			beats[0] += 1;
+			rgbs[0] += 1;
+
+			beats[beats[0]] = atoi(data[2][i]);
+			rgbs[rgbs[0]] = data[3][i][0];
 		}
 
-	printf("\n     COUNT:\t%d", group[0]);
-	printf("\n      MEAN: \t%d", get_mean(group));
-	printf("\n    MEDIAN: \t%d", group[0] > 0 ? group[group[0] / 2] : 0);
-	printf("\n   STD DEV: \t%.3lf\n\n", group[0] > 0 ? get_std_dev(group) : 0);
+	// printf("\n%d : %d : %d", bucket, beats[0], rgbs[0]);
+
+
+	printf("\nRegression: y = %.2lfx + %.2lf", get_a(beats, rgbs), get_b(beats, rgbs));
+	printf("\n       R^2: %.2lf\n\n", get_r(beats, rgbs));
 }
 
 void calc_stat(char *time)
@@ -280,7 +357,7 @@ void calc_stat(char *time)
 			group[group[0]] = atoi(data[2][i]);
 		}
 
-	printf("\n     COUNT:\t%d", group[0]);
+	printf("\n     COUNT: \t%d", group[0]);
 	printf("\n      MEAN: \t%d", get_mean(group));
 	printf("\n    MEDIAN: \t%d", group[0] > 0 ? group[group[0] / 2] : 0);
 	printf("\n      MODE: \t%d", get_mode(group));
