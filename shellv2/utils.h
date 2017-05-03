@@ -35,6 +35,10 @@ int inverse_bucket_h(int bucket);
 
 void process_hist_v2(char **args);
 
+void calc_regression(char *time);
+
+int get_mode(int *group);
+
 void calc_stat(char *time);
 
 void parse_time(int *h, int *m, char *time);

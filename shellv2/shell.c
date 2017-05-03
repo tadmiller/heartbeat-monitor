@@ -131,7 +131,7 @@ int shell_exec(char **args)
 	if (strcmp(*args, "date") == 0)   //if input is resume then start resume method
 		arduino_clock(args);
 	else if (strcmp(*args, "regression") == 0)   //if input is resume then start resume method
-		printf("regression");
+		calc_regression(*(args + 1));
 	else if (strcmp(*args, "stat") == 0)
 		calc_stat(*(args + 1));
 	else if (strcmp(*args, "env") == 0)

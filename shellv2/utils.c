@@ -199,8 +199,6 @@ char *mmap_read(char *file)
 	strncpy(ret, map, strlen(map));
 	munmap(map, strlen(map));
 
-	printf("\nReturning:\n \"%s\"\n", ret);
-
 	return ret;
 }
 
@@ -236,9 +234,18 @@ int get_bucket_time(char *timeStr)
 	return get_bucket(h, m);
 }
 
-void calc_stat(char *time)
+double get_a(int *group)
 {
-	int sum = 0;
+	return 0;
+}
+
+double get_b(int *group)
+{
+	return 0;
+}
+
+void calc_regression(char *time)
+{
 	int bucket = get_bucket_time(time);
 	int dataSize;
 	char ***data = db_calc_data(&dataSize);
@@ -250,20 +257,60 @@ void calc_stat(char *time)
 		{
 			group[0] += 1;
 			group[group[0]] = atoi(data[2][i]);
-			sum += group[group[0]];
 		}
 
 	printf("\n     COUNT:\t%d", group[0]);
 	printf("\n      MEAN: \t%d", get_mean(group));
 	printf("\n    MEDIAN: \t%d", group[0] > 0 ? group[group[0] / 2] : 0);
 	printf("\n   STD DEV: \t%.3lf\n\n", group[0] > 0 ? get_std_dev(group) : 0);
+}
 
+void calc_stat(char *time)
+{
+	int bucket = get_bucket_time(time);
+	int dataSize;
+	char ***data = db_calc_data(&dataSize);
+	int group[dataSize];
+	group[0] = 0;
+	
+	for (size_t i = 0; i < dataSize; i++)
+		if (get_bucket_time(data[1][i]) == bucket)
+		{
+			group[0] += 1;
+			group[group[0]] = atoi(data[2][i]);
+		}
+
+	printf("\n     COUNT:\t%d", group[0]);
+	printf("\n      MEAN: \t%d", get_mean(group));
+	printf("\n    MEDIAN: \t%d", group[0] > 0 ? group[group[0] / 2] : 0);
+	printf("\n      MODE: \t%d", get_mode(group));
+	printf("\n   STD DEV: \t%.3lf\n\n", group[0] > 0 ? get_std_dev(group) : 0);
 }
 
 void print_stars(int len)
 {
 	for (size_t i = 0; i < len; i++)
 		printf("*");
+}
+
+int get_mode(int *group)
+{
+	int nums[120];
+	int n = group[0] - 1;
+	int max = 0;
+
+	if (n < 0)
+		return 0;
+
+	for (size_t i = 0; i < 120; i++)
+		nums[i] = 0;
+	for (size_t i = 1; i < n; i++)
+		nums[group[i]] += 1;
+	for (size_t i = 0; i < 120; i++)
+		if (nums[i] > nums[max])
+			max = i;
+
+	return max;
 }
 
 int get_mean(int *group)
@@ -276,10 +323,6 @@ int get_mean(int *group)
 
 	for (size_t i = 1; i < n; i++)
 		sum += group[i];
-
-	// TODO: FIX
-	if (n == 0)
-		return 0;
 
 	return sum / n;
 }

@@ -11,6 +11,7 @@
 int fd;
 bool readingBuffer = false;
 bool quitFork = false;
+bool runningAction = false;
 
 // Initialize the connection to the Arduino.
 int init_tty(int fd)
