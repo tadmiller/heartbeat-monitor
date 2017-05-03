@@ -275,6 +275,7 @@ void process_rate()
 		//sprintf(time, "%.8s", beat + 4);
 		time[8] = '\0';
 		printf("\nTIME: %s", time);
+		fflush(stdout);
 		//mmap_write(beat, NULL, 'A');
 
 		// db_insert(beat, env);
