@@ -54,11 +54,11 @@ void print_prompt()
 	pw = getpwuid(getuid());
 	if (!pw)
 	{
-		printf("%s", DEFAULT_PROMPT);
+		printf("\n%s", DEFAULT_PROMPT);
 		return;
 	}
 
-	printf("%s@processor/", pw->pw_name);
+	printf("\n%s@processor/", pw->pw_name);
 
 	/* Get current working directory */
 	dir = getcwd(dir, size);

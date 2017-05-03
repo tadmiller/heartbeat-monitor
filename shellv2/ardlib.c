@@ -16,28 +16,20 @@ bool quitFork = false;
 int init_tty(int fd)
 {
 	struct termios tty;
-	/*
-	 * Configure the serial port.
-	 * First, get a reference to options for the tty
-	 * Then, set the baud rate to 9600 (same as on Arduino)
-	 */
-	memset(&tty, 0, sizeof(tty));
-	if (tcgetattr(fd, &tty) == -1)
-	{
-		perror("tcgetattr");
-		return -1;
-	}
 
-	if (cfsetospeed(&tty, (speed_t)B9600) == -1)
-	{
-		perror("ctsetospeed");
+	// Configure the serial port.
+	memset(&tty, 0, sizeof(tty));
+
+	// Get a reference to options for the tty
+	if (tcgetattr(fd, &tty) == -1)
 		return -1;
-	}
-	if (cfsetispeed(&tty, (speed_t)B9600) == -1)
-	{
-		perror("ctsetispeed");
+
+	// Set the baud rate to 9600 (same as on Arduino)
+	if (cfsetospeed(&tty, (speed_t) B9600) == -1)
 		return -1;
-	}
+
+	if (cfsetispeed(&tty, (speed_t) B9600) == -1)
+		return -1;
 
 	// 8 bits, no parity, no stop bits
 	tty.c_cflag &= ~PARENB;
@@ -64,10 +56,7 @@ int init_tty(int fd)
 
 	// Update options for the port
 	if (tcsetattr(fd, TCSANOW, &tty) == -1)
-	{
-		perror("tcsetattr");
 		return -1;
-	}
 
 	return 0;
 }
@@ -78,26 +67,21 @@ char *send_byte(char send)
 	if (fd == 0)
 		return NULL;
 
-	printf("\nFD is: %d\n", fd);
-
 	int count = 0;
 	char *buffer = NULL;
 
 	while (readingBuffer == true)
 	{
-		printf("\nWaiting for thread to finish reading buffer...");
+		//printf("\nWaiting for thread to finish reading buffer...");
 		usleep(1000 * 1000);
 	}
 
-	printf("\nsending: %d", send);
 	readingBuffer = true;
 	count = write(fd, &send, 1);
 
-	printf("\ndone write");
-
 	if (count == -1)
 	{
-		printf("\nWrite error\n");
+		//printf("\nWrite error\n");
 		close(fd);
 
 		readingBuffer = false;
@@ -105,7 +89,7 @@ char *send_byte(char send)
 	}
 	else if (count == 0)
 	{
-		printf("\nNo data written\n");
+		//printf("\nNo data written\n");
 		close(fd);
 
 		readingBuffer = false;
@@ -115,45 +99,32 @@ char *send_byte(char send)
 	// Wait for data to transmit
 	sleep(1);
 
-	printf("\nBuilding response\n");
-
 	// Read the response
 	buffer = malloc(sizeof(char) * BUFFER_SIZE);
-	printf("\nReading...");
 	count = read(fd, buffer, BUFFER_SIZE - 1);
 
-	printf("\nDone read.");
-	if (count == -1) 
+	if (count < 1) 
 	{
-		printf("\nRead error. Device connection closed\n");
-		close(fd);
-		free(buffer);
+		// Read error. Device connection closed
+		if (count < 0)
+			close(fd);
+			//printf("\nNULL");
 
-		readingBuffer = false;
-		return NULL;
-	}
-	else if (count == 0)
-	{
-		printf("\nNull response\n");
 		free(buffer);
 
 		readingBuffer = false;
 		return NULL;
 	}
 
-	printf("Count is: %d", count);
 	readingBuffer = false;
 
 	// Ensure the response is null-terminated
 	buffer[count] = 0;
 
 	if (buffer != NULL)
-	{
-		printf("Returning: %s", buffer);
 		return buffer;
-	}
 
-	printf("\nData malformed or no data returned\n");
+	//printf("\nData malformed or no data returned\n");
 	free(buffer);
 	return NULL;
 }
@@ -165,6 +136,7 @@ char *arduino_rate(bool keep)
 	if (keep)
 		return bpm;
 
+	bpm[2] = '\0';
 	printf("BPM: %s", bpm);
 	free(bpm);
 
@@ -196,25 +168,6 @@ void arduino_show(char **args)
 	printf("\ndone show\n");
 }
 
-void flush()
-{
-	fflush(stdin);
-	fflush(stdout);
-	send_byte('c');
-	fflush(stdin);
-	fflush(stdout);
-	tcflush(fd, TCIFLUSH);
-
-	usleep(1000 * 1000 * 2);
-
-	fflush(stdin);
-	fflush(stdout);
-	send_byte('c');
-	fflush(stdin);
-	fflush(stdout);
-	tcflush(fd, TCIFLUSH);
-}
-
 /*
 **ConnectArduino********************************************************************
 */
@@ -223,7 +176,7 @@ int arduino_connect(char **args)
 {   // Read the device path from input, or default to /dev/ttyACM0   
 	char *device = *(args + 1) != NULL ? *(args + 1) : "/dev/ttyACM0";
 
-	printf("Connecting to %s\n", device);
+	printf("\nConnecting to %s\n", device);
 	/*
 	 * Need the following flags to open:
 	 * O_RDWR: to read from/write to the devices
@@ -253,7 +206,11 @@ int arduino_connect(char **args)
 
 	printf("\nSuccessfully connected to device\n");
 
-	//flush();
+	usleep(1000 * 1000);
+
+	fflush(stdin);
+	fflush(stdout);
+	tcflush(fd, TCIFLUSH);
 
 	return 0;
 }
@@ -263,62 +220,6 @@ void arduino_close()
 	tcflush(fd, TCIFLUSH);
 
 	close(fd);
-}
-
-void read_response(char* txt, int len, char* buff, int buffLen, char identifier)
-{
-	for (size_t i = 0; i < buffLen; i++)
-	{
-		if (buff[i] == identifier)
-		{
-			if (i + 1 < buffLen)
-			{
-				if (buff[i + 1] == '[')
-					break;
-			}
-			else
-				printf("\nMessage cut off");
-		}
-	}
-}
-
-void arduino_heartrate()
-{
-	int i = 0;
-
-	int bpm;
-	int hour;
-	int min;
-	int sec;
-
-	char *buffer = send_byte('c');
-
-	// Read the bpm
-	while (buffer[i] != 'B')
-		i++;
-	bpm = (int) buffer[i + 2];
-
-	// Read the hour of the BPM recorded
-	while (buffer[i] != 'H')
-		i++;
-	hour = (int) buffer[i + 2] - 32;
-
-	// Read the minute of the BPM recorded
-	while (buffer[i] != 'M')
-		i++;
-	min = (int) buffer[i + 2] - 32;
-	
-	// Read the second of the BPM recorded
-	while (buffer[i] != 'S')
-		i++;
-	sec = (int) buffer[i + 2] - 32;
-	free(buffer);
-
-	fflush(stdin);
-	fflush(stdout);
-	//printf("%s", buffer);
-	printf("\n%.3d BPM at %.2d:%.2d:%.2d", bpm, hour, min, sec);
-	printf("\n\n");
 }
 
 char *arduino_env(bool keep)
@@ -341,53 +242,6 @@ void sys_exit()
 	printf("\n\n\n\n");
 	exit(0);
 }
-
-void get_hist()
-{
-	//scanf("%s", r_time);
-
-	//mmap_read();
-}
-
-// void inputCmd()
-// {
-//     char input[30];
-
-
-//     while(1)    //infinitely looping while
-//     {
-//         printf("processor/shell$ ");  //ask user to enter command
-//         scanf("%s", input); 
-
-//         if (strcmp(input, "show") == 0) //if input is show X then start show method
-//             show();
-//         else if (strcmp(input, "pause") == 0) //if input is pause then start pause method
-//             pauseProg();
-//         else if (strcmp(input, "resume") == 0)   //if input is resume then start resume method
-//             resume();
-//         else if (strcmp(input, "rate") == 0)
-//             arduinoRate();
-//         else if (strcmp(input, "env") == 0)
-//             arduinoEnv();
-//         else if (strcmp(input, "hist") == 0)
-//             getHist();
-//         else if (strcmp(input, "reset") == 0)
-//             clearFile();
-//         else if(strcmp(input, "q") == 0 || strcmp(input, "quit") == 0 || strcmp(input, "exit") == 0 || strcmp(input, "x") == 0) //if exit or quit then exit program
-//             sysExit();
-//         else if (strcmp(input, "c") == 0 || strcmp(input, "connect") == 0)
-//             arduinoConnect();
-//         else if (strcmp(input, "close") == 0)
-//             arduinoClose();
-//         else if (strcmp(input, "flush") == 0)
-//             flush();
-//         //else
-//         //    process_rate();
-//     }
-//    // printf("You exited the program\n");
-   
-// }
-
 
 // Data visualizer. Reads data from Arduino and stores into 10 character array.
 // Gets sent to mmap'd file after 10 reads.
