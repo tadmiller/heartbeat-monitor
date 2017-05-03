@@ -274,7 +274,7 @@ void process_rate()
 		{
 			strncpy(time, beat + 4, 8);
 			time[8] = '\0';
-			//mmap_write(beat, NULL, 'A');
+			mmap_write(beat, NULL, 'A');
 
 			db_insert(time, atoi(beat), env);
 		}

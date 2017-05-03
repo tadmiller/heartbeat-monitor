@@ -335,9 +335,6 @@ void calc_regression(char *time)
 			rgbs[rgbs[0]] = data[3][i][0];
 		}
 
-	// printf("\n%d : %d : %d", bucket, beats[0], rgbs[0]);
-
-
 	printf("\nRegression: y = %.2lfx + %.2lf", get_a(beats, rgbs), get_b(beats, rgbs));
 	printf("\n       R^2: %.2lf\n\n", get_r(beats, rgbs));
 }
