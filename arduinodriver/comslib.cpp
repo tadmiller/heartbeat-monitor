@@ -19,14 +19,52 @@ void sendRGB(int r, int g, int b)
 
 void receiveClock()
 {
-	char h = receiveByte();
-	while (h != 'h')
+	Serial.println("Receiving clock...");
+	char h;
+	char m;
+	char s;
+	char msg = ' ';
+
+	do
 	{
+		h = msg - 32;
 		Serial.print("h is: ");
 		Serial.println(h);
 
-		h = receiveByte();
+		msg = receiveByte();
 	}
+	while (msg != 'h');
+
+	do
+	{
+		m = msg - 32;
+		Serial.print("m is: ");
+		Serial.println(m);
+
+		msg = receiveByte();
+	}
+	while (msg != 'm');
+
+	do
+	{
+		s = msg - 32;
+		Serial.print("s is: ");
+		Serial.println(s);
+
+		msg = receiveByte();
+	}
+	while (msg != 's');
+
+	setClock(h, m, s);
+	updateClock();
+	Serial.println("Successfully synced time!");
+	printTime();
+	//Serial.print()
+}
+
+void sendTime()
+{
+	sendReading(getSysTime());
 }
 
 char receiveByte()

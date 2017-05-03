@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include <Wire.h>
+#include "rtclib.h"
 
 int sendReading(String data);
 
@@ -13,5 +14,7 @@ void sendRGB(int r, int g, int b);
 void receiveClock();
 
 char receiveByte();
+
+void sendTime();
 
 #endif

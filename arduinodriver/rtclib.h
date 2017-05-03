@@ -14,6 +14,8 @@
 // Initialize the Arduino clock
 void initClock();
 
+String getSysTime();
+
 int getSysHour();
 
 int getSysMin();

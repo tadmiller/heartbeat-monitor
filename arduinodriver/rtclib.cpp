@@ -25,6 +25,11 @@ void initClock()
 	rtc.setSecond(String(__TIME__).substring(6, 8).toInt());
 }
 
+String getSysTime()
+{
+	return sys_time;
+}
+
 int getSysHour()
 {
 	return sys_hour;
@@ -62,8 +67,8 @@ void updateClock()
 		lastSecond = rtc.second(); // Update lastSecond value
 
 		sys_time = String(rtc.hour()) + ":";//+  + ;
-		sys_time += rtc.minute() < 10 ? "0" : "" + String(rtc.minute()) + ":";
-		sys_time += rtc.second() < 10 ? "0" : "" + String(rtc.second());
+		sys_time += rtc.minute() < 10 ? "0" + String(rtc.minute()) + ":" : "" + String(rtc.minute()) + ":";
+		sys_time += rtc.second() < 10 ? "0" + String(rtc.second()) : "" + String(rtc.second());
 
 		sys_hour = rtc.hour();
 		sys_minute = rtc.minute();
@@ -75,6 +80,7 @@ void updateClock()
 
 void printTime()
 {
+	Serial.print("The time is: ");
 	Serial.print(String(rtc.hour()) + ":"); // Print hour
 
 	if (rtc.minute() < 10)
@@ -85,21 +91,15 @@ void printTime()
 	if (rtc.second() < 10)
 		Serial.print('0'); // Print leading '0' for second
 
-	Serial.print(String(rtc.second())); // Print second
+	Serial.println(String(rtc.second())); // Print second
 
-	if (rtc.is12Hour()) // If we're in 12-hour mode
-	{	// Use rtc.pm() to read the AM/PM state of the hour
-		if (rtc.pm()) Serial.print(" PM"); // Returns true if PM
-		else Serial.print(" AM");
-	}
+	// Serial.print(" | ");
 
-	Serial.print(" | ");
-
-	// Few options for printing the day, pick one:
-	Serial.print(rtc.dayStr()); // Print day string
-	//Serial.print(rtc.dayC()); // Print day character
-	//Serial.print(rtc.day()); // Print day integer (1-7, Sun-Sat)
-	Serial.print(" - ");
-	Serial.print(String(rtc.month()) + "/" + String(rtc.date()) + "/"); // Print month // Print date 
-	Serial.println(String(rtc.year()));        // Print year
+	// // Few options for printing the day, pick one:
+	// Serial.print(rtc.dayStr()); // Print day string
+	// //Serial.print(rtc.dayC()); // Print day character
+	// //Serial.print(rtc.day()); // Print day integer (1-7, Sun-Sat)
+	// Serial.print(" - ");
+	// Serial.print(String(rtc.month()) + "/" + String(rtc.date()) + "/"); // Print month // Print date 
+	// Serial.println(String(rtc.year()));        // Print year
 }

@@ -45,11 +45,11 @@ void updateCmd()
 	}
 	else
 	{   // 112 == 'p' which means we pause the program state.
-		if (cmd == 112)
+		if (cmd == 'p')
 			paused = true;
-		else if (cmd == 114) // 114 = 'r' which means we resume the program state.
+		else if (cmd == 'r') // 114 = 'r' which means we resume the program state.
 			paused = false;
-		else if (cmd == 115) // 115 is 's' which means we're going to display the number that comes after
+		else if (cmd == 's') // 115 is 's' which means we're going to display the number that comes after
 		{
 			dispVal = 0;
 			delay(100);
@@ -64,10 +64,12 @@ void updateCmd()
 			paused = true;
 			matrixWrite(dispVal);
 		}
-		else if (cmd == 99)
+		else if (cmd == 'b')
 			sendBPM(getSysHour(), getSysMin(), getSysSec(), getBPM());
 		else if (cmd == 'c')
 			receiveClock();
+		else if (cmd == 't')
+			printTime();
 		// else if (cmd == 101)
 		// 	printADJD_S311Values();
 
