@@ -8,10 +8,20 @@ int sendReading(String data)
 	return 0;
 }
 
+// String intToString(int s, int len)
+// {
+// 	String res = String(s);
+
+// 	for (int i = )
+// }
+
 // Sends the heart beats per minute from the heart rate sensor
 void sendBPM(int hour, int min, int sec, int reading)	
 {
-	sendReading(String(reading) + "," + String(hour) + "," + String(min) + "," + String(sec) + ",");
+	char buff[13];
+	sprintf(buff, "%.3d,%.2d,%.2d,%.2d,", reading, hour, min, sec);
+	buff[12] = '\0';
+	sendReading(String(buff));
 }
 
 void sendRGB(int r, int g, int b)

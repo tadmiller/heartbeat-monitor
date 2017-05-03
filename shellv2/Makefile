@@ -13,5 +13,7 @@ compile:
 clean:
 	@rm -f *.o
 
-install:
-	${APT} update && ${APT} install libsqlite3-dev  && ${APT} install sqlite3 
+install: sqlite compile
+
+sqlite:
+	${APT} update && ${APT} install libsqlite3-dev && ${APT} install sqlite3
