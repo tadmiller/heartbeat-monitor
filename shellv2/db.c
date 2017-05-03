@@ -2,6 +2,7 @@
 
 sqlite3 *db;
 int pk;
+bool usingDB = false;
 
 static int cb(void *NotUsed, int argc, char **argv, char **colName)
 {
@@ -20,16 +21,16 @@ void db_handler(char **args)
 	if (strcmp(*(args + 1), "init") == 0)
 		db_init();
 	else if (strcmp(*(args + 1), "view") == 0)
-		printf("\n%s\n", *(args + 1));
+		db_select();
 	else if (strcmp(*(args + 1), "ins") == 0)
-		db_insert(33, "GREEN");
+		db_insert("10:10:10", 33, "GREEN");
 }
 
-void db_insert(int rate, char *env)
+void db_insert(char *time, int rate, char *env)
 {
-	char sql[50];// = "";
+	char sql[100];// = "";
 				//"(0, 100, \"Hello\")";
-	sprintf(sql, "INSERT INTO SensorData VALUES(%d, %d, \"%s\")", pk, rate, env);
+	sprintf(sql, "INSERT INTO SensorData (TIME, RATE, ENV) VALUES (\"%s\", %d, \"%s\");", time, rate, env);
 
 	printf("\n%s\n", sql);
 	//strcat(sql, pk);
@@ -41,11 +42,13 @@ void db_insert(int rate, char *env)
 
 	pk++;
 
-	//db_exec(sql);
+	db_exec(sql);
 }
 
 char *db_select()
 {
+	char *sql = "SELECT * FROM SensorData";
+	db_exec(sql);
 	return NULL;
 }
 
@@ -54,7 +57,7 @@ void db_init()
 
 	char *sql = "CREATE TABLE SensorData"				\
 				"("										\
-					"PK INT PRIMARY KEY NOT NULL,"		\
+					"PK INTEGER PRIMARY KEY AUTOINCREMENT,"	\
 					"TIME TEXT NOT NULL,"				\
 					"RATE INT NOT NULL,"				\
 					"ENV  TEXT NOT NULL"				\
@@ -65,6 +68,11 @@ void db_init()
 
 void db_exec(char *sql)
 {
+	while (usingDB)
+		usleep(1000 * 1000);
+
+	usingDB = true;
+
 	int rex = sqlite3_open("processor.db", &db);
 	char *err;
 
@@ -73,4 +81,6 @@ void db_exec(char *sql)
 	printf("\nrex:%d\n", rex);
 	printf("\nerr:%s\n", err);
 	sqlite3_close(db);
+
+	usingDB = false;
 }

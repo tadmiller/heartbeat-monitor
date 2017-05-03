@@ -213,7 +213,7 @@ char *mmap_read(char *file)
 	strncpy(ret, map, strlen(map));
 	munmap(map, strlen(map));
 
-	//printf("\nReturning:\n \"%s\"\n", ret);
+	printf("\nReturning:\n \"%s\"\n", ret);
 
 	return ret;
 }

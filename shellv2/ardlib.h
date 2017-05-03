@@ -19,7 +19,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <termios.h>
-#include <stdbool.h>
 #include <stdint.h>
 #include <sys/mman.h>
 #include <stdbool.h>
