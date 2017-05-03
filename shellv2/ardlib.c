@@ -261,19 +261,19 @@ void sys_exit()
 void process_rate()
 {
 	char *beat;
-	//char *env;
+	char *env;
 
 	while (!quitFork)
 	{
 		beat = arduino_rate(true);
-		//env = arduino_env(true);
+		env = arduino_env(true);
 
 		mmap_write(beat, NULL, 'A');
 
 		// db_insert(beat, env);
 
 		free(beat);
-		//free(env);
+		free(env);
 
 		usleep(1000 * 1000 * 3);
 
