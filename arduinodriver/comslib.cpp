@@ -18,9 +18,10 @@ int sendReading(String data)
 // Sends the heart beats per minute from the heart rate sensor
 void sendBPM(int hour, int min, int sec, int reading)	
 {
-	char buff[14];
+	char buff[15];
 	sprintf(buff, "%.3d,%.2d,%.2d,%.2d,", reading, hour, min, sec);
-	buff[13] = '\0';
+	buff[13] = '\n';
+	buff[14] = '\0';
 	sendReading(String(buff));
 }
 

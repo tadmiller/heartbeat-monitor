@@ -213,7 +213,7 @@ char *mmap_read(char *file)
 	strncpy(ret, map, strlen(map));
 	munmap(map, strlen(map));
 
-	//printf("\nReturning: %s\n", ret);
+	printf("\nReturning:\n \"%s\"\n", ret);
 
 	return ret;
 }
@@ -235,6 +235,7 @@ int get_mean(int *group)
 	for (size_t i = 1; i < n; i++)
 		sum += group[i];
 
+	// TODO: FIX
 	return sum;
 }
 

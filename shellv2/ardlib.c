@@ -233,10 +233,15 @@ char *arduino_env(bool keep)
 {
 	char *env = send_byte('e');
 
-	if (keep)
-		return env;
+	if (env != NULL)
+	{
+		printf("\nRGB SENSOR: %s", env);
+		free(env);
+	}
+	else
+		printf("\nRGB is NULL\n");
 
-	printf("\nRGB SENSOR: %s", env);
+	
 	free(env);
 
 	return NULL;
@@ -255,25 +260,28 @@ void sys_exit()
 // Gets sent to mmap'd file after 10 reads.
 void process_rate()
 {
-	char *res;
+	char *beat;
+	char *env;
 
-	while (1)
+	while (!quitFork)
 	{
-		res = NULL;
-		res = arduino_rate(true);
+		beat = arduino_rate(true);
+		env = arduino_env(true);
 
-		res[14] = '\0';
-		//printf("%s", res);
+		mmap_write(beat, NULL, 'A');
 
-		mmap_write(res, NULL, 'A');
+		// db_insert(beat, env);
 
-		free(res);
+		free(beat);
+		free(env);
 
 		usleep(1000 * 1000 * 3);
 
-		if (quitFork)
-			exit(0);
+		if (quitFork == true)
+			break;
 	}
+
+	return;
 }
 
 void arduino_clock(char **args)
@@ -328,5 +336,8 @@ void fork_heartrate()
 	if (pid == 0)
 		return;
 	else
+	{
 		process_rate();
+		exit(0);
+	}
 }

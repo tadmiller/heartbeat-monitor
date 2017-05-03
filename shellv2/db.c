@@ -54,7 +54,8 @@ void db_init()
 
 	char *sql = "CREATE TABLE SensorData"				\
 				"("										\
-					"TIME INT PRIMARY KEY NOT NULL,"	\
+					"PK INT PRIMARY KEY NOT NULL,"		\
+					"TIME TEXT NOT NULL,"				\
 					"RATE INT NOT NULL,"				\
 					"ENV  TEXT NOT NULL"				\
 				");";
