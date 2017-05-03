@@ -9,7 +9,7 @@
 #define CRTSCTS 020000000000
 #endif
 
-#define BUFFER_SIZE 32
+#define BUFFER_SIZE 64
 
 #include <sys/types.h>
 #include <sys/stat.h>

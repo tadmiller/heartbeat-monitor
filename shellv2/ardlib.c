@@ -272,10 +272,7 @@ void arduino_clock(char **args)
 
 	if (*(args + 1) != NULL)
 		if (strcmp(*(args + 1), "sync") == 0)
-		{
 			arduino_clock_sync();
-			return;
-		}
 
 	time = send_byte('t');
 
