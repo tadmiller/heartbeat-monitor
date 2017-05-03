@@ -15,6 +15,7 @@
 #include <sys/mman.h>
 #include <stdbool.h>
 #include <math.h>
+#include <time.h>
 
 #include "db.h"
 
@@ -46,6 +47,6 @@ int get_bucket(int hour, int min);
 
 int get_mean(int *group);
 
-int get_std_dev(int *group);
+double get_std_dev(int *group);
 
 #endif

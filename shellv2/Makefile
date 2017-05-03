@@ -2,7 +2,7 @@
 
 CC=gcc
 CFLAGS=-std=c99 -Wall -pedantic -Werror
-CLINK=-lsqlite3
+CLINK=-lsqlite3 -lm
 APT=sudo apt-get -y
 
 all: clean compile

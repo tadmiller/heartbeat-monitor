@@ -214,11 +214,24 @@ void parse_time(int *h, int *m, char *time)
 	parse_commas(time, len, m, i, &j);
 }
 
-int get_bucket_time(char *time)
+int get_bucket_time(char *timeStr)
 {
 	int h;
 	int m;
-	parse_time(&h, &m, time);
+
+	if (timeStr == NULL)
+	{
+		time_t t;
+		struct tm *curr_time;
+
+		time(&t);
+		curr_time = localtime(&t);
+
+		h = curr_time -> tm_hour;
+		m = curr_time -> tm_min;
+	}
+	else
+		parse_time(&h, &m, timeStr);
 
 	return get_bucket(h, m);
 }
@@ -231,13 +244,6 @@ void calc_stat(char *time)
 	char ***data = db_calc_data(&dataSize);
 	int group[dataSize];
 	group[0] = 0;
-
-	printf("\nDB size: %d", dataSize);
-
-	printf("\n%s\n", data[0][0]);
-	printf("\n%s\n", data[1][0]);
-	printf("\n%s\n", data[2][0]);
-	printf("\n%s\n", data[3][0]);
 	
 	for (size_t i = 0; i < dataSize; i++)
 		if (get_bucket_time(data[1][i]) == bucket)
@@ -249,8 +255,8 @@ void calc_stat(char *time)
 
 	printf("\n     COUNT:\t%d", group[0]);
 	printf("\n      MEAN: \t%d", get_mean(group));
-	printf("\n    MEDIAN: \t%d", group[group[0] / 2]);
-	printf("\n   STD DEV: \t%d", get_std_dev(group));
+	printf("\n    MEDIAN: \t%d", group[0] > 0 ? group[group[0] / 2] : 0);
+	printf("\n   STD DEV: \t%.3lf\n\n", group[0] > 0 ? get_std_dev(group) : 0);
 
 }
 
@@ -274,13 +280,29 @@ int get_mean(int *group)
 	// TODO: FIX
 	if (n == 0)
 		return 0;
-	
+
 	return sum / n;
 }
 
-int get_std_dev(int *group)
+double get_std_dev(int *group)
 {
-	return 0;
+	if (group == NULL || group[0] == 0)
+		return 0;
+
+	int mean = get_mean(group);
+	int n = group[0] - 1;
+	double dev = 0;
+
+	for (size_t i = 1; i < n; i++)
+		dev += pow(group[i] - mean, 2);
+
+	printf("like billy");
+	printf("like billy");
+	printf("like billy");
+
+	dev /= n;
+
+	return sqrt(dev);
 }
 
 // Print a star histogram using the recorded dates and times.
@@ -290,9 +312,9 @@ void print_hist(int **groups, int len)
 	{
 		if (groups[i])
 		{
-			printf("\n%.2d:%.2d | μ %.2d |\t", inverse_bucket_h(i), inverse_bucket_m(i),0);
+			printf("\n%.2d:%.2d | μ %.2d |\t", inverse_bucket_h(i), inverse_bucket_m(i), get_mean(groups[i]));
 			print_stars(groups[i][1]);
-			printf("\n      | σ %.2d |\t", 0);
+			printf("\n      | σ %.2lf |\t", get_std_dev(groups[i]));
 			print_stars(groups[i][1]);
 			printf("\n");
 		}
