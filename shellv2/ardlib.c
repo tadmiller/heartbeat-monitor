@@ -160,7 +160,7 @@ char *send_byte(char send)
 
 char *arduino_rate(bool keep)
 {
-	char *bpm = send_byte('c');
+	char *bpm = send_byte('b');
 
 	if (keep)
 		return bpm;

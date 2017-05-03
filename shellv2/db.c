@@ -12,25 +12,6 @@ static int cb(void *NotUsed, int argc, char **argv, char **colName)
 	return 0;
 }
 
-// int main(int argc, char* argv[])
-// {
-// 	sqlite3 *datab;
-// 	char *errMessage;
-// 	int rex;
-// 	char *sql;
-
-// 	rex = sqlite3_open("heartVENV.database", &datab);   //opening db
-	
-// 		sql = "CREATE TABLE SensorData("            //creating table
-// 		 "TIME INT PRIMARY KEY     NOT NULL," 
-// 		 "HEARTRATE           INT    NOT NULL," 
-// 		 "ENV            INT     NOT NULL);";
-
-// 	rex = sqlite3_exec(datab, sql, cb, 0, &errMessage);
-// 	printf("%d", rex);
-
-// }
-
 void db_handler(char **args)
 {
 	if (*(args + 1) == NULL)
