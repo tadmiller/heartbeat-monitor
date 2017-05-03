@@ -255,10 +255,14 @@ void sys_exit()
 // Gets sent to mmap'd file after 10 reads.
 void process_rate()
 {
+	char *res;
+
 	while (1)
 	{
-		char *res = arduino_rate(true);
+		res = NULL;
+		res = arduino_rate(true);
 
+		res[13] = '\0';
 		printf("%s", res);
 
 		mmap_write(res, NULL, 'A');
