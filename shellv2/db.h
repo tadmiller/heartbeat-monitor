@@ -26,4 +26,6 @@ void db_exec(char *sql, char type);
 
 char *db_select();
 
+int db_size();
+
 #endif

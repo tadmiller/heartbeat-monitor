@@ -2,10 +2,18 @@
 
 sqlite3 *db;
 bool usingDB = false;
+bool updated = false;
+int size = 0;
 
 // For each column this is called
 static int cb(void *notUsed, int argc, char **argv, char **colName)
 {
+	if (strcmp(colName[0], "MAX(pk)") == 0)
+	{
+		size = atoi(argv[0]);
+		return 0;
+	}
+	
 	for (size_t i = 0; i < argc; i++)
 		printf("%s = %s\n", colName[i], argv[i] ? argv[i] : "NULL");
    
@@ -23,6 +31,8 @@ void db_handler(char **args)
 		db_select();
 	else if (strcmp(*(args + 1), "ins") == 0)
 		db_insert("10:10:10", 33, "GREEN");
+	else if (strcmp(*(args + 1), "size") == 0)
+		printf("\nSIZE IS: %d\n", db_size());
 }
 
 void db_insert(char *time, int rate, char *env)
@@ -31,6 +41,26 @@ void db_insert(char *time, int rate, char *env)
 	sprintf(sql, "INSERT INTO SensorData (TIME, RATE, ENV) VALUES (\"%s\", %d, \"%s\");", time, rate, env);
 
 	db_exec(sql, 'I');
+}
+
+void waitForCallback()
+{
+	while (!updated)
+		usleep(100 * 1000);
+
+	updated = false;
+
+	return;
+}
+
+int db_size()
+{
+	char *sql = "SELECT MAX(pk) FROM SensorData";
+	db_exec(sql, 'S');
+
+	waitForCallback();
+
+	return size;
 }
 
 char *db_select()
@@ -74,5 +104,6 @@ void db_exec(char *sql, char type)
 
 	sqlite3_close(db);
 
+	updated = true;
 	usingDB = false;
 }
