@@ -22,7 +22,7 @@ void db_handler(char **args);
 
 void db_insert(char *time, int rate, char *env);
 
-void db_exec(char *sql);
+void db_exec(char *sql, char type);
 
 char *db_select();
 
