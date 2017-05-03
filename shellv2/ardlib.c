@@ -233,6 +233,9 @@ char *arduino_env(bool keep)
 {
 	char *env = send_byte('e');
 
+	if (keep)
+		return env;
+
 	if (env != NULL)
 	{
 		printf("\nRGB SENSOR: %s", env);
@@ -240,9 +243,6 @@ char *arduino_env(bool keep)
 	}
 	else
 		printf("\nRGB is NULL\n");
-
-	
-	free(env);
 
 	return NULL;
 }
