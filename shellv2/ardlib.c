@@ -271,12 +271,8 @@ void process_rate()
 
 		if (beat != NULL && env != NULL)
 		{
-			printf("\n\n\nBEAT: %.3s", beat);
-			printf("\nENV:  %s", env);
 			strncpy(time, beat + 4, 8);
 			time[8] = '\0';
-			printf("\nTIME: %s", time);
-			fflush(stdout);
 			//mmap_write(beat, NULL, 'A');
 
 			db_insert(time, atoi(beat), env);

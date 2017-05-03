@@ -296,10 +296,6 @@ double get_std_dev(int *group)
 	for (size_t i = 1; i < n; i++)
 		dev += pow(group[i] - mean, 2);
 
-	printf("like billy");
-	printf("like billy");
-	printf("like billy");
-
 	dev /= n;
 
 	return sqrt(dev);
@@ -403,8 +399,8 @@ void process_groups(int *bpms, int *hours, int *mins, int *secs, int arrLen, int
 
 		if (groups[bucket] == NULL)
 		{	// arrLen is max elems
-			printf("\n%d:%d, ", hours[i], mins[i]);
-			printf("Allocating bucket %d", bucket);
+			//printf("\n%d:%d, ", hours[i], mins[i]);
+			//printf("Allocating bucket %d", bucket);
 			groups[bucket] = malloc(sizeof(int) * arrLen + 1);
 			**(groups + bucket) = 0;
 		}
