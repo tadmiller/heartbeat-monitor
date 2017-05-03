@@ -516,7 +516,7 @@ void process_groups(int *bpms, int *hours, int *mins, int *secs, int arrLen, int
 
 		if (groups[bucket] == NULL)
 		{	// arrLen is max elems
-			printf("\n%d:%d, ", hours[i], mins[i]);
+			printf("\n%d:%d", hours[i], mins[i]);
 			printf("Allocating bucket %d", bucket);
 			groups[bucket] = malloc(sizeof(int) * arrLen + 1);
 			**(groups + bucket) = 0;
@@ -530,6 +530,7 @@ void process_groups(int *bpms, int *hours, int *mins, int *secs, int arrLen, int
 void process_hist_v2(char **args)
 {
 	char *map = mmap_read(*(args + 1));
+	//char *time = get_bucket_time(*(args + 2));
 	int len;
 
 	int *bpms;
@@ -560,7 +561,7 @@ void process_hist_v2(char **args)
 
 	parse_hist_csv(map, len, bpms, hours, mins, secs, arrLen);
 	process_groups(bpms, hours, mins, secs, arrLen, groups);
-	print_hist(groups, GROUP_SIZE);
+	//print_hist(groups, GROUP_SIZE);
 
 	free(map);
 	free(bpms);
