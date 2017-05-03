@@ -3,9 +3,11 @@
 sqlite3 *db;
 bool usingDB = false;
 
-static int cb(void *NotUsed, int argc, char **argv, char **colName)
+static int cb(void *notUsed, int argc, char **argv, char **colName)
 {
-	for (size_t i =0; i< argc; i++)
+	printf("ARGC: %d", argc);
+
+	for (size_t i = 0; i < argc; i++)
 		printf("%s = %s\n", colName[i], argv[i] ? argv[i] : "NULL");
    
 	printf("\n");
