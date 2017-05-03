@@ -133,7 +133,7 @@ int shell_exec(char **args)
 	else if (strcmp(*args, "regression") == 0)   //if input is resume then start resume method
 		printf("regression");
 	else if (strcmp(*args, "stat") == 0)
-		calc_stat(NULL);
+		calc_stat(*(args + 1));
 	else if (strcmp(*args, "env") == 0)
 		arduino_env(0);
 	else if (strcmp(*args, "exit") == 0 || strcmp(*args, "quit") == 0 || strcmp(*args, "q") == 0)

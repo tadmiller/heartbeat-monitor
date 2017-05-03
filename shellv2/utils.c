@@ -204,8 +204,32 @@ char *mmap_read(char *file)
 	return ret;
 }
 
+void parse_time(int *h, int *m, char *time)
+{
+	size_t i = 0;
+	size_t j = 0;
+	size_t len = strlen(time);
+
+	parse_commas(time, len, h, i, &j);
+	parse_commas(time, len, m, i, &j);
+
+	printf("\nGot: %d:%d\n", *h, *m);
+}
+
+int get_bucket_time(char *time)
+{
+	int h;
+	int m;
+	parse_time(&h, &m, time);
+
+	return get_bucket(h, m);
+}
+
 void calc_stat(char *time)
 {
+	int bucket = get_bucket_time(time);
+	printf("bucket is: %d", bucket);
+
 	int size;
 	char ***data = db_calc_data(&size);
 
@@ -273,7 +297,7 @@ int parse_commas(char *str, int len, int *numArr, size_t numItr, size_t *j)
 	int numSize;
 	char *num;
 
-	while (*j < len && str[*j] != ',')
+	while (*j < len && str[*j] != ',' && str[*j] != ':')
 	{	// Apparently CR is two characters
 		if (str[*j] == 13)
 			start += 2;
@@ -290,6 +314,8 @@ int parse_commas(char *str, int len, int *numArr, size_t numItr, size_t *j)
 		num[i] = str[start + i];
 
 	num[numSize + 1] = '\0';
+
+	//printf("\nParsed: %s", num);
 	numArr[numItr] = atoi(num);
 
 	*j += 1;
@@ -398,9 +424,4 @@ void process_hist_v2(char **args)
 			free(groups[i]);
 
 	free(groups);
-}
-
-void clear_mmap()
-{
-	//mmap_write(NULL, NULL, NULL, NULL);
 }

@@ -36,4 +36,12 @@ void process_hist_v2(char **args);
 
 void calc_stat(char *time);
 
+void parse_time(int *h, int *m, char *time);
+
+int get_bucket_time(char *time);
+
+int parse_commas(char *str, int len, int *numArr, size_t numItr, size_t *j);
+
+int get_bucket(int hour, int min);
+
 #endif
