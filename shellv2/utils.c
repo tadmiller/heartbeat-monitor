@@ -551,7 +551,7 @@ void process_hist_v2(char **args)
 	if (len < 15)
 		return;
 
-	arrLen = (len / 15) + 1;
+	arrLen = len / 15;
 	bpms = malloc(sizeof(int) * arrLen);
 	hours = malloc(sizeof(int) * arrLen);
 	mins = malloc(sizeof(int) * arrLen);
