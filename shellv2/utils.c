@@ -212,8 +212,6 @@ void parse_time(int *h, int *m, char *time)
 
 	parse_commas(time, len, h, i, &j);
 	parse_commas(time, len, m, i, &j);
-
-	printf("\nGot: %d:%d\n", *h, *m);
 }
 
 int get_bucket_time(char *time)
@@ -227,19 +225,32 @@ int get_bucket_time(char *time)
 
 void calc_stat(char *time)
 {
+	int sum = 0;
 	int bucket = get_bucket_time(time);
-	printf("bucket is: %d", bucket);
+	int dataSize;
+	char ***data = db_calc_data(&dataSize);
+	int group[dataSize];
+	group[0] = 0;
 
-	int size;
-	char ***data = db_calc_data(&size);
-
-	printf("\nDB size: %d", size);
+	printf("\nDB size: %d", dataSize);
 
 	printf("\n%s\n", data[0][0]);
 	printf("\n%s\n", data[1][0]);
 	printf("\n%s\n", data[2][0]);
 	printf("\n%s\n", data[3][0]);
-	//for (size_t i = 0; i < 4; i++)
+	
+	for (size_t i = 0; i < dataSize; i++)
+		if (get_bucket_time(data[1][i]) == bucket)
+		{
+			group[0] += 1;
+			group[group[0]] = atoi(data[2][i]);
+			sum += group[group[0]];
+		}
+
+	printf("\n     COUNT:\t%d", group[0]);
+	printf("\n      MEAN: \t%d", get_mean(group));
+	printf("\n    MEDIAN: \t%d", group[group[0] / 2]);
+	printf("\n   STD DEV: \t%d", get_std_dev(group));
 
 }
 
@@ -261,7 +272,10 @@ int get_mean(int *group)
 		sum += group[i];
 
 	// TODO: FIX
-	return sum;
+	if (n == 0)
+		return 0;
+	
+	return sum / n;
 }
 
 int get_std_dev(int *group)

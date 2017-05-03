@@ -44,4 +44,8 @@ int parse_commas(char *str, int len, int *numArr, size_t numItr, size_t *j);
 
 int get_bucket(int hour, int min);
 
+int get_mean(int *group);
+
+int get_std_dev(int *group);
+
 #endif
