@@ -132,7 +132,8 @@ int shell_exec(char **args)
 		arduino_clock(args);
 	else if (strcmp(*args, "regression") == 0)   //if input is resume then start resume method
 		printf("regression");
-	// else if (strcmp(*args, "stat") == 0)
+	else if (strcmp(*args, "stat") == 0)
+		calc_stat(NULL);
 	else if (strcmp(*args, "env") == 0)
 		arduino_env(0);
 	else if (strcmp(*args, "exit") == 0 || strcmp(*args, "quit") == 0 || strcmp(*args, "q") == 0)
@@ -180,36 +181,5 @@ int shell_exec(char **args)
 	// TODO
 
 	/* Simple fork/exec */
-	return 0; // shell_run(args);
-}
-
-/*
- * Forks this process and runs what it has been passed
- */
-int shell_run(char **args)
-{
-	// pid_t pid;
-	// int status;
-	// int i = 0;
-	/* // Check if the last argument is "&"
-	int concurrent = 0;
-	while (args[i]) i++;
-		if (strcmp("&", args[i - 1]) == 0)
-		{
-			concurrent = 1;
-			args[i - 1] = NULL;
-		}
-	*/
-
-	/* Fork the process and execute stuff!
-	 * In the child process, run the command the user desires
-	 * Be sure to implement robust error checking.
-	 * If the concurrent variable is true, then we should not wait
-	 * for the subprocess to finish, but instead print out its PID
-	 */
-	// TODO
-
-	printf("\nCMD IS: %s\n", *args + 0);
-
 	return 0;
 }

@@ -25,8 +25,6 @@ char **tok_line(char *line);
 
 int shell_exec(char **args);
 
-int shell_run(char **args);
-
 int shell_init();
 
 #endif

@@ -204,6 +204,21 @@ char *mmap_read(char *file)
 	return ret;
 }
 
+void calc_stat(char *time)
+{
+	int size;
+	char ***data = db_calc_data(&size);
+
+	printf("\nDB size: %d", size);
+
+	printf("\n%s\n", data[0][0]);
+	printf("\n%s\n", data[1][0]);
+	printf("\n%s\n", data[2][0]);
+	printf("\n%s\n", data[3][0]);
+	//for (size_t i = 0; i < 4; i++)
+
+}
+
 void print_stars(int len)
 {
 	for (size_t i = 0; i < len; i++)

@@ -24,7 +24,9 @@ void db_insert(char *time, int rate, char *env);
 
 void db_exec(char *sql, char type);
 
-char *db_select();
+void db_select();
+
+char ***db_calc_data(int *s);
 
 int db_size();
 
