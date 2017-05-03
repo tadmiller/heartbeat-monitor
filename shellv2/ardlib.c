@@ -147,12 +147,16 @@ char *arduino_rate(bool keep)
 void arduino_resume()
 {
 	send_byte('r');
+
+	printf("\nResumed.\n");
 }
 
 // Sends char p to arduino to provoke actions on display
 void arduino_pause()
 {
 	send_byte('p');
+
+	printf("\nPaused.\n");
 }
 
 // Sends char s to arduino to provoke actions on display
@@ -160,12 +164,10 @@ void arduino_show(char **args)
 {
 	int num = *(args + 1) != NULL ? atoi(*(args + 1)) : 0;
 
-	printf("num is: %d:%d\n", num, fd);
-
 	send_byte('s');
 	send_byte(num);
 
-	printf("\ndone show\n");
+	printf("\nDone.\n");
 }
 
 /*
@@ -229,7 +231,7 @@ char *arduino_env(bool keep)
 	if (keep)
 		return env;
 
-	printf("RGB SENSOR: %s", env);
+	printf("\nRGB SENSOR: %s", env);
 	free(env);
 
 	return NULL;
@@ -284,20 +286,22 @@ void arduino_clock_sync()
 
 	send_byte('c');
 
-	printf("\nSending hour...");
+	printf("\nSyncing hour...");
 
 	send_byte(curr_time -> tm_hour + 32);
 	send_byte('h');
 
-	printf("\nSending minute...");
+	printf("\nSyncing minute...");
 
 	send_byte(curr_time -> tm_min + 32);
 	send_byte('m');
 
-	printf("\nSending second...");
+	printf("\nSyncing second...");
 
 	send_byte(curr_time -> tm_sec + 32);
-	send_byte('s');
+	char *time = send_byte('s');
+
+	printf("\n%s", time);
 }
 
 void fork_heartrate()

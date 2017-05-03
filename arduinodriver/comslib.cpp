@@ -31,8 +31,6 @@ void receiveClock()
 	do
 	{
 		h = msg - 32;
-		Serial.print("h is: ");
-		Serial.println(h);
 
 		msg = receiveByte();
 	}
@@ -41,8 +39,6 @@ void receiveClock()
 	do
 	{
 		m = msg - 32;
-		Serial.print("m is: ");
-		Serial.println(m);
 
 		msg = receiveByte();
 	}
@@ -51,8 +47,6 @@ void receiveClock()
 	do
 	{
 		s = msg - 32;
-		Serial.print("s is: ");
-		Serial.println(s);
 
 		msg = receiveByte();
 	}
