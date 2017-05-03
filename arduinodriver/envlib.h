@@ -41,15 +41,13 @@ void init_TCS34725(void);
 
 void get_TCS34725ID(void);
 
-void init_env();
+void initEnv();
 
 void findColor();
 
-int get_RedVal(void);
+void printColor();
 
-int get_GreenVal(void);
-
-int get_BlueVal(void);
+void printRGB();
 
 #endif
 

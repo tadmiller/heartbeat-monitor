@@ -30,6 +30,7 @@ void setup()
 	initMatrix();   // Initialize RGB Matrix
 	initClock();    // Initialize clock
 	initHeartbeat(); // sets up to read Pulse Sensor signal every 2mS
+	initEnv();
 	//initLightSensor();
 	pinMode(6, OUTPUT);
 }

@@ -70,6 +70,8 @@ void updateCmd()
 			receiveClock();
 		else if (cmd == 't')
 			printTime();
+		else if (cmd == 'e')
+			printColor();
 		// else if (cmd == 101)
 		// 	printADJD_S311Values();
 

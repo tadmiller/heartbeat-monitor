@@ -56,7 +56,6 @@ void receiveClock()
 	while (msg != 's');
 
 	setClock(h, m, s);
-	updateClock();
 	Serial.println("Successfully synced time!");
 	printTime();
 	//Serial.print()

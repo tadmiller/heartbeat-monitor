@@ -7,6 +7,7 @@
 #include "heartbeatlib.h"
 #include "rtclib.h"
 #include "comslib.h"
+#include "envlib.h"
 
 #define PROCESSING_VISUALIZER 1
 #define SERIAL_PLOTTER 2
