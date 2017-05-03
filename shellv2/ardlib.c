@@ -136,9 +136,14 @@ char *arduino_rate(bool keep)
 	if (keep)
 		return bpm;
 
-	bpm[2] = '\0';
-	printf("BPM: %s", bpm);
-	free(bpm);
+	if (bpm != NULL)
+	{
+		bpm[2] = '\0';
+		printf("\nBPM: %s\n", bpm);
+		free(bpm);
+	}
+	else
+		printf("\nBPM is NULL\n");
 
 	return NULL;
 }
@@ -267,7 +272,10 @@ void arduino_clock(char **args)
 
 	if (*(args + 1) != NULL)
 		if (strcmp(*(args + 1), "sync") == 0)
+		{
 			arduino_clock_sync();
+			return;
+		}
 
 	time = send_byte('t');
 
