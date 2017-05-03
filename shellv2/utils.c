@@ -177,7 +177,7 @@ char *mmap_read(char *file)
 	char *map;
 	char *ret;
 
-	printf("\nReading %s\n", filepath);
+	//printf("\nReading %s\n", filepath);
 
 	if (fd == -1)
 	{

@@ -247,6 +247,7 @@ void sys_exit()
 	arduino_close();
 
 	printf("\n\n\n\n");
+	quitFork = true;
 	exit(0);
 }
 
@@ -254,15 +255,20 @@ void sys_exit()
 // Gets sent to mmap'd file after 10 reads.
 void process_rate()
 {
-	while (!quitFork)
+	while (1)
 	{
 		char *res = arduino_rate(true);
+
+		printf("%s", res);
 
 		mmap_write(res, NULL, 'A');
 
 		free(res);
 
 		usleep(1000 * 1000 * 3);
+
+		if (quitFork)
+			exit(0);
 	}
 }
 
@@ -270,18 +276,17 @@ void arduino_clock(char **args)
 {
 	char *time;
 
-	if (*(args + 1) != NULL)
+	if (*(args + 1) == NULL)
+	{
+		time = send_byte('t');
+
+		printf("\n%s\n", time);
+
+		free(time);
+	}
+	else
 		if (strcmp(*(args + 1), "sync") == 0)
-		{
 			arduino_clock_sync();
-			return;
-		}
-
-	time = send_byte('t');
-
-	printf("\n%s\n", time);
-
-	free(time);
 }
 
 void arduino_clock_sync()
