@@ -262,13 +262,17 @@ void process_rate()
 {
 	char *beat;
 	char *env;
+	//char *time;
 
 	while (!quitFork)
 	{
 		beat = arduino_rate(true);
 		env = arduino_env(true);
 
-		mmap_write(beat, NULL, 'A');
+		printf("BEAT: %.3s", beat);
+		printf("ENV:  %s", env);
+		printf("TIME: %s", beat + 3);
+		//mmap_write(beat, NULL, 'A');
 
 		// db_insert(beat, env);
 
