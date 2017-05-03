@@ -272,13 +272,12 @@ void process_rate()
 		printf("\n\n\nBEAT: %.3s", beat);
 		printf("\nENV:  %s", env);
 		strncpy(time, beat + 4, 8);
-		//sprintf(time, "%.8s", beat + 4);
 		time[8] = '\0';
 		printf("\nTIME: %s", time);
 		fflush(stdout);
 		//mmap_write(beat, NULL, 'A');
 
-		// db_insert(beat, env);
+		db_insert(beat, env, time);
 
 		free(beat);
 		free(env);
