@@ -425,7 +425,7 @@ void print_hist(int **groups, int len)
 	{
 		if (groups[i] != NULL && groups[i][0] > 0)
 		{
-			printf("\n%.2d:%.2d | μ %.2d |\t", inverse_bucket_h(i), inverse_bucket_m(i), get_mean(groups[i]));
+			printf("\n%.2d:%.2d | μ %.2d |\t\t", inverse_bucket_h(i), inverse_bucket_m(i), get_mean(groups[i]));
 			print_stars(groups[i][1]);
 			printf("\n      | σ %.2lf |\t", get_std_dev(groups[i]));
 			print_stars(groups[i][1]);

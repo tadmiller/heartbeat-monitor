@@ -10,6 +10,12 @@ all: clean compile
 compile:
 	${CC} ${CFLAGS} cli.c shell.c ardlib.c utils.c db.c -o cli.o ${CLINK}
 
+update:
+	gitpull all
+
+gitpull:
+	git pull
+
 clean:
 	@rm -f *.o
 
