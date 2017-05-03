@@ -155,7 +155,8 @@ int shell_exec(char **args)
 		arduino_pause();
 	else if (strcmp(*args, "rate") == 0)
 		arduino_rate(0);
-	// else if (strcmp(*args, "reset") == 0)
+	else if (strcmp(*args, "reset") == 0)
+		mmap_write(NULL, NULL, 'W');
 	else if (strcmp(*args, "resume") == 0)
 		arduino_resume();
 	else if (strcmp(*args, "show") == 0)
@@ -165,8 +166,6 @@ int shell_exec(char **args)
 	// Additional commands
 	else if (strcmp(*args, "close") == 0)
 		arduino_close();
-	// else if (strcmp(*args, "flush") == 0)
-	// else if (strcmp(*args, "set") == 0)
 	else if (strcmp(*args, "collect") == 0)
 		fork_heartrate();
 	else if (strcmp(*args, "db") == 0)

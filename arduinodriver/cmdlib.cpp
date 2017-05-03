@@ -65,7 +65,12 @@ void updateCmd()
 			matrixWrite(dispVal);
 		}
 		else if (cmd == 98)
-			sendBPM(getSysHour(), getSysMin(), getSysSec(), getBPM());
+		{
+			if (paused == true)
+				sendBPM(getSysHour(), getSysMin(), getSysSec(), dispVal);
+			else
+				sendBPM(getSysHour(), getSysMin(), getSysSec(), getBPM());
+		}
 		else if (cmd == 99)
 			receiveClock();
 		else if (cmd == 116)
