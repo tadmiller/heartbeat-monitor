@@ -40,10 +40,10 @@ int mmap_write(char *data, char *file, char mode)
 
 		textsize += rlen;
 	}
-	//else if (mode == 'W')
-	//	textsize = data != NULL ? strlen(data) : 0; // + \0 null character
-	else
-		return 1;
+	else if (mode == 'W')
+		textsize = data != NULL ? strlen(data) : 0; // + \0 null character
+	//else
+	//	return 1;
 	
 	fd = open(filepath, O_RDWR | O_CREAT | O_TRUNC, (mode_t) 0600);
 

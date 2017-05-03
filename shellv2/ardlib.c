@@ -138,7 +138,7 @@ char *arduino_rate(bool keep)
 
 	if (bpm != NULL)
 	{
-		bpm[2] = '\0';
+		bpm[3] = '\0';
 		printf("\nBPM: %s\n", bpm);
 		free(bpm);
 	}
