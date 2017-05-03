@@ -3,14 +3,12 @@
 sqlite3 *db;
 bool usingDB = false;
 
+// For each column this is called
 static int cb(void *notUsed, int argc, char **argv, char **colName)
 {
-	printf("ARGC: %d", argc);
-
 	for (size_t i = 0; i < argc; i++)
 		printf("%s = %s\n", colName[i], argv[i] ? argv[i] : "NULL");
    
-	printf("\n");
 	return 0;
 }
 

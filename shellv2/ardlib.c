@@ -70,10 +70,10 @@ char *send_byte(char send)
 	int count = 0;
 	char *buffer = NULL;
 
-	while (readingBuffer == true)
+	while (readingBuffer)
 	{
 		//printf("\nWaiting for thread to finish reading buffer...");
-		usleep(1000 * 1000);
+		usleep(1000 * 1000 * 2);
 	}
 
 	readingBuffer = true;
@@ -116,11 +116,11 @@ char *send_byte(char send)
 		return NULL;
 	}
 
-	readingBuffer = false;
-
 	// Ensure the response is null-terminated
-	buffer[count] = 0;
+	if (count < BUFFER_SIZE)
+		buffer[count] = 0;
 
+	readingBuffer = false;
 	if (buffer != NULL)
 		return buffer;
 
@@ -269,18 +269,24 @@ void process_rate()
 		beat = arduino_rate(true);
 		env = arduino_env(true);
 
-		printf("\n\n\nBEAT: %.3s", beat);
-		printf("\nENV:  %s", env);
-		strncpy(time, beat + 4, 8);
-		time[8] = '\0';
-		printf("\nTIME: %s", time);
-		fflush(stdout);
-		//mmap_write(beat, NULL, 'A');
+		if (beat != NULL && env != NULL)
+		{
+			printf("\n\n\nBEAT: %.3s", beat);
+			printf("\nENV:  %s", env);
+			strncpy(time, beat + 4, 8);
+			time[8] = '\0';
+			printf("\nTIME: %s", time);
+			fflush(stdout);
+			//mmap_write(beat, NULL, 'A');
 
-		db_insert(time, atoi(beat), env);
+			db_insert(time, atoi(beat), env);
+		}
 
-		free(beat);
-		free(env);
+		if (beat != NULL)
+			free(beat);
+
+		if (env != NULL)
+			free(env);
 
 		usleep(1000 * 1000 * 3);
 
