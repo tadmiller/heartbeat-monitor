@@ -262,8 +262,8 @@ void process_rate()
 		res = NULL;
 		res = arduino_rate(true);
 
-		res[13] = '\0';
-		printf("%s", res);
+		res[14] = '\0';
+		//printf("%s", res);
 
 		mmap_write(res, NULL, 'A');
 
