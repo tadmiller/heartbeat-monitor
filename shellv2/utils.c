@@ -1,18 +1,4 @@
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <termios.h>
-#include <stdint.h>
-#include <sys/mman.h>
-#include <stdbool.h>
-#include <math.h>
 #include "utils.h"
-
-#define GROUP_SIZE 96
 
 // Open and append 10 BPMs to a file
 int mmap_write(char *data, char *file, char mode)

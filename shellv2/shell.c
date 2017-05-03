@@ -1,16 +1,4 @@
-#define _GNU_SOURCE
-#include <pwd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-
-#include <sqlite3.h> 
-
 #include "shell.h"
-#include "ardlib.h"
-#include "utils.h"
-#include "db.h"
 
 int shell_init()
 {

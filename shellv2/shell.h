@@ -7,6 +7,16 @@
 /* Fallback prompt to show */
 #define DEFAULT_PROMPT "> "
 
+#define _GNU_SOURCE
+#include <pwd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include "ardlib.h"
+#include "utils.h"
+#include "db.h"
+
 void print_prompt();
 
 size_t read_line(char **);

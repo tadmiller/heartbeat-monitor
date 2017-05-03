@@ -277,7 +277,7 @@ void process_rate()
 		fflush(stdout);
 		//mmap_write(beat, NULL, 'A');
 
-		db_insert(beat, env, time);
+		db_insert(time, atoi(beat), env);
 
 		free(beat);
 		free(env);

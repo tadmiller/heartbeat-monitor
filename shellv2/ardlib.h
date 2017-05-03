@@ -25,6 +25,7 @@
 #include <time.h>
 
 #include "utils.h"
+#include "db.h"
 
 void sys_exit();
 
