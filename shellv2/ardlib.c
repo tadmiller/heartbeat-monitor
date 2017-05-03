@@ -261,7 +261,7 @@ void sys_exit()
 void process_rate()
 {
 	char *beat;
-	char *env;
+	//char *env;
 
 	while (!quitFork)
 	{
