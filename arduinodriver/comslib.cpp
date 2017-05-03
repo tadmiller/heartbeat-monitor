@@ -1,13 +1,15 @@
 #include "comslib.h"
 
-int sendReading(String data) //Sends the data from the sensors
+// Sends the data from the sensors
+int sendReading(String data) 
 {
 	Serial.println(data);
 
 	return 0;
 }
 
-void sendBPM(int hour, int min, int sec, int reading)	//Sends the heart beats per minute from the heart rate sensor
+// Sends the heart beats per minute from the heart rate sensor
+void sendBPM(int hour, int min, int sec, int reading)	
 {
 	sendReading(String(reading) + "," + String(hour) + "," + String(min) + "," + String(sec) + ",");
 }
@@ -17,7 +19,8 @@ void sendRGB(int r, int g, int b)
 	sendReading(String(r) + "," + String(g) + "," + String(b) + ",");
 }
 
-void receiveClock()	//Taking in the clock's data in order to send to c files
+// Taking in the clock's data in order to send to c files
+void receiveClock()	
 {
 	Serial.println("Receiving clock...");
 	char h;
@@ -61,7 +64,8 @@ void receiveClock()	//Taking in the clock's data in order to send to c files
 	//Serial.print()
 }
 
-void sendTime()	//Send the time to be read by the computer
+// Send the time to be read by the computer
+void sendTime()	
 {
 	sendReading(getSysTime());
 }
