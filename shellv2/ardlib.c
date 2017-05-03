@@ -415,7 +415,7 @@ void arduino_clock(char **args)
 
 	time = send_byte('t');
 
-	printf("%s", time);
+	printf("\n%s\n", time);
 
 	free(time);
 }
@@ -432,18 +432,18 @@ void arduino_clock_sync()
 
 	printf("\nSending hour...");
 
+	send_byte(curr_time -> tm_hour + 32);
 	send_byte('h');
-	send_byte(curr_time -> tm_hour);
 
 	printf("\nSending minute...");
 
+	send_byte(curr_time -> tm_min + 32);
 	send_byte('m');
-	send_byte(curr_time -> tm_min);
 
 	printf("\nSending second...");
 
+	send_byte(curr_time -> tm_sec + 32);
 	send_byte('s');
-	send_byte(curr_time -> tm_sec);
 }
 
 void fork_heartrate()
