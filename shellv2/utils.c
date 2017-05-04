@@ -419,18 +419,19 @@ double get_std_dev(int *group)
 }
 
 // Print a star histogram using the recorded dates and times.
-void print_hist(int **groups, int len)
+void print_hist(int **groups, int len, int time)
 {
 	for (size_t i = 0; i < len; i++)
 	{
 		if (groups[i] != NULL && groups[i][0] > 0)
-		{
-			printf("\n%.2d:%.2d | μ %.2d |\t\t", inverse_bucket_h(i), inverse_bucket_m(i), get_mean(groups[i]));
-			print_stars(groups[i][1]);
-			printf("\n      | σ %.2lf |\t", get_std_dev(groups[i]));
-			print_stars(groups[i][1]);
-			printf("\n");
-		}
+			if (i == time || time == -1)
+			{
+				printf("\n%.2d:%.2d | μ %.2d |\t\t", inverse_bucket_h(i), inverse_bucket_m(i), get_mean(groups[i]));
+				print_stars(groups[i][1]);
+				printf("\n      | σ %.2lf |\t", get_std_dev(groups[i]));
+				print_stars(groups[i][1]);
+				printf("\n");
+			}
 	}
 
 	printf("\n");
@@ -531,8 +532,8 @@ void process_groups(int *bpms, int *hours, int *mins, int *secs, int arrLen, int
 
 void process_hist_v2(char **args)
 {
-	char *map = mmap_read(*(args + 1));
-	//char *time = get_bucket_time(*(args + 2));
+	char *map =  mmap_read(NULL); // mmap_read(*(args + 1));
+	int time = *(args + 1) != NULL ? get_bucket_time(*(args + 1)) : -1;
 	int len;
 
 	int *bpms;
@@ -563,7 +564,7 @@ void process_hist_v2(char **args)
 
 	parse_hist_csv(map, len, bpms, hours, mins, secs, arrLen);
 	process_groups(bpms, hours, mins, secs, arrLen, groups);
-	print_hist(groups, GROUP_SIZE);
+	print_hist(groups, GROUP_SIZE, time);
 
 	free(map);
 	free(bpms);
