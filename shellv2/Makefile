@@ -10,12 +10,6 @@ all: clean compile
 compile:
 	${CC} ${CFLAGS} cli.c shell.c ardlib.c utils.c db.c -o cli.o ${CLINK}
 
-
-gup:
-	git pull
-
-update: gup compile
-
 clean:
 	@rm -f *.o
 
